@@ -628,7 +628,81 @@ textarea{resize:vertical;min-height:80px;}
   .diff-grid{grid-template-columns:1fr;}
 }
 
-/* FIREBASE AUTH */
+/* ===== CALCOLATORE GIOCATA ===== */
+.calc-card {
+  background: linear-gradient(135deg,rgba(255,215,0,0.06),rgba(0,229,160,0.04));
+  border: 1px solid rgba(255,215,0,0.25);
+  border-radius: 10px; padding: 18px; margin-bottom: 16px;
+}
+.calc-title { font-size:0.65rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+.calc-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+.calc-input-wrap { display:flex; align-items:center; gap:8px; }
+.calc-input-wrap label { font-size:0.78rem; color:var(--muted); white-space:nowrap; }
+.calc-input {
+  width:90px; background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); padding:9px 12px; border-radius:8px;
+  font-family:'DM Mono',monospace; font-size:0.9rem; outline:none;
+  transition:border-color 0.2s;
+}
+.calc-input:focus { border-color:var(--gold); }
+.calc-results { display:flex; gap:20px; flex-wrap:wrap; }
+.calc-result-item { text-align:center; }
+.calc-result-label { font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:3px; }
+.calc-result-val { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:1px; line-height:1; }
+.calc-save-note { font-size:0.75rem; color:var(--muted); margin-top:8px; line-height:1.5; }
+
+/* ===== STATISTICHE PAGE ===== */
+.stats-section { margin-top:48px; padding-top:32px; border-top:1px solid var(--border); padding-bottom:48px; display:none; }
+.stats-section.visible { display:block; }
+.stats-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+.stats-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:2px; }
+.btn-back-storico { background:var(--surface); border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:8px 16px; font-size:0.82rem; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
+.btn-back-storico:hover { color:var(--text); border-color:var(--accent); }
+
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+.kpi-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; }
+.kpi-label { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; }
+.kpi-val { font-family:'Bebas Neue',sans-serif; font-size:2rem; line-height:1; margin-bottom:4px; }
+.kpi-sub { font-size:0.72rem; color:var(--muted); font-family:'DM Mono',monospace; }
+
+.stats-row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.stats-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px; }
+.stats-card.full { grid-column:1/-1; }
+.stats-card-title { font-size:0.65rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:14px; }
+
+/* ROI chart */
+.roi-chart-wrap { position:relative; width:100%; height:120px; }
+.roi-chart-wrap svg { width:100%; height:100%; }
+.roi-footer { display:flex; justify-content:space-between; margin-top:8px; flex-wrap:wrap; gap:8px; }
+.roi-stat { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; }
+.roi-stat strong { color:var(--text); }
+
+/* Sport bars */
+.sport-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.sport-name { font-size:0.8rem; color:var(--text); width:60px; flex-shrink:0; }
+.sport-bar-wrap { flex:1; background:var(--border); border-radius:4px; height:6px; overflow:hidden; }
+.sport-bar { height:100%; border-radius:4px; background:var(--accent); transition:width 0.6s ease; }
+.sport-pct { font-size:0.75rem; color:var(--muted); width:36px; text-align:right; font-family:'DM Mono',monospace; }
+.sport-count { font-size:0.72rem; color:var(--muted); width:20px; font-family:'DM Mono',monospace; }
+
+/* Bias alerts */
+.bias-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.bias-item:last-child { border-bottom:none; }
+.bias-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.bias-dot.warn { background:var(--gold); }
+.bias-dot.ok { background:var(--accent); }
+.bias-dot.bad { background:var(--danger); }
+.bias-text { font-size:0.82rem; color:#c5cad8; line-height:1.6; }
+.bias-text strong { color:var(--text); }
+
+/* Standalone calculator in stats */
+.stats-calc { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:16px; }
+.stats-calc-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+
+@media(max-width:600px){
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .stats-row2 { grid-template-columns:1fr; }
+}
 .auth-card {
   background: linear-gradient(135deg, rgba(77,166,255,0.06), rgba(0,229,160,0.04));
   border: 1px solid rgba(77,166,255,0.25);
@@ -940,7 +1014,8 @@ textarea{resize:vertical;min-height:80px;}
 <div class="storico-section" id="storicoSection">
   <div class="storico-title-row">
     <span class="storico-title">📚 Storico Pronostici</span>
-    <div class="backup-btns">
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-backup" onclick="showStats()">📊 Statistiche</button>
       <button class="btn-backup" onclick="openBackupModal()">💾 Backup</button>
     </div>
   </div>
@@ -965,6 +1040,70 @@ textarea{resize:vertical;min-height:80px;}
   </div>
 
   <div class="storico-list" id="storicoList"></div>
+</div>
+
+<!-- STATISTICHE -->
+<div class="stats-section" id="statsSection">
+  <div class="stats-header">
+    <span class="stats-title">📊 Statistiche</span>
+    <button class="btn-back-storico" onclick="hideStats()">← Storico</button>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid" id="statsKpi"></div>
+
+  <!-- ROI chart + Sport -->
+  <div class="stats-row2">
+    <div class="stats-card">
+      <div class="stats-card-title">📈 Andamento ROI</div>
+      <div class="roi-chart-wrap">
+        <canvas id="roiChart"></canvas>
+      </div>
+      <div class="roi-footer" id="roiFooter"></div>
+    </div>
+    <div class="stats-card">
+      <div class="stats-card-title">🏆 Precisione per sport</div>
+      <div id="sportBars"></div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+        <div class="kpi-label">Confidenza media AI vs reale</div>
+        <div id="confCompare" style="font-size:0.9rem;margin-top:4px;font-family:'DM Mono',monospace;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calcolatore standalone -->
+  <div class="stats-card full stats-row2" style="display:block;margin-bottom:14px;">
+    <div class="stats-card-title">💰 Calcolatore "E se?"</div>
+    <div class="stats-calc">
+      <div class="stats-calc-row">
+        <div class="calc-input-wrap">
+          <label>Importo €</label>
+          <input type="number" class="calc-input" id="statsCalcImporto" value="10" min="1" step="1" oninput="aggiornaStatsCalc()"/>
+        </div>
+        <div class="calc-input-wrap">
+          <label>Quota</label>
+          <input type="number" class="calc-input" id="statsCalcQuota" value="1.85" min="1.01" step="0.01" oninput="aggiornaStatsCalc()"/>
+        </div>
+        <div class="calc-results">
+          <div class="calc-result-item">
+            <span class="calc-result-label">Vincita</span>
+            <span class="calc-result-val" style="color:var(--accent)" id="statsVincita">€18.50</span>
+          </div>
+          <div class="calc-result-item">
+            <span class="calc-result-label">Profitto</span>
+            <span class="calc-result-val" style="color:var(--accent)" id="statsProfitto">+€8.50</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pattern AI -->
+  <div class="stats-card" style="margin-bottom:14px;">
+    <div class="stats-card-title">🧠 Pattern AI rilevati</div>
+    <div id="biasPanel"></div>
+  </div>
+
 </div>
 
 <!-- Status picker (floating) -->
@@ -1020,6 +1159,7 @@ textarea{resize:vertical;min-height:80px;}
 
 </div><!-- /container -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -1549,6 +1689,7 @@ function saveCurrentPronostico() {
     come_giocarla: r.come_giocarla||null,
     lezioni_applicate: r.lezioni_applicate||0,
     lezioni_note: r.lezioni_note||null,
+    importo_giocato: getImportoGiocata(),
     status: 'attesa',
     ricalcoli: []
   };
@@ -1679,7 +1820,235 @@ function confirmDelete(id) {
 }
 
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
-// ─── BACKUP MODAL ────────────────────────────────────────────────────────────
+// ─── CALCOLATORE GIOCATA ─────────────────────────────────────────────────────
+function aggiornaCalc(quota) {
+  const imp = parseFloat(document.getElementById('calcImporto')?.value) || 0;
+  const vincita = imp * quota;
+  const profitto = vincita - imp;
+  const vEl = document.getElementById('calcVincita');
+  const pEl = document.getElementById('calcProfitto');
+  if (vEl) vEl.textContent = '€' + vincita.toFixed(2);
+  if (pEl) pEl.textContent = (profitto >= 0 ? '+' : '') + '€' + profitto.toFixed(2);
+}
+
+function aggiornaStatsCalc() {
+  const imp = parseFloat(document.getElementById('statsCalcImporto')?.value) || 0;
+  const quota = parseFloat(document.getElementById('statsCalcQuota')?.value) || 1;
+  const vincita = imp * quota;
+  const profitto = vincita - imp;
+  const vEl = document.getElementById('statsVincita');
+  const pEl = document.getElementById('statsProfitto');
+  if (vEl) vEl.textContent = '€' + vincita.toFixed(2);
+  if (pEl) pEl.textContent = (profitto >= 0 ? '+' : '') + '€' + profitto.toFixed(2);
+}
+
+function getImportoGiocata() {
+  const el = document.getElementById('calcImporto');
+  return el ? parseFloat(el.value) || 0 : 0;
+}
+
+// ─── STATISTICHE ─────────────────────────────────────────────────────────────
+let roiChartInstance = null;
+
+function showStats() {
+  document.getElementById('storicoSection').style.display = 'none';
+  const s = document.getElementById('statsSection');
+  s.classList.add('visible');
+  s.scrollIntoView({behavior:'smooth', block:'start'});
+  renderStats();
+}
+
+function hideStats() {
+  document.getElementById('statsSection').classList.remove('visible');
+  document.getElementById('storicoSection').style.display = 'block';
+}
+
+function renderStats() {
+  const history = loadHistory();
+  const verified = history.filter(e => e.status === 'vinto' || e.status === 'perso' || e.status === 'pareggio');
+  const vinti = history.filter(e => e.status === 'vinto').length;
+  const persi = history.filter(e => e.status === 'perso').length;
+  const attesa = history.filter(e => e.status === 'attesa' || e.status === 'pareggio').length;
+  const totale = history.length;
+  const winRate = verified.length ? Math.round(vinti / verified.length * 100) : 0;
+
+  // ROI calc
+  let totalInvestito = 0, totalVinto = 0;
+  verified.forEach(e => {
+    const imp = parseFloat(e.importo_giocato) || 0;
+    if (!imp) return;
+    totalInvestito += imp;
+    if (e.status === 'vinto') totalVinto += imp * (parseFloat(e.quota) || 1);
+  });
+  const roi = totalInvestito > 0 ? ((totalVinto - totalInvestito) / totalInvestito * 100).toFixed(1) : null;
+  const profittoReale = (totalVinto - totalInvestito).toFixed(2);
+
+  // KPI
+  document.getElementById('statsKpi').innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Totale</div>
+      <div class="kpi-val" style="color:var(--accent3)">${totale}</div>
+      <div class="kpi-sub">pronostici salvati</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Vinti</div>
+      <div class="kpi-val" style="color:var(--accent)">${vinti}</div>
+      <div class="kpi-sub">${winRate}% win rate</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Persi</div>
+      <div class="kpi-val" style="color:var(--danger)">${persi}</div>
+      <div class="kpi-sub">${verified.length ? Math.round(persi/verified.length*100) : 0}% lose rate</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">ROI Reale</div>
+      <div class="kpi-val" style="color:${roi >= 0 ? 'var(--accent)' : 'var(--danger)'}">${roi !== null ? roi + '%' : 'N/D'}</div>
+      <div class="kpi-sub">${totalInvestito > 0 ? 'su €' + totalInvestito.toFixed(0) + ' giocati' : 'inserisci importi'}</div>
+    </div>`;
+
+  // ROI chart
+  renderRoiChart(history);
+
+  // Sport bars
+  const sportMap = {};
+  history.forEach(e => {
+    if (!sportMap[e.sport]) sportMap[e.sport] = { v:0, p:0, t:0 };
+    sportMap[e.sport].t++;
+    if (e.status === 'vinto') sportMap[e.sport].v++;
+    if (e.status === 'perso') sportMap[e.sport].p++;
+  });
+  const colors = ['var(--accent)', 'var(--accent3)', 'var(--gold)', 'var(--accent2)', '#9b59b6'];
+  let sportHtml = '';
+  Object.entries(sportMap).forEach(([sport, d], i) => {
+    const pct = d.t > 0 && (d.v+d.p) > 0 ? Math.round(d.v/(d.v+d.p)*100) : 0;
+    sportHtml += `<div class="sport-row">
+      <span class="sport-name">${sport}</span>
+      <div class="sport-bar-wrap"><div class="sport-bar" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div>
+      <span class="sport-pct">${pct}%</span>
+      <span class="sport-count">${d.t}</span>
+    </div>`;
+  });
+  document.getElementById('sportBars').innerHTML = sportHtml || '<div style="color:var(--muted);font-size:0.82rem">Nessun dato ancora</div>';
+
+  // Confidence compare
+  const withConf = verified.filter(e => e.confidenza);
+  const avgConf = withConf.length ? Math.round(withConf.reduce((s,e) => s + e.confidenza, 0) / withConf.length) : null;
+  document.getElementById('confCompare').innerHTML = avgConf
+    ? `<span style="color:var(--accent3)">${avgConf}% stimata</span> → <span style="color:${winRate >= avgConf ? 'var(--accent)' : 'var(--danger)'}">${winRate}% reale</span>`
+    : '<span style="color:var(--muted)">Dati insufficienti</span>';
+
+  // ROI footer
+  document.getElementById('roiFooter').innerHTML = `
+    <span class="roi-stat">Investito: <strong>€${totalInvestito.toFixed(2)}</strong></span>
+    <span class="roi-stat">Vinto: <strong>€${totalVinto.toFixed(2)}</strong></span>
+    <span class="roi-stat" style="color:${profittoReale >= 0 ? 'var(--accent)' : 'var(--danger)'}">Profitto: <strong>${profittoReale >= 0 ? '+' : ''}€${profittoReale}</strong></span>`;
+
+  // Bias analysis
+  renderBiasPanel(history);
+}
+
+function renderRoiChart(history) {
+  const canvas = document.getElementById('roiChart');
+  if (!canvas) return;
+  if (roiChartInstance) { roiChartInstance.destroy(); roiChartInstance = null; }
+
+  // Build cumulative ROI data points from verified entries with importo
+  const entries = history
+    .filter(e => (e.status === 'vinto' || e.status === 'perso') && parseFloat(e.importo_giocato) > 0)
+    .sort((a,b) => new Date(a.savedAt) - new Date(b.savedAt));
+
+  if (entries.length < 2) {
+    canvas.parentElement.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:30px 0">Inserisci importi nei pronostici e verifica i risultati per vedere il grafico</div>';
+    return;
+  }
+
+  let cumulative = 0;
+  const labels = [];
+  const data = [0];
+  entries.forEach(e => {
+    const imp = parseFloat(e.importo_giocato);
+    if (e.status === 'vinto') cumulative += imp * (parseFloat(e.quota)||1) - imp;
+    else cumulative -= imp;
+    labels.push(e.team1.slice(0,3) + '-' + e.team2.slice(0,3));
+    data.push(parseFloat(cumulative.toFixed(2)));
+  });
+  labels.unshift('Inizio');
+
+  const color = cumulative >= 0 ? '#00e5a0' : '#ff4757';
+  roiChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: color,
+        backgroundColor: color + '15',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: color,
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { display: false },
+        y: {
+          display: true,
+          grid: { color: '#1e2330' },
+          ticks: { color: '#6b7591', font: { size: 10 }, callback: v => '€'+v }
+        }
+      }
+    }
+  });
+}
+
+function renderBiasPanel(history) {
+  const verified = history.filter(e => e.verifica && e.verifica.nota_apprendimento);
+  if (!verified.length) {
+    document.getElementById('biasPanel').innerHTML = '<div style="color:var(--muted);font-size:0.82rem">Nessuna verifica completata ancora. Usa "Verifica Risultato" dopo ogni partita per vedere i pattern.</div>';
+    return;
+  }
+
+  // Group notes and find patterns
+  const notes = verified.map(e => ({
+    nota: e.verifica.nota_apprendimento,
+    esito: e.verifica.esito_scommessa,
+    sport: e.sport,
+    competition: e.competition
+  }));
+
+  // Count errors vs successes
+  const errors = notes.filter(n => n.esito === 'PERSO');
+  const wins = notes.filter(n => n.esito === 'VINTO');
+
+  let html = '';
+
+  if (errors.length > 0) {
+    html += `<div class="bias-item">
+      <div class="bias-dot bad"></div>
+      <div class="bias-text"><strong>Errori frequenti (${errors.length}):</strong> ${errors[0].nota}</div>
+    </div>`;
+    if (errors.length > 1) {
+      html += `<div class="bias-item">
+        <div class="bias-dot warn"></div>
+        <div class="bias-text"><strong>Pattern rilevato:</strong> ${errors[1].nota}</div>
+      </div>`;
+    }
+  }
+
+  if (wins.length > 0) {
+    html += `<div class="bias-item">
+      <div class="bias-dot ok"></div>
+      <div class="bias-text"><strong>Punti di forza (${wins.length} vinti):</strong> ${wins[0].nota}</div>
+    </div>`;
+  }
+
+  if (!html) html = '<div style="color:var(--muted);font-size:0.82rem">Dati insufficienti per rilevare pattern.</div>';
+  document.getElementById('biasPanel').innerHTML = html;
+}
 function openBackupModal() {
   showExportTab();
   document.getElementById('backupModal').classList.add('visible');
@@ -2215,6 +2584,34 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
       </div>`;
   }
 
+  const quota = parseFloat(r.quota_stimata) || 1.5;
+  const calcHtml = showSave ? `
+    <div class="calc-card">
+      <div class="calc-title">💰 Calcolatore Giocata</div>
+      <div class="calc-row">
+        <div class="calc-input-wrap">
+          <label>Importo €</label>
+          <input type="number" class="calc-input" id="calcImporto" value="10" min="1" step="1" oninput="aggiornaCalc(${quota})"/>
+        </div>
+        <div class="calc-results">
+          <div class="calc-result-item">
+            <span class="calc-result-label">Quota</span>
+            <span class="calc-result-val" style="color:var(--text)">${quota.toFixed(2)}</span>
+          </div>
+          <div class="calc-result-item">
+            <span class="calc-result-label">Vincita totale</span>
+            <span class="calc-result-val" style="color:var(--accent)" id="calcVincita">€${(10*quota).toFixed(2)}</span>
+          </div>
+          <div class="calc-result-item">
+            <span class="calc-result-label">Profitto netto</span>
+            <span class="calc-result-val" style="color:var(--accent)" id="calcProfitto">+€${(10*quota-10).toFixed(2)}</span>
+          </div>
+          ${r.value_bet_principale?`<div class="calc-result-item"><span class="calc-result-label">Value</span><span class="calc-result-val" style="color:var(--gold)">⚡ SI</span></div>`:''}
+        </div>
+      </div>
+      <div class="calc-save-note">💡 L'importo verrà salvato con il pronostico e contribuirà al calcolo del tuo ROI reale nelle statistiche.</div>
+    </div>` : '';
+
   const saveBtn = showSave ? `<button class="btn-save" id="btnSave" onclick="saveCurrentPronostico()">💾 SALVA PRONOSTICO</button>` : '';
 
   document.getElementById('resultCard').innerHTML = `
@@ -2269,6 +2666,7 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
       ${lezioniBox}
       ${webPanel}
     </div>
+    ${calcHtml}
     ${saveBtn}
     <div class="disclaimer"><strong>⚠️ Gioco Responsabile:</strong> Strumento puramente informativo. I pronostici AI non garantiscono risultati. Il gioco d'azzardo può creare dipendenza — non scommettere più di quanto puoi permetterti di perdere.</div>
   `;
