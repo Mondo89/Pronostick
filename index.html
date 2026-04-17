@@ -1054,7 +1054,7 @@ Riassumi in italiano in modo strutturato.`;
     let iterations = 0;
     while (iterations < 5) {
       iterations++;
-      const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:getModel(),max_tokens:2000,tools,messages})});
+      const res = await fetch("/api/proxy",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:getModel(),max_tokens:2000,tools,messages})});
       const data = await res.json();
       if (!res.ok) break;
       const assistantContent = data.content || [];
@@ -1182,7 +1182,7 @@ ${mercatiSchema}
 
 // ─── CALL AI ──────────────────────────────────────────────────────────────────
 async function callAI(prompt, maxTokens=1500) {
-  const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:getModel(),max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})});
+  const res = await fetch("/api/proxy",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:getModel(),max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})});
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message||'Errore API');
   const raw = data.content.map(i=>i.text||'').join('');
@@ -2009,8 +2009,8 @@ Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se 
     let iterations = 0;
     while (iterations < 5) {
       iterations++;
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      const res = await fetch("/api/proxy", {
+        method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey() },
         body: JSON.stringify({ model: getModel(), max_tokens: 1000, tools, messages })
       });
       const data = await res.json();
@@ -2052,8 +2052,8 @@ Analizza e rispondi SOLO con JSON valido:
 }`;
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+    const res = await fetch("/api/proxy", {
+      method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey() },
       body: JSON.stringify({ model: getModel(), max_tokens: 800, messages: [{ role: "user", content: evalPrompt }] })
     });
     const data = await res.json();
