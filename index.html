@@ -1052,9 +1052,9 @@ Riassumi in italiano in modo strutturato.`;
     let messages = [{role:"user",content:userMsg}];
     let finalText = '';
     let iterations = 0;
-    while (iterations < 5) {
+    while (iterations < 3) {
       iterations++;
-      const res = await fetch("/api/proxy",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:getModel(),max_tokens:2000,tools,messages})});
+      const res = await fetch("/api/proxy",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:getModel(),max_tokens:1200,tools,messages})});
       const data = await res.json();
       if (!res.ok) break;
       const assistantContent = data.content || [];
@@ -2007,7 +2007,7 @@ async function verificaRisultato(id) {
 Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se disponibili, eventuali note importanti sulla partita.`
     }];
     let iterations = 0;
-    while (iterations < 5) {
+    while (iterations < 3) {
       iterations++;
       const res = await fetch("/api/proxy", {
         method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey() },
