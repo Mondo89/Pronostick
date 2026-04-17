@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PronosticoAI — Analisi Sportiva Intelligente</title>
+<meta name="description" content="Pronosticatore sportivo con intelligenza artificiale. Analisi live, value bet e storico partite.">
+<meta name="theme-color" content="#00e5a0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PronosticoAI">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0c0f; --surface:#111318; --surface2:#181c23; --border:#1e2330;
+  --accent:#00e5a0; --accent2:#ff6b35; --accent3:#4da6ff;
+  --text:#e8ecf5; --muted:#6b7591; --danger:#ff4757; --gold:#ffd700;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 800px 600px at 20% 10%,rgba(0,229,160,0.04) 0%,transparent 60%),radial-gradient(ellipse 600px 500px at 80% 80%,rgba(77,166,255,0.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+.container{max-width:900px;margin:0 auto;padding:0 20px;position:relative;z-index:1;}
+
+/* HEADER */
+header{padding:40px 0 30px;border-bottom:1px solid var(--border);margin-bottom:40px;}
+.logo{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:2px;color:var(--text);line-height:1;}
+.logo-badge{background:var(--accent);color:var(--bg);font-size:0.65rem;font-weight:600;letter-spacing:2px;padding:3px 8px;border-radius:3px;text-transform:uppercase;}
+.tagline{color:var(--muted);font-size:0.9rem;font-weight:300;}
+
+/* API KEY SETUP */
+.apikey-card {
+  background: linear-gradient(135deg, rgba(0,229,160,0.06), rgba(77,166,255,0.04));
+  border: 2px solid rgba(0,229,160,0.3);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin-bottom: 32px;
+  position: relative;
+}
+.apikey-card.configured {
+  background: rgba(0,229,160,0.04);
+  border-color: rgba(0,229,160,0.15);
+}
+.apikey-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem; letter-spacing: 2px; color: var(--text);
+  margin-bottom: 6px; display: flex; align-items: center; gap: 8px;
+}
+.apikey-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+.apikey-row { display: flex; gap: 10px; align-items: center; }
+.apikey-input {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); padding: 11px 14px; border-radius: 8px;
+  font-family: 'DM Mono', monospace; font-size: 0.82rem; outline: none;
+  transition: border-color 0.2s;
+}
+.apikey-input:focus { border-color: var(--accent); }
+.apikey-btn {
+  background: var(--accent); color: var(--bg); border: none;
+  border-radius: 8px; padding: 11px 18px;
+  font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem;
+  letter-spacing: 1.5px; cursor: pointer; white-space: nowrap;
+  transition: all 0.2s;
+}
+.apikey-btn:hover { filter: brightness(1.1); }
+.apikey-status {
+  font-size: 0.75rem; margin-top: 8px;
+  font-family: 'DM Mono', monospace;
+}
+.apikey-status.ok { color: var(--accent); }
+.apikey-status.missing { color: var(--accent2); }
+.apikey-link {
+  color: var(--accent3); font-size: 0.75rem;
+  text-decoration: none; display: inline-block; margin-top: 4px;
+}
+.apikey-link:hover { text-decoration: underline; }
+.sport-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;}
+.sport-tab{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:8px 18px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+.sport-tab:hover{border-color:var(--accent);color:var(--text);}
+.sport-tab.active{background:rgba(0,229,160,0.1);border-color:var(--accent);color:var(--accent);}
+
+/* FORM */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:28px;}
+.form-title{font-size:0.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+.teams-row{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-bottom:20px;}
+.vs-badge{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--muted);text-align:center;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-group{margin-bottom:0;}
+.form-group label{display:block;font-size:0.75rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+input:not([type=file]),select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:12px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+input:not([type=file])::placeholder,textarea::placeholder{color:var(--muted);}
+input:not([type=file]):focus,textarea:focus{border-color:var(--accent);}
+textarea{resize:vertical;min-height:80px;}
+
+/* FILE UPLOAD */
+#fileInput{display:none;}
+.file-section{margin-bottom:20px;}
+.file-section-label{display:block;font-size:0.75rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.upload-box{border:2px dashed var(--border);border-radius:10px;background:var(--surface2);padding:20px;display:flex;align-items:center;gap:16px;transition:all 0.25s;}
+.upload-box.dragover{border-color:var(--accent);background:rgba(0,229,160,0.06);}
+.upload-icon{font-size:2.2rem;line-height:1;flex-shrink:0;}
+.upload-info{flex:1;}
+.upload-title{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+.upload-formats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;}
+.fmt-badge{background:rgba(77,166,255,0.12);border:1px solid rgba(77,166,255,0.3);color:var(--accent3);font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;padding:2px 8px;border-radius:4px;}
+.upload-desc{font-size:0.75rem;color:var(--muted);line-height:1.5;}
+.upload-cta{background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:10px 18px;font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:1.5px;cursor:pointer;flex-shrink:0;transition:all 0.2s;white-space:nowrap;}
+.upload-cta:hover{filter:brightness(1.1);}
+.file-chips{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+.chip{display:flex;align-items:center;justify-content:space-between;background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.22);border-radius:6px;padding:9px 14px;}
+.chip-name{display:flex;align-items:center;gap:8px;color:var(--accent);font-family:'DM Mono',monospace;font-size:0.78rem;}
+.chip-size{color:var(--muted);font-size:0.7rem;}
+.chip-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 2px;line-height:1;transition:color 0.15s;}
+.chip-del:hover{color:var(--danger);}
+
+/* BUTTONS */
+.btn-analyze{width:100%;background:var(--accent);color:var(--bg);border:none;padding:16px;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;cursor:pointer;transition:all 0.2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-analyze:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn-analyze:disabled{opacity:0.5;cursor:not-allowed;transform:none;filter:none;}
+
+.btn-save{width:100%;background:transparent;color:var(--accent);border:2px solid var(--accent);padding:14px;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all 0.2s;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-save:hover{background:rgba(0,229,160,0.1);}
+.btn-save.saved{color:var(--muted);border-color:var(--border);cursor:default;}
+
+/* LOADING */
+.loading-state{display:none;text-align:center;padding:60px 20px;}
+.loading-state.visible{display:block;}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{color:var(--muted);font-size:0.9rem;font-family:'DM Mono',monospace;}
+.loading-steps{margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.loading-step{font-size:0.8rem;color:var(--muted);font-family:'DM Mono',monospace;opacity:0;transition:opacity 0.5s;}
+.loading-step.show{opacity:1;color:var(--accent);}
+
+/* ERROR */
+.error-state{display:none;background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.3);border-radius:10px;padding:16px 20px;color:var(--danger);font-size:0.88rem;margin-bottom:20px;}
+.error-state.visible{display:block;}
+
+/* RESULT */
+.result-card{display:none;animation:fadeUp 0.4s ease;}
+.result-card.visible{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.verdict-banner{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden;}
+.verdict-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent3));}
+.verdict-header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+.verdict-match{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;line-height:1.1;}
+.confidence-pill{display:flex;align-items:center;gap:8px;background:rgba(0,229,160,0.1);border:1px solid var(--accent);border-radius:30px;padding:8px 16px;flex-shrink:0;}
+.confidence-label{font-size:0.7rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.confidence-value{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--accent);line-height:1;}
+.odds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0;}
+.odds-cell{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;}
+.odds-cell.recommended{background:rgba(0,229,160,0.08);border-color:var(--accent);}
+.odds-label{font-size:0.7rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.odds-value{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text);line-height:1;margin-bottom:4px;}
+.odds-cell.recommended .odds-value{color:var(--accent);}
+.odds-prob{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);}
+.bet-suggestion{background:linear-gradient(135deg,rgba(0,229,160,0.08),rgba(77,166,255,0.05));border:1px solid rgba(0,229,160,0.3);border-radius:10px;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.bet-main{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:1px;color:var(--accent);}
+.bet-desc{font-size:0.82rem;color:var(--muted);margin-top:3px;}
+.bet-odds-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--text);line-height:1;}
+.bet-odds-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;text-align:right;}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.analysis-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
+.analysis-card.full-width{grid-column:1/-1;}
+.card-heading{font-size:0.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.analysis-content{font-size:0.88rem;line-height:1.7;color:#c5cad8;}
+.disclaimer{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);border-radius:8px;padding:14px 18px;font-size:0.78rem;color:var(--muted);line-height:1.6;margin-top:20px;}
+.disclaimer strong{color:var(--accent2);}
+
+/* ===== STORICO ===== */
+.storico-section{margin-top:48px;padding-top:32px;border-top:1px solid var(--border);padding-bottom:48px;}
+.storico-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.storico-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;}
+
+/* Filter tabs */
+.filter-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+.filter-tab{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 10px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative;overflow:hidden;}
+.filter-tab::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;}
+.filter-tab:hover{transform:translateY(-2px);}
+.filter-tab.active{transform:translateY(-2px);}
+
+.filter-tab.tab-attesa{border-color:rgba(255,215,0,0.2);}
+.filter-tab.tab-attesa.active{background:rgba(255,215,0,0.08);border-color:rgba(255,215,0,0.5);}
+.filter-tab.tab-attesa.active::before{background:linear-gradient(135deg,rgba(255,215,0,0.08),transparent);opacity:1;}
+
+.filter-tab.tab-vinti{border-color:rgba(0,229,160,0.2);}
+.filter-tab.tab-vinti.active{background:rgba(0,229,160,0.08);border-color:rgba(0,229,160,0.5);}
+.filter-tab.tab-vinti.active::before{background:linear-gradient(135deg,rgba(0,229,160,0.08),transparent);opacity:1;}
+
+.filter-tab.tab-persi{border-color:rgba(255,71,87,0.2);}
+.filter-tab.tab-persi.active{background:rgba(255,71,87,0.06);border-color:rgba(255,71,87,0.45);}
+.filter-tab.tab-persi.active::before{background:linear-gradient(135deg,rgba(255,71,87,0.06),transparent);opacity:1;}
+
+.ft-icon{font-size:1.5rem;margin-bottom:6px;display:block;}
+.ft-label{font-size:0.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;display:block;}
+.ft-count{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;display:block;}
+.filter-tab.tab-attesa .ft-label{color:var(--gold);}
+.filter-tab.tab-attesa .ft-count{color:var(--gold);}
+.filter-tab.tab-vinti .ft-label{color:var(--accent);}
+.filter-tab.tab-vinti .ft-count{color:var(--accent);}
+.filter-tab.tab-persi .ft-label{color:var(--danger);}
+.filter-tab.tab-persi .ft-count{color:var(--danger);}
+
+.storico-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:0.9rem;border:1px dashed var(--border);border-radius:10px;}
+.storico-list{display:flex;flex-direction:column;gap:16px;}
+
+/* Single history card */
+.hcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s;}
+.hcard.vinto{border-color:rgba(0,229,160,0.4);}
+.hcard.perso{border-color:rgba(255,71,87,0.35);}
+.hcard.pareggio{border-color:rgba(255,215,0,0.35);}
+
+.hcard-top{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;cursor:pointer;}
+.hcard-left{flex:1;}
+.hcard-match{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:1px;margin-bottom:2px;}
+.hcard-meta{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;display:flex;gap:10px;flex-wrap:wrap;}
+.hcard-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+
+/* Status badge */
+.status-badge{font-size:0.7rem;font-weight:700;letter-spacing:1.5px;padding:4px 12px;border-radius:20px;text-transform:uppercase;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;}
+.status-attesa{background:rgba(255,215,0,0.12);color:var(--gold);border:1px solid rgba(255,215,0,0.3);}
+.status-vinto{background:rgba(0,229,160,0.12);color:var(--accent);border:1px solid rgba(0,229,160,0.3);}
+.status-perso{background:rgba(255,71,87,0.1);color:var(--danger);border:1px solid rgba(255,71,87,0.25);}
+.status-pareggio{background:rgba(255,215,0,0.1);color:var(--gold);border:1px solid rgba(255,215,0,0.2);}
+
+.pronostico-tag{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent);letter-spacing:1px;}
+.confidence-mini{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);}
+
+/* Card actions */
+.hcard-actions{padding:0 20px 16px;display:flex;gap:10px;flex-wrap:wrap;}
+.btn-ricalcolo{background:rgba(77,166,255,0.1);color:var(--accent3);border:1px solid rgba(77,166,255,0.3);border-radius:6px;padding:8px 16px;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:1.5px;cursor:pointer;transition:all 0.2s;}
+.btn-ricalcolo:hover{background:rgba(77,166,255,0.2);}
+.btn-ricalcolo:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-delete{background:rgba(255,71,87,0.08);color:var(--danger);border:1px solid rgba(255,71,87,0.2);border-radius:6px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all 0.2s;}
+.btn-delete:hover{background:rgba(255,71,87,0.15);}
+
+/* Ricalcolo diff panel */
+.diff-panel{margin:0 20px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;display:none;}
+.diff-panel.visible{display:block;}
+.diff-title{font-size:0.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent3);margin-bottom:12px;}
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.diff-col-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:600;}
+.diff-item{margin-bottom:8px;}
+.diff-key{font-size:0.72rem;color:var(--muted);}
+.diff-val{font-size:0.88rem;color:var(--text);font-weight:500;}
+.diff-val.changed{color:var(--accent2);}
+.diff-val.same{color:var(--accent);}
+.diff-summary{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:0.82rem;line-height:1.6;color:#c5cad8;}
+
+/* Status picker dropdown */
+.status-picker{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.4);display:none;flex-direction:column;gap:4px;}
+.status-picker.open{display:flex;}
+.status-option{padding:8px 16px;border-radius:5px;font-size:0.8rem;font-weight:600;cursor:pointer;border:none;text-align:left;background:transparent;font-family:'DM Sans',sans-serif;transition:background 0.15s;}
+.status-option:hover{background:var(--surface2);}
+
+.hcard-detail{padding:0 20px 16px;display:none;}
+.hcard-detail.open{display:block;}
+.detail-text{font-size:0.82rem;color:var(--muted);line-height:1.6;background:var(--surface2);border-radius:6px;padding:12px;max-height:150px;overflow-y:auto;}
+
+/* Full detail expanded card */
+.full-detail { border-top: 1px solid var(--border); padding: 20px; display:none; }
+.full-detail.open { display:block; animation: fadeUp 0.3s ease; }
+.full-detail-banner { position:relative; overflow:hidden; background:var(--surface2); border-radius:10px; padding:20px; margin-bottom:14px; }
+.full-detail-banner::before { content:''; position:absolute; top:0;left:0;right:0;height:3px; background:linear-gradient(90deg,var(--accent),var(--accent3)); }
+.full-detail-match { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:2px; margin-bottom:4px; display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+.full-detail-meta { font-size:0.75rem; color:var(--muted); font-family:'DM Mono',monospace; }
+.fd-conf-row { display:flex; align-items:center; justify-content:space-between; margin-top:12px; flex-wrap:wrap; gap:8px; }
+.fd-conf-pill { background:rgba(0,229,160,0.1); border:1px solid var(--accent); border-radius:20px; padding:6px 14px; font-size:0.75rem; color:var(--accent); font-family:'DM Mono',monospace; font-weight:600; }
+.fd-quota { text-align:right; }
+.fd-quota-num { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--text); line-height:1; }
+.fd-quota-label { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+
+.fd-odds-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:14px 0; }
+.fd-odds-cell { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center; }
+.fd-odds-cell.rec { background:rgba(0,229,160,0.08); border-color:var(--accent); }
+.fd-odds-label { font-size:0.65rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.fd-odds-value { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:var(--text); line-height:1; }
+.fd-odds-cell.rec .fd-odds-value { color:var(--accent); }
+
+.fd-pronostico-bar { background:linear-gradient(135deg,rgba(0,229,160,0.08),rgba(77,166,255,0.05)); border:1px solid rgba(0,229,160,0.25); border-radius:8px; padding:14px 18px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+.fd-bet-main { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--accent); letter-spacing:1px; }
+.fd-bet-sub { font-size:0.78rem; color:var(--muted); margin-top:2px; }
+
+.fd-sections { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+.fd-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px; }
+.fd-card.wide { grid-column:1/-1; }
+.fd-card-title { font-size:0.62rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+.fd-card-text { font-size:0.82rem; line-height:1.65; color:#c5cad8; }
+.fd-web-box { background:rgba(0,229,160,0.03); border:1px solid rgba(0,229,160,0.15); border-radius:8px; padding:14px; margin-bottom:12px; overflow-y:auto; font-size:0.78rem; color:var(--muted); line-height:1.6; white-space:pre-wrap; }
+.fd-web-title { font-size:0.62rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent3); margin-bottom:8px; }
+@media(max-width:600px){ .fd-odds-grid{grid-template-columns:1fr;} .fd-sections{grid-template-columns:1fr;} }
+
+/* EXPORT MODAL */
+.export-modal {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.75);
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.export-modal.visible { display: flex; }
+.export-modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  width: 100%; max-width: 500px;
+  max-height: 80vh;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.export-modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem; letter-spacing: 2px; color: var(--text);
+}
+.export-modal-sub { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+.export-modal textarea {
+  width: 100%; height: 180px; resize: none;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--muted); border-radius: 8px; padding: 10px;
+  font-family: 'DM Mono', monospace; font-size: 0.72rem;
+  outline: none;
+}
+.export-modal-actions { display: flex; gap: 10px; }
+.btn-copy-json {
+  flex: 1; background: var(--accent); color: var(--bg);
+  border: none; border-radius: 8px; padding: 12px;
+  font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem;
+  letter-spacing: 1.5px; cursor: pointer; transition: all 0.2s;
+}
+.btn-copy-json:hover { filter: brightness(1.1); }
+.btn-close-modal {
+  background: var(--surface2); color: var(--muted);
+  border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px;
+  font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+.btn-close-modal:hover { color: var(--text); }
+.backup-btns { display:flex; gap:8px; align-items:center; }
+.btn-backup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 5px;
+  position: relative; overflow: hidden;
+}
+.btn-backup:hover { border-color: var(--accent); color: var(--text); }
+.btn-backup.btn-import:hover { border-color: var(--accent3); }
+
+/* IMPORT TOAST */
+.import-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 20px;
+  font-size: 0.85rem; color: var(--text);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 999; display:none;
+  animation: fadeUp 0.3s ease;
+  white-space: nowrap;
+}
+.import-toast.visible { display:block; }
+.import-toast.success { border-color: rgba(0,229,160,0.4); color: var(--accent); }
+.import-toast.error { border-color: rgba(255,71,87,0.4); color: var(--danger); }
+.btn-verifica {
+  background: rgba(255,215,0,0.1);
+  color: var(--gold);
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-verifica:hover { background: rgba(255,215,0,0.18); }
+.btn-verifica:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.verifica-panel {
+  margin: 0 20px 16px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+  border: 1px solid var(--border);
+}
+.verifica-panel.visible { display: block; }
+
+.verifica-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.verifica-header.corretto { background: rgba(0,229,160,0.1); border-bottom: 1px solid rgba(0,229,160,0.2); }
+.verifica-header.sbagliato { background: rgba(255,71,87,0.08); border-bottom: 1px solid rgba(255,71,87,0.2); }
+.verifica-header.parziale { background: rgba(255,215,0,0.08); border-bottom: 1px solid rgba(255,215,0,0.2); }
+
+.verifica-esito {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+.verifica-score {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.verifica-body { padding: 16px 18px; background: var(--surface2); }
+.verifica-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.verifica-item { }
+.verifica-key { font-size: 0.65rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.verifica-val { font-size: 0.88rem; color: var(--text); font-weight: 500; }
+.verifica-val.ok { color: var(--accent); }
+.verifica-val.ko { color: var(--danger); }
+
+.verifica-note {
+  background: var(--surface);
+  border-left: 3px solid var(--accent3);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 14px;
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: #c5cad8;
+  margin-top: 4px;
+}
+.verifica-note strong { color: var(--text); }
+
+/* VALUE BET */
+.value-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.4);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;
+  color: var(--gold); text-transform: uppercase;
+}
+.value-score {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem; color: var(--gold); font-weight: 600;
+}
+.mr-value { margin-top: 5px; }
+
+/* COME GIOCARLA */
+.come-giocarla {
+  background: linear-gradient(135deg, rgba(0,229,160,0.06), rgba(77,166,255,0.04));
+  border: 2px solid rgba(0,229,160,0.3);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.come-giocarla::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent3), var(--gold));
+}
+.cg-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+}
+.cg-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem; letter-spacing: 2px; color: var(--text);
+}
+.cg-vale-si {
+  background: rgba(0,229,160,0.12); border: 1px solid rgba(0,229,160,0.4);
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 1px;
+  color: var(--accent); text-transform: uppercase;
+}
+.cg-vale-no {
+  background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.3);
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 1px;
+  color: var(--accent2); text-transform: uppercase;
+}
+.cg-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.cg-step {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px 14px;
+}
+.cg-step-num {
+  background: var(--accent); color: var(--bg);
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+}
+.cg-step-text { font-size: 0.88rem; line-height: 1.5; color: var(--text); }
+.cg-footer {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px;
+}
+.cg-info-box { background: var(--surface2); border-radius: 8px; padding: 10px 14px; }
+.cg-info-label { font-size: 0.62rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.cg-info-val { font-size: 0.85rem; color: var(--text); font-weight: 500; line-height: 1.4; }
+.cg-info-val.highlight { color: var(--accent); font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 1px; }
+.cg-avvertenza {
+  grid-column: 1/-1;
+  background: rgba(255,107,53,0.06); border: 1px solid rgba(255,107,53,0.15);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 0.78rem; color: var(--muted); line-height: 1.5;
+}
+@media(max-width:600px){ .cg-footer{grid-template-columns:1fr;} }
+.mercati-section { margin-bottom: 20px; }
+.mercati-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+.mercato-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.mercato-chip:hover { border-color: var(--accent3); }
+.mercato-chip.selected {
+  background: rgba(77,166,255,0.08);
+  border-color: var(--accent3);
+}
+.mercato-chip input[type=checkbox] { display: none; }
+.mercato-check {
+  width: 16px; height: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  font-size: 0.7rem;
+}
+.mercato-chip.selected .mercato-check {
+  background: var(--accent3);
+  border-color: var(--accent3);
+  color: var(--bg);
+}
+.mercato-label { font-size: 0.82rem; font-weight: 500; color: var(--muted); transition: color 0.15s; }
+.mercato-chip.selected .mercato-label { color: var(--text); }
+
+/* Sub-selector for Over/Under threshold */
+.ou-select {
+  display: none;
+  margin-top: 6px;
+  gap: 6px;
+}
+.ou-select.visible { display: flex; }
+.ou-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Mono', monospace;
+}
+.ou-btn.active { background: rgba(77,166,255,0.12); border-color: var(--accent3); color: var(--accent3); }
+
+/* Mercati result cards */
+.mercati-result-section { margin-bottom: 16px; }
+.mercati-result-title {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--accent3);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.mercati-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.mercato-result-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.mercato-result-card.top-pick {
+  background: rgba(77,166,255,0.06);
+  border-color: rgba(77,166,255,0.35);
+}
+.mercato-result-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--border);
+}
+.mercato-result-card.top-pick::before { background: linear-gradient(90deg, var(--accent3), var(--accent)); }
+.mr-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.mr-pick { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 1px; color: var(--text); margin-bottom: 4px; }
+.mercato-result-card.top-pick .mr-pick { color: var(--accent3); }
+.mr-row { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.mr-prob { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--muted); }
+.mr-quota { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--text); }
+.mr-note { font-size: 0.75rem; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+
+@media(max-width:600px){
+  .mercati-grid { grid-template-columns: 1fr; }
+  .mercati-result-grid { grid-template-columns: 1fr; }
+}
+
+@media(max-width:600px){
+  .teams-row{grid-template-columns:1fr;}.vs-badge{display:none;}
+  .form-row{grid-template-columns:1fr;}.odds-grid{grid-template-columns:1fr;}
+  .analysis-grid{grid-template-columns:1fr;}.logo-text{font-size:2rem;}
+  .upload-box{flex-direction:column;text-align:center;}
+  .diff-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div id="protocolBanner" style="display:none;background:rgba(255,71,87,0.12);border-bottom:1px solid rgba(255,71,87,0.3);padding:12px 20px;text-align:center;font-size:0.82rem;color:var(--danger);line-height:1.5;position:sticky;top:0;z-index:50;">
+  ⚠️ <strong>Apri da un server web</strong> — su file locale le API non funzionano.<br>
+  Carica su <strong>Netlify</strong> o <strong>GitHub Pages</strong> per usarla correttamente.
+</div>
+
+<div class="container">
+
+<header>
+  <div class="logo">
+    <span class="logo-text">PronosticoAI</span>
+    <span class="logo-badge">Beta</span>
+  </div>
+  <p class="tagline">Analisi sportiva potenziata dall'intelligenza artificiale</p>
+</header>
+
+<!-- API KEY SETUP -->
+<div class="apikey-card" id="apikeyCard">
+  <div class="apikey-title">🔑 Configurazione API Key</div>
+  <div class="apikey-desc">
+    Inserisci la tua API key di Anthropic per usare l'app. Viene salvata solo sul tuo dispositivo, mai condivisa.
+    <br><a class="apikey-link" href="https://console.anthropic.com/keys" target="_blank">→ Ottieni la tua API key su console.anthropic.com</a>
+  </div>
+  <div class="apikey-row">
+    <input type="password" class="apikey-input" id="apikeyInput" placeholder="sk-ant-api03-..." />
+    <button class="apikey-btn" onclick="saveApiKey()">SALVA</button>
+  </div>
+  <div class="apikey-status missing" id="apikeyStatus">⚠️ API key non configurata — l'app non funzionerà senza</div>
+</div>
+
+<!-- Sport tabs -->
+<div class="sport-tabs">
+  <button class="sport-tab active" data-sport="Calcio">⚽ Calcio</button>
+  <button class="sport-tab" data-sport="Tennis">🎾 Tennis</button>
+  <button class="sport-tab" data-sport="Basket">🏀 Basket</button>
+  <button class="sport-tab" data-sport="Rugby">🏉 Rugby</button>
+  <button class="sport-tab" data-sport="Baseball">⚾ Baseball</button>
+  <button class="sport-tab" data-sport="Hockey">🏒 Hockey</button>
+</div>
+
+<!-- Form -->
+<div class="form-card">
+  <div class="form-title">📋 Dati della partita</div>
+  <div class="teams-row">
+    <div class="form-group">
+      <label>Squadra / Giocatore Casa</label>
+      <input type="text" id="team1" placeholder="es. Juventus"/>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="form-group">
+      <label>Squadra / Giocatore Ospite</label>
+      <input type="text" id="team2" placeholder="es. Inter"/>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Competizione / Lega</label>
+      <input type="text" id="competition" placeholder="es. Serie A"/>
+    </div>
+    <div class="form-group">
+      <label>Data prevista</label>
+      <input type="date" id="matchDate"/>
+    </div>
+  </div>
+  <div class="form-group" style="margin-bottom:20px">
+    <label>Contesto aggiuntivo</label>
+    <textarea id="context" placeholder="es. infortuni, forma recente, statistiche testa a testa..."></textarea>
+  </div>
+
+  <!-- FILE UPLOAD -->
+  <div class="file-section">
+    <span class="file-section-label">📎 Allega file dati</span>
+    <input type="file" id="fileInput" multiple accept=".csv,.txt,.json,.tsv"/>
+    <div class="upload-box" id="uploadZone">
+      <div class="upload-icon">📂</div>
+      <div class="upload-info">
+        <div class="upload-title">Trascina i file qui per caricarli</div>
+        <div class="upload-formats">
+          <span class="fmt-badge">CSV</span><span class="fmt-badge">TXT</span>
+          <span class="fmt-badge">JSON</span><span class="fmt-badge">TSV</span>
+        </div>
+        <div class="upload-desc">Statistiche stagionali, storico scontri diretti, rendimento giocatori.<br>I dati vengono letti e inviati all'AI per affinare il pronostico.</div>
+      </div>
+      <button class="upload-cta" type="button" onclick="document.getElementById('fileInput').click()">📎 SFOGLIA</button>
+    </div>
+    <div class="file-chips" id="fileChips"></div>
+  </div>
+
+  <!-- MERCATI -->
+  <div class="mercati-section">
+    <span class="file-section-label">📊 Mercati da analizzare</span>
+    <div class="mercati-grid">
+      <div class="mercato-chip selected" onclick="toggleMercato(this,'1x2')">
+        <div class="mercato-check">✓</div>
+        <span class="mercato-label">⚽ 1X2 — Risultato finale</span>
+        <input type="checkbox" checked data-mercato="1x2"/>
+      </div>
+      <div class="mercato-chip" onclick="toggleMercato(this,'ou')">
+        <div class="mercato-check"></div>
+        <span class="mercato-label">📈 Over / Under</span>
+        <input type="checkbox" data-mercato="ou"/>
+      </div>
+      <div class="mercato-chip" onclick="toggleMercato(this,'gg')">
+        <div class="mercato-check"></div>
+        <span class="mercato-label">🎯 Goal / No Goal</span>
+        <input type="checkbox" data-mercato="gg"/>
+      </div>
+      <div class="mercato-chip" onclick="toggleMercato(this,'esatto')">
+        <div class="mercato-check"></div>
+        <span class="mercato-label">🔢 Risultato Esatto</span>
+        <input type="checkbox" data-mercato="esatto"/>
+      </div>
+      <div class="mercato-chip" onclick="toggleMercato(this,'handicap')">
+        <div class="mercato-check"></div>
+        <span class="mercato-label">⚖️ Handicap Asiatico</span>
+        <input type="checkbox" data-mercato="handicap"/>
+      </div>
+      <div class="mercato-chip" onclick="toggleMercato(this,'doppia')">
+        <div class="mercato-check"></div>
+        <span class="mercato-label">🔀 Doppia Chance</span>
+        <input type="checkbox" data-mercato="doppia"/>
+      </div>
+    </div>
+    <!-- Over/Under soglia -->
+    <div class="ou-select" id="ouSelect">
+      <span style="font-size:0.75rem;color:var(--muted);align-self:center;">Soglia:</span>
+      <button class="ou-btn" onclick="setOuSoglia(this,'1.5')">1.5</button>
+      <button class="ou-btn active" onclick="setOuSoglia(this,'2.5')">2.5</button>
+      <button class="ou-btn" onclick="setOuSoglia(this,'3.5')">3.5</button>
+      <button class="ou-btn" onclick="setOuSoglia(this,'4.5')">4.5</button>
+    </div>
+  </div>
+
+  <button class="btn-analyze" id="analyzeBtn" onclick="analyzeMatch()">⚡ ANALIZZA &amp; PRONOSTICA</button>
+</div>
+
+<!-- Loading -->
+<div class="loading-state" id="loadingState">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Analisi in corso...</div>
+  <div class="loading-steps">
+    <div class="loading-step" id="step1">🌐 Ricerca dati in tempo reale...</div>
+    <div class="loading-step" id="step2">📰 Analisi notizie e infortuni...</div>
+    <div class="loading-step" id="step3">🧠 Elaborazione AI pronostico...</div>
+    <div class="loading-step" id="step4">✅ Generazione risultato finale...</div>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="error-state" id="errorState"></div>
+
+<!-- Result -->
+<div class="result-card" id="resultCard"></div>
+
+<!-- STORICO -->
+<div class="storico-section" id="storicoSection">
+  <div class="storico-title-row">
+    <span class="storico-title">📚 Storico Pronostici</span>
+    <div class="backup-btns">
+      <button class="btn-backup" onclick="openBackupModal()">💾 Backup</button>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="filter-tabs">
+    <div class="filter-tab tab-attesa active" onclick="setFilter('attesa')" id="ftab-attesa">
+      <span class="ft-icon">⏳</span>
+      <span class="ft-label">In Attesa</span>
+      <span class="ft-count" id="fcount-attesa">0</span>
+    </div>
+    <div class="filter-tab tab-vinti" onclick="setFilter('vinto')" id="ftab-vinto">
+      <span class="ft-icon">✅</span>
+      <span class="ft-label">Vinti</span>
+      <span class="ft-count" id="fcount-vinto">0</span>
+    </div>
+    <div class="filter-tab tab-persi" onclick="setFilter('perso')" id="ftab-perso">
+      <span class="ft-icon">❌</span>
+      <span class="ft-label">Persi</span>
+      <span class="ft-count" id="fcount-perso">0</span>
+    </div>
+  </div>
+
+  <div class="storico-list" id="storicoList"></div>
+</div>
+
+<!-- Status picker (floating) -->
+<div class="status-picker" id="statusPicker">
+  <button class="status-option" style="color:var(--gold)" onclick="setStatus('attesa')">⏳ In Attesa</button>
+  <button class="status-option" style="color:var(--accent)" onclick="setStatus('vinto')">✅ Vinto</button>
+  <button class="status-option" style="color:var(--danger)" onclick="setStatus('perso')">❌ Perso</button>
+  <button class="status-option" style="color:var(--gold)" onclick="setStatus('pareggio')">➖ Pareggio</button>
+</div>
+
+<!-- Import/Export Toast -->
+<div class="import-toast" id="importToast"></div>
+
+<!-- Backup Modal -->
+<div class="export-modal" id="backupModal">
+  <div class="export-modal-box">
+
+    <!-- EXPORT TAB -->
+    <div id="backupTabExport">
+      <div class="export-modal-title">💾 Backup Storico</div>
+      <div class="export-modal-sub" style="margin-bottom:16px">
+        Salva una copia del tuo storico pronostici.
+      </div>
+
+      <button onclick="shareWhatsApp()" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:10px;padding:16px;font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:2px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:10px;">
+        📁 SCARICA / CONDIVIDI FILE
+      </button>
+
+      <button onclick="showImportTab()" style="width:100%;background:transparent;color:var(--accent3);border:1px solid rgba(77,166,255,0.3);border-radius:10px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;cursor:pointer;margin-bottom:14px;">
+        ⬆️ IMPORTA UN BACKUP
+      </button>
+
+      <div id="downloadLinkContainer"></div>
+
+      <button onclick="closeBackupModal()" class="btn-close-modal" style="width:100%;margin-top:4px">Chiudi</button>
+    </div>
+
+    <!-- IMPORT TAB -->
+    <div id="backupTabImport" style="display:none">
+      <div class="export-modal-title" style="margin-bottom:8px">⬆️ Importa Backup</div>
+      <div class="export-modal-sub" style="margin-bottom:16px">
+        Seleziona il file <strong style="color:var(--text)">.json</strong> del backup salvato sul tuo dispositivo.
+      </div>
+      <label style="display:block;background:var(--accent3);color:var(--bg);border:none;border-radius:10px;padding:16px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;cursor:pointer;text-align:center;margin-bottom:10px;position:relative;overflow:hidden;">
+        📂 SCEGLI FILE JSON
+        <input type="file" accept=".json,application/json" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="importFromFile(this)"/>
+      </label>
+      <button onclick="showExportTab()" class="btn-close-modal" style="width:100%">← Indietro</button>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let selectedSport = 'Calcio';
+let attachedFiles = [];
+let currentResult = null;
+let activeStatusId = null;
+let activeFilter = 'attesa';
+let ouSoglia = '2.5';
+
+// ─── MERCATI HELPERS ──────────────────────────────────────────────────────────
+function toggleMercato(chip, key) {
+  chip.classList.toggle('selected');
+  const cb = chip.querySelector('input[type=checkbox]');
+  cb.checked = chip.classList.contains('selected');
+  chip.querySelector('.mercato-check').textContent = cb.checked ? '✓' : '';
+  // Show/hide OU threshold selector
+  if (key === 'ou') {
+    document.getElementById('ouSelect').classList.toggle('visible', cb.checked);
+  }
+}
+
+function setOuSoglia(btn, val) {
+  ouSoglia = val;
+  document.querySelectorAll('.ou-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function getSelectedMercati() {
+  const selected = [];
+  document.querySelectorAll('.mercato-chip.selected').forEach(chip => {
+    const key = chip.querySelector('input').dataset.mercato;
+    if (key === 'ou') selected.push(`Over/Under ${ouSoglia}`);
+    else if (key === '1x2') selected.push('1X2');
+    else if (key === 'gg') selected.push('Goal/No Goal');
+    else if (key === 'esatto') selected.push('Risultato Esatto');
+    else if (key === 'handicap') selected.push('Handicap Asiatico');
+    else if (key === 'doppia') selected.push('Doppia Chance');
+  });
+  return selected;
+}
+
+// ─── API KEY ─────────────────────────────────────────────────────────────────
+const APIKEY_KEY = 'pronosticoai_apikey';
+
+function getApiKey() {
+  return localStorage.getItem(APIKEY_KEY) || '';
+}
+
+function saveApiKey() {
+  const val = document.getElementById('apikeyInput').value.trim();
+  if (!val) { showToast('⚠️ Inserisci una API key valida', 'error'); return; }
+  if (!val.startsWith('sk-')) { showToast('⚠️ La API key deve iniziare con "sk-"', 'error'); return; }
+  localStorage.setItem(APIKEY_KEY, val);
+  updateApiKeyUI();
+  showToast('✅ API key salvata!', 'success');
+}
+
+function updateApiKeyUI() {
+  const key = getApiKey();
+  const card = document.getElementById('apikeyCard');
+  const status = document.getElementById('apikeyStatus');
+  const input = document.getElementById('apikeyInput');
+  if (key) {
+    card.classList.add('configured');
+    status.className = 'apikey-status ok';
+    status.textContent = '✅ API key configurata — ' + key.slice(0,8) + '...' + key.slice(-4);
+    input.value = key;
+  } else {
+    card.classList.remove('configured');
+    status.className = 'apikey-status missing';
+    status.textContent = '⚠️ API key non configurata — l\'app non funzionerà senza';
+    input.value = '';
+  }
+}
+// Use a fixed key so data persists across file renames/moves
+const STORAGE_KEY = 'pronosticoai_v3_history';
+
+function loadHistory() {
+  try {
+    // Try main key first
+    const main = localStorage.getItem(STORAGE_KEY);
+    if (main) return JSON.parse(main);
+    // Migration: check old key names from previous versions
+    const oldKeys = ['pronostico_history', 'pronosticoai_history'];
+    for (const k of oldKeys) {
+      const old = localStorage.getItem(k);
+      if (old) {
+        const data = JSON.parse(old);
+        if (data.length) {
+          // Migrate to new key
+          localStorage.setItem(STORAGE_KEY, old);
+          localStorage.removeItem(k);
+          return data;
+        }
+      }
+    }
+    return [];
+  } catch(e) { return []; }
+}
+function saveHistory(h) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(h));
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.sport-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    selectedSport = tab.dataset.sport;
+  });
+});
+document.getElementById('matchDate').value = new Date().toISOString().split('T')[0];
+document.getElementById('fileInput').addEventListener('change', function(){ handleFiles(this.files); this.value=''; });
+updateApiKeyUI();
+
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+
+// Close status picker on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('.status-badge') && !e.target.closest('#statusPicker')) {
+    document.getElementById('statusPicker').classList.remove('open');
+    activeStatusId = null;
+  }
+});
+
+renderHistory();
+
+// ─── FILE HANDLING ────────────────────────────────────────────────────────────
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    if (attachedFiles.find(f => f.name === file.name)) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['csv','txt','json','tsv'].includes(ext)) { showError(`⚠️ Formato non supportato: .${ext}`); return; }
+    const reader = new FileReader();
+    reader.onload = e => { attachedFiles.push({name:file.name,size:file.size,content:e.target.result}); renderChips(); hideError(); };
+    reader.readAsText(file,'UTF-8');
+  });
+}
+function removeFile(name) { attachedFiles = attachedFiles.filter(f=>f.name!==name); renderChips(); }
+function renderChips() {
+  document.getElementById('fileChips').innerHTML = attachedFiles.map(f=>`
+    <div class="chip">
+      <span class="chip-name">✅ ${f.name} <span class="chip-size">${(f.size/1024).toFixed(1)} KB</span></span>
+      <button class="chip-del" onclick="removeFile(${JSON.stringify(f.name)})">✕</button>
+    </div>`).join('');
+}
+function buildFileContext() {
+  if (!attachedFiles.length) return '';
+  let s = '\n\n=== DATI DA FILE ALLEGATI ===\n';
+  attachedFiles.forEach(f => { s+=`\n--- ${f.name} ---\n`; s+=f.content.length>3000?f.content.slice(0,3000)+'\n...[troncato]':f.content; s+='\n'; });
+  return s;
+}
+
+// ─── WEB SEARCH ──────────────────────────────────────────────────────────────
+async function fetchWebData(team1, team2, competition, sport, matchDate) {
+  try {
+    const userMsg = `Cerca informazioni aggiornate su questa partita di ${sport}: ${team1} vs ${team2}${competition?' - '+competition:''}${matchDate?' del '+matchDate:''}.
+Cerca: forma recente ultime 5 partite, infortuni/squalifiche, quote bookmaker 1X2 e Over/Under, notizie rilevanti.
+Riassumi in italiano in modo strutturato.`;
+    const tools = [{type:"web_search_20250305",name:"web_search"}];
+    let messages = [{role:"user",content:userMsg}];
+    let finalText = '';
+    let iterations = 0;
+    while (iterations < 5) {
+      iterations++;
+      const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,tools,messages})});
+      const data = await res.json();
+      if (!res.ok) break;
+      const assistantContent = data.content || [];
+      messages.push({role:"assistant",content:assistantContent});
+      for (const block of assistantContent) { if (block.type==='text'&&block.text) finalText+=block.text+'\n'; }
+      const toolUseBlocks = assistantContent.filter(b=>b.type==='tool_use');
+      if (!toolUseBlocks.length) break;
+      const toolResults = toolUseBlocks.map(tu=>({type:"tool_result",tool_use_id:tu.id,content:`Ricerca eseguita per: "${tu.input?.query||''}". Procedi con il riassunto.`}));
+      messages.push({role:"user",content:toolResults});
+    }
+    return {text:finalText.trim()};
+  } catch(e) { return {text:''}; }
+}
+
+// ─── MEMORIA ERRORI ──────────────────────────────────────────────────────────
+function buildMemory(sport, competition) {
+  const history = loadHistory();
+
+  // Only entries that have been verified (have a verifica object with nota_apprendimento)
+  const verified = history.filter(e =>
+    e.verifica &&
+    e.verifica.nota_apprendimento &&
+    e.verifica.risultato_trovato
+  );
+
+  if (!verified.length) return { text: '', count: 0 };
+
+  // Prioritise same sport + same competition, then same sport, then all
+  const scored = verified.map(e => {
+    let score = 0;
+    if (e.sport === sport) score += 2;
+    if (competition && e.competition &&
+        e.competition.toLowerCase().includes(competition.toLowerCase())) score += 3;
+    return { e, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  const top = scored.slice(0, 8); // max 8 lessons
+
+  let text = '\n\n=== LEZIONI APPRESE DA PRONOSTICI PRECEDENTI ===\n';
+  text += 'Usa queste informazioni per correggere eventuali bias sistematici nei tuoi pronostici.\n\n';
+
+  top.forEach(({ e }, i) => {
+    const v = e.verifica;
+    const date = new Date(e.matchDate).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+    const esito = v.esito_scommessa || '?';
+    const accuracy = v.accuratezza || '?';
+    text += `[${i + 1}] ${e.team1} vs ${e.team2} (${e.sport}${e.competition ? ' · ' + e.competition : ''}) — ${date}\n`;
+    text += `    Pronostico: ${e.pronostico} → Esito: ${esito} (${accuracy})\n`;
+    text += `    ✅ Indovinato: ${v.cosa_ha_indovinato || '—'}\n`;
+    text += `    ❌ Sbagliato: ${v.cosa_ha_sbagliato || '—'}\n`;
+    text += `    🧠 Lezione: ${v.nota_apprendimento}\n\n`;
+  });
+
+  return { text, count: top.length };
+}
+
+// ─── BUILD PROMPT ─────────────────────────────────────────────────────────────
+function buildPrompt(team1, team2, competition, matchDate, context, webText, mercati, memory) {
+  const webSection = webText ? `\n\n=== DATI RICERCATI IN TEMPO REALE ===\n${webText}` : '';
+  const memorySection = (memory && memory.text) ? memory.text : '';
+  const mercatiList = (mercati && mercati.length) ? mercati : ['1X2'];
+  const mercatiSection = `\nMERCATI DA ANALIZZARE: ${mercatiList.join(', ')}`;
+
+  const mercatiSchema = mercatiList.map(m => {
+    const key = m.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+    return `    "mercato_${key}": { "consiglio":"es. Over 2.5", "probabilita":numero 0-100, "quota_stimata":"numero", "quota_bookmaker":"numero se trovata nel web search altrimenti null", "value_bet":true o false, "note":"breve motivazione" }`;
+  }).join(',\n');
+
+  return `Sei un esperto analista di scommesse sportive con 20 anni di esperienza. Analizza questa partita usando TUTTI i dati disponibili.
+
+SPORT: ${selectedSport}
+PARTITA: ${team1} vs ${team2}
+${competition?'COMPETIZIONE: '+competition:''}
+${matchDate?'DATA: '+matchDate:''}
+${context?'CONTESTO: '+context:''}${mercatiSection}${buildFileContext()}${memorySection}${webSection}
+
+ISTRUZIONI VALUE BET:
+- Per ogni mercato, se hai trovato quote reali dei bookmaker nei dati web, confrontale con la probabilità stimata
+- Una scommessa è VALUE BET se: (probabilità_stimata / 100) × quota_bookmaker > 1.05
+- Esempio: se stimi 60% e bookmaker quota 2.00 → 0.60 × 2.00 = 1.20 → VALUE BET ✅
+- Se non hai quote reali, usa quota_stimata per il calcolo
+
+ISTRUZIONI COME_GIOCARLA:
+- Spiega in modo semplicissimo, come se parli a qualcuno che non ha mai scommesso
+- Indica: dove andare (bookmaker), cosa cercare, cosa cliccare, quanto mettere (max 5% budget)
+- Se ci sono più mercati con value, consiglia la combinata o quale scegliere
+- Usa un linguaggio diretto, concreto, zero gergo tecnico
+
+Rispondi SOLO con JSON valido, nessun testo prima o dopo:
+{
+  "pronostico_principale":"es. 1 o X o 2 o Over 2.5 o GG",
+  "descrizione_pronostico":"breve descrizione",
+  "quota_stimata":"numero es. 1.85",
+  "confidenza":numero 0-100,
+  "probabilita_1":numero,
+  "probabilita_x":numero,
+  "probabilita_2":numero,
+  "analisi_forma":"2-3 frasi",
+  "analisi_tattica":"2-3 frasi",
+  "fattori_chiave":"2-3 fattori",
+  "rischio":"BASSO o MEDIO o ALTO",
+  "risultato_esatto_ipotetico":"es. 2-1",
+  "consiglio_aggiuntivo":"alternativa o nota",
+  "dati_live_usati":true o false,
+  "lezioni_applicate": numero di lezioni delle verifiche precedenti che hai considerato (0 se nessuna),
+  "lezioni_note": "breve nota su come le lezioni passate hanno influenzato questo pronostico, oppure null",
+  "value_bet_principale":true o false,
+  "value_bet_score":"numero es. 1.24 oppure null se non calcolabile",
+  "mercati": {
+${mercatiSchema}
+  },
+  "come_giocarla": {
+    "passo1":"es. Apri Snai, Bet365, Sisal o qualsiasi bookmaker che usi",
+    "passo2":"es. Cerca la partita: Inter vs Cagliari di giovedì 17 aprile",
+    "passo3":"es. Seleziona: 1 - Vittoria Inter",
+    "passo4":"es. Se vuoi più guadagno aggiungi anche: Over 2.5 gol",
+    "quota_da_cercare":"es. cerca una quota di almeno 1.20 per il solo risultato",
+    "importo_consigliato":"es. Metti al massimo il 5% di quello che hai messo da parte per le scommesse. Se hai 100€, gioca massimo 5€",
+    "avvertenza":"es. Questa è una partita considerata sicura ma nessun pronostico è garantito",
+    "vale_la_pena":true o false
+  }
+}`;
+}
+
+// ─── CALL AI ──────────────────────────────────────────────────────────────────
+async function callAI(prompt, maxTokens=1500) {
+  const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})});
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message||'Errore API');
+  const raw = data.content.map(i=>i.text||'').join('');
+  return JSON.parse(raw.replace(/```json|```/g,'').trim());
+}
+
+// ─── ANALYZE ─────────────────────────────────────────────────────────────────
+async function analyzeMatch() {
+  const team1 = document.getElementById('team1').value.trim();
+  const team2 = document.getElementById('team2').value.trim();
+  const competition = document.getElementById('competition').value.trim();
+  const matchDate = document.getElementById('matchDate').value;
+  const context = document.getElementById('context').value.trim();
+  if (!team1||!team2) { showError('⚠️ Inserisci entrambi i nomi.'); return; }
+  if (!getApiKey()) { showError('⚠️ Inserisci la tua API key in cima alla pagina prima di analizzare.'); return; }
+
+  hideError(); hideResult();
+  showLoading(true,'Analisi in corso...');
+  document.getElementById('analyzeBtn').disabled = true;
+
+  document.getElementById('step1').classList.add('show');
+  const webData = await fetchWebData(team1,team2,competition,selectedSport,matchDate);
+  document.getElementById('step2').classList.add('show');
+  await wait(300);
+  document.getElementById('step3').classList.add('show');
+
+  const mercati = getSelectedMercati();
+  const memory = buildMemory(selectedSport, competition);
+
+  try {
+    const prompt = buildPrompt(team1,team2,competition,matchDate,context,webData.text,mercati,memory);
+    const r = await callAI(prompt, 2000);
+    document.getElementById('step4').classList.add('show');
+    await wait(300);
+    currentResult = {r, team1, team2, competition, matchDate, sport:selectedSport, webText:webData.text, mercati, memoryCount: memory.count};
+    showLoading(false);
+    renderResult(r, team1, team2, competition, webData.text, true, mercati, memory.count);
+  } catch(err) {
+    showLoading(false);
+    const msg = err.message.includes('exceeded_limit') || err.message.includes('rate')
+      ? '⏳ Limite API raggiunto — hai fatto troppe richieste ravvicinate. Aspetta qualche minuto e riprova.'
+      : '❌ Errore: ' + err.message;
+    showError(msg);
+  }
+  document.getElementById('analyzeBtn').disabled = false;
+}
+
+// ─── SAVE ─────────────────────────────────────────────────────────────────────
+function saveCurrentPronostico() {
+  if (!currentResult) return;
+  const {r,team1,team2,competition,matchDate,sport,webText,mercati} = currentResult;
+  const history = loadHistory();
+  const entry = {
+    id: Date.now().toString(),
+    savedAt: new Date().toISOString(),
+    sport, team1, team2, competition, matchDate,
+    pronostico: r.pronostico_principale,
+    descrizione: r.descrizione_pronostico,
+    quota: r.quota_stimata,
+    confidenza: r.confidenza,
+    rischio: r.rischio,
+    risultato_ipotetico: r.risultato_esatto_ipotetico,
+    prob1: r.probabilita_1, probx: r.probabilita_x, prob2: r.probabilita_2,
+    analisi_forma: r.analisi_forma,
+    analisi_tattica: r.analisi_tattica,
+    fattori_chiave: r.fattori_chiave,
+    consiglio: r.consiglio_aggiuntivo,
+    dati_live: r.dati_live_usati,
+    webText: webText||'',
+    mercati: mercati||['1X2'],
+    mercati_data: r.mercati||{},
+    value_bet_principale: r.value_bet_principale||false,
+    value_bet_score: r.value_bet_score||null,
+    come_giocarla: r.come_giocarla||null,
+    lezioni_applicate: r.lezioni_applicate||0,
+    lezioni_note: r.lezioni_note||null,
+    status: 'attesa',
+    ricalcoli: []
+  };
+  history.unshift(entry);
+  saveHistory(history);
+
+  // Update save button
+  const btn = document.getElementById('btnSave');
+  if (btn) { btn.textContent='✅ SALVATO'; btn.classList.add('saved'); btn.disabled=true; }
+
+  renderHistory();
+}
+
+// ─── RICALCOLO ───────────────────────────────────────────────────────────────
+async function ricalcola(id) {
+  const history = loadHistory();
+  const entry = history.find(e=>e.id===id);
+  if (!entry) return;
+
+  const btn = document.getElementById('ricalcBtn_'+id);
+  if (btn) { btn.disabled=true; btn.textContent='🔄 Ricalcolo...'; }
+  showLoading(true,'Ricalcolo in corso...');
+  document.getElementById('step1').classList.add('show');
+
+  const webData = await fetchWebData(entry.team1,entry.team2,entry.competition,entry.sport,entry.matchDate);
+  document.getElementById('step2').classList.add('show');
+  document.getElementById('step3').classList.add('show');
+
+  try {
+    const prevSport = selectedSport;
+    selectedSport = entry.sport;
+    const mercati = entry.mercati || ['1X2'];
+    const memory = buildMemory(entry.sport, entry.competition);
+    const prompt = buildPrompt(entry.team1,entry.team2,entry.competition,entry.matchDate,'',webData.text,mercati,memory);
+    const r = await callAI(prompt, 2000);
+    selectedSport = prevSport;
+    document.getElementById('step4').classList.add('show');
+    await wait(300);
+    showLoading(false);
+
+    // Build full diff with all key fields
+    const diff = {
+      timestamp: new Date().toISOString(),
+      pronostico_new: r.pronostico_principale,
+      descrizione_new: r.descrizione_pronostico,
+      confidenza_new: r.confidenza,
+      quota_new: r.quota_stimata,
+      rischio_new: r.rischio,
+      prob1_new: r.probabilita_1,
+      probx_new: r.probabilita_x,
+      prob2_new: r.probabilita_2,
+      fattori_new: r.fattori_chiave,
+      analisi_forma_new: r.analisi_forma,
+      analisi_tattica_new: r.analisi_tattica,
+      risultato_new: r.risultato_esatto_ipotetico,
+      come_giocarla_new: r.come_giocarla||null,
+      webText_new: webData.text||''
+    };
+    entry.ricalcoli.unshift(diff);
+    const idx = history.findIndex(e=>e.id===id);
+    history[idx] = entry;
+    saveHistory(history);
+    renderHistory();
+
+    setTimeout(() => {
+      const panel = document.getElementById('diff_'+id);
+      if (panel) { panel.classList.add('visible'); panel.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+    }, 100);
+
+  } catch(err) {
+    showLoading(false);
+    const msg = err.message.includes('exceeded_limit') || err.message.includes('rate')
+      ? '⏳ Limite API raggiunto — hai fatto troppe richieste ravvicinate. Aspetta qualche minuto e riprova.'
+      : '❌ Errore ricalcolo: ' + err.message;
+    showError(msg);
+  }
+  if (btn) { btn.disabled=false; btn.textContent='🔄 RICALCOLA'; }
+}
+
+// ─── STATUS ──────────────────────────────────────────────────────────────────
+function openStatusPicker(id, el) {
+  activeStatusId = id;
+  const picker = document.getElementById('statusPicker');
+  const rect = el.getBoundingClientRect();
+  picker.style.top = (rect.bottom + window.scrollY + 6) + 'px';
+  picker.style.left = rect.left + 'px';
+  picker.classList.add('open');
+}
+function setStatus(status) {
+  if (!activeStatusId) return;
+  const history = loadHistory();
+  const idx = history.findIndex(e=>e.id===activeStatusId);
+  if (idx>=0) { history[idx].status=status; saveHistory(history); }
+  document.getElementById('statusPicker').classList.remove('open');
+  activeStatusId = null;
+  renderHistory();
+}
+
+// ─── DELETE ──────────────────────────────────────────────────────────────────
+function deleteEntry(id) {
+  // Show inline confirm inside the card instead of browser confirm() which is blocked on mobile
+  const existing = document.getElementById('confirm_' + id);
+  if (existing) { existing.remove(); return; }
+
+  const card = document.getElementById('hcard_' + id);
+  if (!card) return;
+
+  const bar = document.createElement('div');
+  bar.id = 'confirm_' + id;
+  bar.style.cssText = 'margin:0 20px 14px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.35);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;';
+  bar.innerHTML = `
+    <span style="font-size:0.85rem;color:var(--text)">🗑 Eliminare questo pronostico?</span>
+    <div style="display:flex;gap:8px;">
+      <button onclick="confirmDelete('${id}')" style="background:var(--danger);color:#fff;border:none;border-radius:6px;padding:7px 16px;font-weight:600;font-size:0.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">Sì, elimina</button>
+      <button onclick="document.getElementById('confirm_${id}').remove()" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:7px 14px;font-size:0.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">Annulla</button>
+    </div>`;
+
+  // Insert before hcard-actions
+  const actions = card.querySelector('.hcard-actions');
+  if (actions) card.insertBefore(bar, actions);
+  else card.appendChild(bar);
+}
+
+function confirmDelete(id) {
+  const history = loadHistory().filter(e => e.id !== id);
+  saveHistory(history);
+  renderHistory();
+}
+
+// ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
+// ─── BACKUP MODAL ────────────────────────────────────────────────────────────
+function openBackupModal() {
+  showExportTab();
+  document.getElementById('backupModal').classList.add('visible');
+}
+function closeBackupModal() {
+  document.getElementById('backupModal').classList.remove('visible');
+}
+function showExportTab() {
+  document.getElementById('backupTabExport').style.display = 'block';
+  document.getElementById('backupTabImport').style.display = 'none';
+  document.getElementById('downloadLinkContainer').innerHTML = '';
+}
+function showImportTab() {
+  document.getElementById('importText').value = '';
+  document.getElementById('backupTabExport').style.display = 'none';
+  document.getElementById('backupTabImport').style.display = 'block';
+}
+
+function getBackupJSON() {
+  const history = loadHistory();
+  if (!history.length) {
+    showToast('⚠️ Nessun pronostico da esportare', 'error');
+    return null;
+  }
+  return JSON.stringify({
+    version: '3.0',
+    exportedAt: new Date().toISOString(),
+    count: history.length,
+    data: history
+  }, null, 2);
+}
+
+function shareWhatsApp() {
+  const history = loadHistory();
+  if (!history.length) { showToast('⚠️ Nessun pronostico da esportare', 'error'); return; }
+
+  const json = getBackupJSON();
+  const date = new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-');
+  const filename = `pronosticoai_backup_${date}.json`;
+
+  // Method 1: Web Share API with actual file (Android Chrome, iOS Safari)
+  if (navigator.share && navigator.canShare) {
+    const blob = new Blob([json], { type: 'application/json' });
+    const file = new File([blob], filename, { type: 'application/json' });
+    if (navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: 'PronosticoAI Backup' })
+        .then(() => { showToast('✅ File condiviso!', 'success'); closeBackupModal(); })
+        .catch(err => { if (err.name !== 'AbortError') downloadFile(json, filename); });
+      return;
+    }
+  }
+
+  // Method 2: data URI download (fallback for mobile browsers)
+  downloadFile(json, filename);
+}
+
+function downloadFile(json, filename) {
+  // Remove any existing download link
+  const container = document.getElementById('downloadLinkContainer');
+  if (container) container.innerHTML = '';
+
+  try {
+    // Use base64 encoded blob URL — most compatible with Android webview
+    const bytes = new TextEncoder().encode(json);
+    const binStr = Array.from(bytes).map(b => String.fromCharCode(b)).join('');
+    const b64 = btoa(binStr);
+    const href = `data:application/octet-stream;base64,${b64}`;
+
+    if (container) {
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = filename;
+      link.textContent = '⬇️ Tocca qui per scaricare il file';
+      link.style.cssText = 'display:block;background:var(--accent);color:var(--bg);border-radius:10px;padding:14px;font-family:"Bebas Neue",sans-serif;font-size:1rem;letter-spacing:2px;text-decoration:none;text-align:center;margin-top:8px;';
+      container.appendChild(link);
+    }
+    showToast('⬇️ Tocca il tasto verde per scaricare', 'success');
+  } catch(e) {
+    // Absolute last resort: Blob URL
+    try {
+      const blob = new Blob([json], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      if (container) {
+        const link = document.createElement('a');
+        link.href = url; link.download = filename;
+        link.textContent = '⬇️ Tocca qui per scaricare il file';
+        link.style.cssText = 'display:block;background:var(--accent);color:var(--bg);border-radius:10px;padding:14px;font-family:"Bebas Neue",sans-serif;font-size:1rem;letter-spacing:2px;text-decoration:none;text-align:center;margin-top:8px;';
+        container.appendChild(link);
+      }
+    } catch(e2) { showExportText(); }
+  }
+}
+
+function importFromFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    processImport(e.target.result);
+    input.value = '';
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function importFromText() {
+  const raw = document.getElementById('importText') ? document.getElementById('importText').value.trim() : '';
+  if (!raw) { showToast('⚠️ Nessun testo da importare', 'error'); return; }
+  processImport(raw);
+}
+
+function processImport(raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    const incoming = Array.isArray(parsed) ? parsed : (parsed.data || []);
+    if (!incoming.length) { showToast('⚠️ Nessun dato trovato nel backup', 'error'); return; }
+
+    const existing = loadHistory();
+    const existingIds = new Set(existing.map(e => e.id));
+    const merged = [...existing];
+    let added = 0;
+    incoming.forEach(entry => {
+      if (!existingIds.has(entry.id)) { merged.push(entry); added++; }
+    });
+    merged.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+    saveHistory(merged);
+    renderHistory();
+    closeBackupModal();
+    showToast(added > 0 ? `✅ Importati ${added} pronostici` : 'ℹ️ Tutti già presenti', 'success');
+  } catch(err) {
+    showToast('❌ Testo non valido — assicurati di incollare tutto il backup', 'error');
+  }
+}
+
+function copyExportText() {
+  const ta = document.getElementById('exportText');
+  ta.select();
+  try {
+    navigator.clipboard.writeText(ta.value)
+      .then(() => showToast('✅ Copiato negli appunti!', 'success'))
+      .catch(() => { document.execCommand('copy'); showToast('✅ Copiato!', 'success'); });
+  } catch(e) {
+    document.execCommand('copy');
+    showToast('✅ Copiato!', 'success');
+  }
+}
+
+function showToast(msg, type='success') {
+  const el = document.getElementById('importToast');
+  el.textContent = msg;
+  el.className = `import-toast visible ${type}`;
+  setTimeout(() => el.classList.remove('visible'), 3500);
+}
+function setFilter(filter) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ftab-' + filter).classList.add('active');
+  renderHistory();
+}
+
+// ─── RENDER HISTORY ──────────────────────────────────────────────────────────
+function renderHistory() {
+  const history = loadHistory();
+  const listEl = document.getElementById('storicoList');
+
+  // Update counts on all tabs
+  const counts = { attesa: 0, vinto: 0, perso: 0 };
+  history.forEach(e => {
+    if (e.status === 'vinto') counts.vinto++;
+    else if (e.status === 'perso') counts.perso++;
+    else counts.attesa++;
+  });
+  document.getElementById('fcount-attesa').textContent = counts.attesa;
+  document.getElementById('fcount-vinto').textContent = counts.vinto;
+  document.getElementById('fcount-perso').textContent = counts.perso;
+
+  // Filter by active tab
+  const filtered = history.filter(e => {
+    if (activeFilter === 'vinto') return e.status === 'vinto';
+    if (activeFilter === 'perso') return e.status === 'perso';
+    return e.status === 'attesa' || e.status === 'pareggio';
+  });
+
+  if (!filtered.length) {
+    const emptyMsg = {
+      attesa: '⏳ Nessun pronostico in attesa.<br>Genera e salva un pronostico per vederlo qui.',
+      vinto:  '🏆 Nessun pronostico vinto ancora.<br>Verifica i risultati delle partite passate.',
+      perso:  '📭 Nessun pronostico perso registrato.'
+    }[activeFilter];
+    listEl.innerHTML = `<div class="storico-empty">${emptyMsg}</div>`;
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(e => {
+    const statusLabel = {attesa:'⏳ In Attesa',vinto:'✅ Vinto',perso:'❌ Perso',pareggio:'➖ Pareggio'}[e.status]||'⏳ In Attesa';
+    const statusClass = 'status-'+e.status;
+    const liveBadge = e.dati_live ? '🌐' : '📚';
+    const savedDate = new Date(e.savedAt).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+    const savedTime = new Date(e.savedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+
+    // Verifica già eseguita — mostra sempre il pannello
+    let verificaHtml = '';
+    if (e.verifica) {
+      const v = e.verifica;
+      const headerClass = v.accuratezza==='ESATTO'?'corretto':v.accuratezza==='SBAGLIATO'?'sbagliato':'parziale';
+      const esitoColor = v.esito_scommessa==='VINTO'?'var(--accent)':v.esito_scommessa==='PERSO'?'var(--danger)':'var(--gold)';
+      const esitoIcon = v.esito_scommessa==='VINTO'?'✅':v.esito_scommessa==='PERSO'?'❌':'➖';
+      verificaHtml = `
+        <div class="verifica-panel visible" id="verifica_${e.id}">
+          <div class="verifica-header ${headerClass}">
+            <span class="verifica-esito" style="color:${esitoColor}">${esitoIcon} ${v.esito_scommessa} — ${v.accuratezza}</span>
+            <span class="verifica-score">Risultato reale: <strong>${v.punteggio_reale}</strong></span>
+          </div>
+          <div class="verifica-body">
+            <div class="verifica-row">
+              <div class="verifica-item"><div class="verifica-key">Pronostico dato</div><div class="verifica-val">${e.pronostico}</div></div>
+              <div class="verifica-item"><div class="verifica-key">Esito reale</div><div class="verifica-val">${v.vincitore_reale}</div></div>
+              <div class="verifica-item"><div class="verifica-key">✅ Cosa ha indovinato</div><div class="verifica-val ok">${v.cosa_ha_indovinato}</div></div>
+              <div class="verifica-item"><div class="verifica-key">❌ Cosa ha sbagliato</div><div class="verifica-val ko">${v.cosa_ha_sbagliato}</div></div>
+            </div>
+            <div class="verifica-key" style="margin-bottom:8px">🧠 Nota di Apprendimento</div>
+            <div class="verifica-note">${v.nota_apprendimento}</div>
+          </div>
+        </div>`;
+    } else {
+      verificaHtml = `<div class="verifica-panel" id="verifica_${e.id}"></div>`;
+    }
+
+    // Latest ricalcolo diff
+    let diffHtml = '';
+    if (e.ricalcoli && e.ricalcoli.length) {
+      const latest = e.ricalcoli[0];
+      const ricalcoloDate = new Date(latest.timestamp).toLocaleDateString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      const pronosticoChanged = latest.pronostico_new !== e.pronostico;
+      const confidenzaChanged = latest.confidenza_new !== e.confidenza;
+      const rischioChanged = latest.rischio_new !== e.rischio;
+      const prob1Changed = latest.prob1_new !== e.prob1;
+      const prob2Changed = latest.prob2_new !== e.prob2;
+      const anyChanged = pronosticoChanged || confidenzaChanged || rischioChanged || prob1Changed || prob2Changed;
+
+      const cgNew = latest.come_giocarla_new;
+      const cgSection = cgNew ? `
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+          <div class="diff-col-label" style="margin-bottom:8px">🎰 Come Giocarla Aggiornata</div>
+          ${[cgNew.passo1,cgNew.passo2,cgNew.passo3,cgNew.passo4].filter(Boolean).map((s,i)=>`
+            <div style="display:flex;gap:10px;margin-bottom:6px;align-items:flex-start">
+              <span style="background:var(--accent3);color:var(--bg);width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:2px">${i+1}</span>
+              <span style="font-size:0.8rem;color:#c5cad8;line-height:1.5">${s}</span>
+            </div>`).join('')}
+          ${cgNew.quota_da_cercare?`<div style="margin-top:8px;font-size:0.8rem;color:var(--accent)">🎯 Quota: ${cgNew.quota_da_cercare}</div>`:''}
+          ${cgNew.importo_consigliato?`<div style="font-size:0.8rem;color:var(--muted)">💰 ${cgNew.importo_consigliato}</div>`:''}
+        </div>` : '';
+
+      diffHtml = `
+        <div class="diff-panel" id="diff_${e.id}">
+          <div class="diff-title">🔄 Ricalcolo — ${ricalcoloDate} ${anyChanged?'<span style="color:var(--accent2);margin-left:8px">⚠️ Modifiche rilevate</span>':'<span style="color:var(--accent);margin-left:8px">✅ Sostanzialmente confermato</span>'}</div>
+          <div class="diff-grid">
+            <div>
+              <div class="diff-col-label">📌 Originale</div>
+              <div class="diff-item"><div class="diff-key">Pronostico</div><div class="diff-val">${e.pronostico}</div></div>
+              <div class="diff-item"><div class="diff-key">Confidenza</div><div class="diff-val">${e.confidenza}%</div></div>
+              <div class="diff-item"><div class="diff-key">Rischio</div><div class="diff-val">${e.rischio}</div></div>
+              <div class="diff-item"><div class="diff-key">1 / X / 2</div><div class="diff-val">${e.prob1}% / ${e.probx}% / ${e.prob2}%</div></div>
+            </div>
+            <div>
+              <div class="diff-col-label">🔄 Ricalcolato</div>
+              <div class="diff-item"><div class="diff-key">Pronostico</div><div class="diff-val ${pronosticoChanged?'changed':'same'}">${latest.pronostico_new}</div></div>
+              <div class="diff-item"><div class="diff-key">Confidenza</div><div class="diff-val ${confidenzaChanged?'changed':'same'}">${latest.confidenza_new}%</div></div>
+              <div class="diff-item"><div class="diff-key">Rischio</div><div class="diff-val ${rischioChanged?'changed':'same'}">${latest.rischio_new}</div></div>
+              <div class="diff-item"><div class="diff-key">1 / X / 2</div><div class="diff-val ${(prob1Changed||prob2Changed)?'changed':'same'}">${latest.prob1_new||'?'}% / ${latest.probx_new||'?'}% / ${latest.prob2_new||'?'}%</div></div>
+            </div>
+          </div>
+          ${latest.analisi_forma_new?`<div class="diff-summary"><strong style="color:var(--text)">📈 Forma aggiornata:</strong><br>${latest.analisi_forma_new}</div>`:''}
+          ${latest.fattori_new?`<div class="diff-summary" style="margin-top:8px"><strong style="color:var(--text)">🔑 Fattori chiave aggiornati:</strong><br>${latest.fattori_new}</div>`:''}
+          ${cgSection}
+        </div>`;
+    }
+
+    return `
+      <div class="hcard ${e.status}" id="hcard_${e.id}">
+        <div class="hcard-top" onclick="toggleDetail('${e.id}')">
+          <div class="hcard-left">
+            <div class="hcard-match">${e.team1} vs ${e.team2}</div>
+            <div class="hcard-meta">
+              <span>${e.sport}</span>
+              ${e.competition?`<span>${e.competition}</span>`:''}
+              <span>📅 ${e.matchDate}</span>
+              <span>💾 ${savedDate} ${savedTime}</span>
+              <span>${liveBadge}</span>
+            </div>
+          </div>
+          <div class="hcard-right">
+            <span class="pronostico-tag">${e.pronostico}</span>
+            <span class="confidence-mini">${e.confidenza}%</span>
+            <button class="status-badge ${statusClass}" onclick="event.stopPropagation();openStatusPicker('${e.id}',this)">${statusLabel}</button>
+          </div>
+        </div>
+        ${buildFullDetailHTML(e)}
+        ${verificaHtml}
+        ${diffHtml}
+        <div class="hcard-actions">
+          <button class="btn-verifica" id="verificaBtn_${e.id}" onclick="verificaRisultato('${e.id}')">${e.verifica?'🔍 RIVERIFICA':'🔍 VERIFICA RISULTATO'}</button>
+          <button class="btn-ricalcolo" id="ricalcBtn_${e.id}" onclick="ricalcola('${e.id}')">🔄 RICALCOLA</button>
+          <button class="btn-delete" onclick="deleteEntry('${e.id}')">🗑 Elimina</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleDetail(id) {
+  const el = document.getElementById('detail_'+id);
+  if (!el) return;
+  const isOpen = el.classList.contains('open');
+  // Close all others
+  document.querySelectorAll('.full-detail.open').forEach(d => d.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+function buildFullDetailHTML(e) {
+  const rc = e.rischio==='BASSO'?'#00e5a0':e.rischio==='MEDIO'?'#ffd700':'#ff4757';
+  const liveBadge = e.dati_live
+    ? `<span style="background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.3);border-radius:20px;padding:2px 9px;font-size:0.68rem;font-weight:600;color:var(--accent);">🌐 LIVE</span>`
+    : `<span style="background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.2);border-radius:20px;padding:2px 9px;font-size:0.68rem;font-weight:600;color:var(--accent2);">📚 STORICO</span>`;
+
+  const webSection = e.webText ? `
+    <div class="fd-web-title">🌐 Dati Ricercati in Tempo Reale</div>
+    <div class="fd-web-box">${e.webText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>` : '';
+
+  const consiglio = e.consiglio ? `
+    <div class="fd-card wide">
+      <div class="fd-card-title">💡 Consiglio Alternativo</div>
+      <div class="fd-card-text">${e.consiglio}</div>
+    </div>` : '';
+
+  return `
+    <div class="full-detail" id="detail_${e.id}">
+      <!-- Banner -->
+      <div class="full-detail-banner">
+        <div class="full-detail-match">${e.team1} vs ${e.team2} ${liveBadge}</div>
+        <div class="full-detail-meta">
+          ${e.sport}${e.competition?' · '+e.competition:''} · 📅 ${e.matchDate} · 💾 ${new Date(e.savedAt).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})} ${new Date(e.savedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}
+        </div>
+        <div class="fd-conf-row">
+          <div>
+            <div class="fd-conf-pill">🎯 Confidenza: ${e.confidenza}%</div>
+          </div>
+          <div class="fd-quota">
+            <div class="fd-quota-num">${e.quota}</div>
+            <div class="fd-quota-label">Quota Stimata</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Odds grid -->
+      <div class="fd-odds-grid">
+        <div class="fd-odds-cell ${e.pronostico==='1'?'rec':''}">
+          <div class="fd-odds-label">${e.pronostico==='1'?'⭐ ':''}1 — Casa</div>
+          <div class="fd-odds-value">${e.prob1}%</div>
+        </div>
+        <div class="fd-odds-cell ${e.pronostico==='X'?'rec':''}">
+          <div class="fd-odds-label">${e.pronostico==='X'?'⭐ ':''}X — Pareggio</div>
+          <div class="fd-odds-value">${e.probx}%</div>
+        </div>
+        <div class="fd-odds-cell ${e.pronostico==='2'?'rec':''}">
+          <div class="fd-odds-label">${e.pronostico==='2'?'⭐ ':''}2 — Ospite</div>
+          <div class="fd-odds-value">${e.prob2}%</div>
+        </div>
+      </div>
+
+      <!-- Pronostico bar -->
+      <div class="fd-pronostico-bar">
+        <div>
+          <div class="fd-bet-main">🎯 ${e.pronostico} — ${e.descrizione}</div>
+          <div class="fd-bet-sub">Rischio: <span style="color:${rc};font-weight:600">${e.rischio}</span> · Risultato ipotetico: ${e.risultato_ipotetico}</div>
+        </div>
+      </div>
+
+      <!-- Analysis sections -->
+      <div class="fd-sections">
+        <div class="fd-card">
+          <div class="fd-card-title">📈 Forma Recente</div>
+          <div class="fd-card-text">${e.analisi_forma||'—'}</div>
+        </div>
+        <div class="fd-card">
+          <div class="fd-card-title">♟️ Analisi Tattica</div>
+          <div class="fd-card-text">${e.analisi_tattica||'—'}</div>
+        </div>
+        <div class="fd-card wide">
+          <div class="fd-card-title">🔑 Fattori Chiave</div>
+          <div class="fd-card-text">${e.fattori_chiave||'—'}</div>
+        </div>
+        ${consiglio}
+        ${e.lezioni_note ? `
+        <div class="fd-card wide" style="border-color:rgba(255,215,0,0.2);background:rgba(255,215,0,0.03)">
+          <div class="fd-card-title" style="color:var(--gold)">🧠 Lezioni Applicate (${e.lezioni_applicate||0})</div>
+          <div class="fd-card-text">${e.lezioni_note}</div>
+        </div>` : ''}
+      </div>
+
+      ${e.mercati_data && Object.keys(e.mercati_data).length ? `
+        <div style="margin-bottom:12px">
+          <div class="fd-card-title" style="margin-bottom:10px">📊 Mercati Analizzati</div>
+          <div class="mercati-result-grid">
+            ${Object.entries(e.mercati_data).map(([key,m],i)=>`
+              <div class="mercato-result-card ${i===0?'top-pick':''}">
+                <div class="mr-label">${key.replace('mercato_','').replace(/_/g,' ').toUpperCase()}</div>
+                <div class="mr-pick">${m.consiglio||'—'}</div>
+                <div class="mr-row">
+                  <span class="mr-prob">${m.probabilita||'?'}% prob.</span>
+                  <span class="mr-quota">${m.quota_stimata||'?'}</span>
+                </div>
+                ${m.value_bet?`<div class="mr-value"><span class="value-badge">⚡ VALUE BET</span></div>`:''}
+                ${m.note?`<div class="mr-note">${m.note}</div>`:''}
+              </div>`).join('')}
+          </div>
+        </div>` : ''}
+
+      ${e.come_giocarla ? (() => {
+        const cg = e.come_giocarla;
+        const steps = [cg.passo1,cg.passo2,cg.passo3,cg.passo4].filter(Boolean);
+        return `
+        <div class="come-giocarla" style="margin-bottom:12px">
+          <div class="cg-header">
+            <span class="cg-title">🎰 Come Giocarla</span>
+            <span class="${cg.vale_la_pena?'cg-vale-si':'cg-vale-no'}">${cg.vale_la_pena?'✅ Vale la pena':'⚠️ Valuta bene'}</span>
+          </div>
+          <div class="cg-steps">
+            ${steps.map((s,i)=>`<div class="cg-step"><div class="cg-step-num">${i+1}</div><div class="cg-step-text">${s}</div></div>`).join('')}
+          </div>
+          <div class="cg-footer">
+            <div class="cg-info-box"><div class="cg-info-label">🎯 Quota da cercare</div><div class="cg-info-val highlight">${cg.quota_da_cercare||'—'}</div></div>
+            <div class="cg-info-box"><div class="cg-info-label">💰 Quanto mettere</div><div class="cg-info-val">${cg.importo_consigliato||'—'}</div></div>
+            <div class="cg-avvertenza">⚠️ ${cg.avvertenza||''}</div>
+          </div>
+        </div>`; })() : `
+        <div style="background:rgba(77,166,255,0.06);border:1px dashed rgba(77,166,255,0.25);border-radius:10px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;">
+          <span style="font-size:1.6rem">🔄</span>
+          <div>
+            <div style="font-size:0.85rem;font-weight:600;color:var(--accent3);margin-bottom:4px">Sezione non disponibile</div>
+            <div style="font-size:0.8rem;color:var(--muted);line-height:1.5">Questo pronostico è stato salvato con una versione precedente dell'app.<br>Rigenera il pronostico per vedere la sezione <strong style="color:var(--text)">🎰 Come Giocarla</strong> e il calcolo Value Bet.</div>
+          </div>
+        </div>`}
+
+      ${webSection}
+    </div>`;
+}
+
+// ─── RENDER RESULT ────────────────────────────────────────────────────────────
+function renderResult(r, team1, team2, competition, webText, showSave, mercati, memoryCount) {
+  const rc = r.rischio==='BASSO'?'#00e5a0':r.rischio==='MEDIO'?'#ffd700':'#ff4757';
+  const liveBadge = r.dati_live_usati
+    ? `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.3);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--accent);margin-left:10px;">🌐 DATI LIVE</span>`
+    : `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--accent2);margin-left:10px;">📚 DATI STORICI</span>`;
+
+  const webPanel = webText ? `
+    <div class="analysis-card full-width" style="border-color:rgba(0,229,160,0.2);background:rgba(0,229,160,0.03)">
+      <div class="card-heading">🌐 Dati Ricercati in Tempo Reale</div>
+      <div class="analysis-content" style="font-size:0.82rem;white-space:pre-wrap;max-height:200px;overflow-y:auto">${webText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>` : '';
+
+  const memoryBadge = (memoryCount && memoryCount > 0)
+    ? `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--gold);margin-left:6px;">🧠 ${memoryCount} lezioni applicate</span>`
+    : '';
+
+  // Lezioni note box
+  const lezioniBox = (r.lezioni_note && memoryCount > 0)
+    ? `<div class="analysis-card full-width" style="border-color:rgba(255,215,0,0.2);background:rgba(255,215,0,0.03)">
+        <div class="card-heading" style="color:var(--gold)">🧠 Come le Lezioni Passate Hanno Influenzato Questo Pronostico</div>
+        <div class="analysis-content">${r.lezioni_note}</div>
+       </div>`
+    : '';
+  let mercatiHtml = '';
+  if (r.mercati && Object.keys(r.mercati).length) {
+    const cards = Object.entries(r.mercati).map(([key, m], i) => {
+      const isTop = i === 0;
+      const valueBadge = m.value_bet
+        ? `<div class="mr-value"><span class="value-badge">⚡ VALUE BET</span>${m.quota_bookmaker?` <span class="value-score">bk: ${m.quota_bookmaker}</span>`:''}</div>`
+        : '';
+      return `
+        <div class="mercato-result-card ${isTop?'top-pick':''}">
+          <div class="mr-label">${key.replace('mercato_','').replace(/_/g,' ').toUpperCase()}</div>
+          <div class="mr-pick">${m.consiglio||'—'}</div>
+          <div class="mr-row">
+            <span class="mr-prob">${m.probabilita||'?'}% prob.</span>
+            <span class="mr-quota">${m.quota_stimata||'?'}</span>
+          </div>
+          ${valueBadge}
+          ${m.note?`<div class="mr-note">${m.note}</div>`:''}
+        </div>`;
+    }).join('');
+    mercatiHtml = `
+      <div class="mercati-result-section">
+        <div class="mercati-result-title">📊 Analisi Mercati Selezionati</div>
+        <div class="mercati-result-grid">${cards}</div>
+      </div>`;
+  }
+
+  // Value bet badge on main pronostico
+  const valueBetMain = r.value_bet_principale
+    ? `<span class="value-badge" style="margin-left:8px">⚡ VALUE BET${r.value_bet_score?' · '+r.value_bet_score:''}</span>`
+    : '';
+
+  // Come giocarla section
+  let comeGiocarlаHtml = '';
+  if (r.come_giocarla) {
+    const cg = r.come_giocarla;
+    const valeClass = cg.vale_la_pena ? 'cg-vale-si' : 'cg-vale-no';
+    const valeText = cg.vale_la_pena ? '✅ Vale la pena giocarla' : '⚠️ Valuta bene prima di giocare';
+    const steps = [cg.passo1, cg.passo2, cg.passo3, cg.passo4].filter(Boolean);
+    comeGiocarlаHtml = `
+      <div class="come-giocarla">
+        <div class="cg-header">
+          <span class="cg-title">🎰 Come Giocarla</span>
+          <span class="${valeClass}">${valeText}</span>
+        </div>
+        <div class="cg-steps">
+          ${steps.map((s,i)=>`
+            <div class="cg-step">
+              <div class="cg-step-num">${i+1}</div>
+              <div class="cg-step-text">${s}</div>
+            </div>`).join('')}
+        </div>
+        <div class="cg-footer">
+          <div class="cg-info-box">
+            <div class="cg-info-label">🎯 Quota da cercare</div>
+            <div class="cg-info-val highlight">${cg.quota_da_cercare||'Vedi pronostico'}</div>
+          </div>
+          <div class="cg-info-box">
+            <div class="cg-info-label">💰 Quanto mettere</div>
+            <div class="cg-info-val">${cg.importo_consigliato||'Max 5% del tuo budget'}</div>
+          </div>
+          <div class="cg-avvertenza">⚠️ ${cg.avvertenza||'Nessun pronostico è garantito. Gioca responsabilmente.'}</div>
+        </div>
+      </div>`;
+  }
+
+  const saveBtn = showSave ? `<button class="btn-save" id="btnSave" onclick="saveCurrentPronostico()">💾 SALVA PRONOSTICO</button>` : '';
+
+  document.getElementById('resultCard').innerHTML = `
+    <div class="verdict-banner">
+      <div class="verdict-header">
+        <div>
+          <div class="verdict-match" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+            ${team1} vs ${team2}${liveBadge}${memoryBadge}
+          </div>
+          ${competition?`<div style="color:var(--muted);font-size:0.8rem;margin-top:4px;letter-spacing:1px">${competition.toUpperCase()}</div>`:''}
+        </div>
+        <div class="confidence-pill">
+          <span class="confidence-label">Confidenza</span>
+          <span class="confidence-value">${r.confidenza}%</span>
+        </div>
+      </div>
+      <div class="odds-grid">
+        <div class="odds-cell ${r.pronostico_principale==='1'?'recommended':''}">
+          <div class="odds-label">${r.pronostico_principale==='1'?'⭐ ':''}1 — Casa</div>
+          <div class="odds-value">${r.probabilita_1}%</div>
+          <div class="odds-prob">probabilità stimata</div>
+        </div>
+        <div class="odds-cell ${r.pronostico_principale==='X'?'recommended':''}">
+          <div class="odds-label">${r.pronostico_principale==='X'?'⭐ ':''}X — Pareggio</div>
+          <div class="odds-value">${r.probabilita_x}%</div>
+          <div class="odds-prob">probabilità stimata</div>
+        </div>
+        <div class="odds-cell ${r.pronostico_principale==='2'?'recommended':''}">
+          <div class="odds-label">${r.pronostico_principale==='2'?'⭐ ':''}2 — Ospite</div>
+          <div class="odds-value">${r.probabilita_2}%</div>
+          <div class="odds-prob">probabilità stimata</div>
+        </div>
+      </div>
+    </div>
+    <div class="bet-suggestion">
+      <div>
+        <div class="bet-main">🎯 ${r.pronostico_principale} — ${r.descrizione_pronostico}${valueBetMain}</div>
+        <div class="bet-desc">Rischio: <span style="color:${rc};font-weight:600">${r.rischio}</span> · Ipotetico: ${r.risultato_esatto_ipotetico}</div>
+      </div>
+      <div>
+        <div class="bet-odds-num">${r.quota_stimata}</div>
+        <div class="bet-odds-label">Quota stimata</div>
+      </div>
+    </div>
+    ${mercatiHtml}
+    ${comeGiocarlаHtml}
+    <div class="analysis-grid">
+      <div class="analysis-card"><div class="card-heading">📈 Forma Recente</div><div class="analysis-content">${r.analisi_forma}</div></div>
+      <div class="analysis-card"><div class="card-heading">♟️ Analisi Tattica</div><div class="analysis-content">${r.analisi_tattica}</div></div>
+      <div class="analysis-card full-width"><div class="card-heading">🔑 Fattori Chiave</div><div class="analysis-content">${r.fattori_chiave}</div></div>
+      ${r.consiglio_aggiuntivo?`<div class="analysis-card full-width"><div class="card-heading">💡 Consiglio Alternativo</div><div class="analysis-content">${r.consiglio_aggiuntivo}</div></div>`:''}
+      ${lezioniBox}
+      ${webPanel}
+    </div>
+    ${saveBtn}
+    <div class="disclaimer"><strong>⚠️ Gioco Responsabile:</strong> Strumento puramente informativo. I pronostici AI non garantiscono risultati. Il gioco d'azzardo può creare dipendenza — non scommettere più di quanto puoi permetterti di perdere.</div>
+  `;
+  document.getElementById('resultCard').classList.add('visible');
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ─── VERIFICA RISULTATO ───────────────────────────────────────────────────────
+async function verificaRisultato(id) {
+  const history = loadHistory();
+  const entry = history.find(e => e.id === id);
+  if (!entry) return;
+
+  const btn = document.getElementById('verificaBtn_' + id);
+  const panel = document.getElementById('verifica_' + id);
+  if (btn) { btn.disabled = true; btn.textContent = '🔍 Verifica in corso...'; }
+
+  // Web search per il risultato reale
+  let risultatoWeb = '';
+  try {
+    const query = `risultato finale ${entry.team1} vs ${entry.team2} ${entry.competition||''} ${entry.matchDate}`;
+    const tools = [{ type: "web_search_20250305", name: "web_search" }];
+    let messages = [{
+      role: "user",
+      content: `Cerca il risultato finale della partita: ${entry.team1} vs ${entry.team2}${entry.competition ? ' - ' + entry.competition : ''} del ${entry.matchDate}.
+Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se disponibili, eventuali note importanti sulla partita.`
+    }];
+    let iterations = 0;
+    while (iterations < 5) {
+      iterations++;
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, tools, messages })
+      });
+      const data = await res.json();
+      if (!res.ok) break;
+      const assistantContent = data.content || [];
+      messages.push({ role: "assistant", content: assistantContent });
+      for (const block of assistantContent) { if (block.type === 'text' && block.text) risultatoWeb += block.text + '\n'; }
+      const toolUse = assistantContent.filter(b => b.type === 'tool_use');
+      if (!toolUse.length) break;
+      messages.push({ role: "user", content: toolUse.map(tu => ({ type: "tool_result", tool_use_id: tu.id, content: `Cerca il risultato di ${entry.team1} vs ${entry.team2} del ${entry.matchDate}` })) });
+    }
+  } catch(e) { risultatoWeb = ''; }
+
+  // AI valuta se il pronostico era corretto
+  const evalPrompt = `Sei un analista sportivo. Devi valutare se un pronostico era corretto confrontandolo con il risultato reale.
+
+PRONOSTICO ORIGINALE:
+- Partita: ${entry.team1} vs ${entry.team2}
+- Data: ${entry.matchDate}
+- Pronostico: ${entry.pronostico} (${entry.descrizione})
+- Confidenza: ${entry.confidenza}%
+- Risultato ipotetico previsto: ${entry.risultato_ipotetico}
+- Rischio stimato: ${entry.rischio}
+
+DATI TROVATI SUL WEB:
+${risultatoWeb || 'Nessun dato trovato online per questa partita.'}
+
+Analizza e rispondi SOLO con JSON valido:
+{
+  "risultato_trovato": true o false,
+  "punteggio_reale": "es. 3-1 oppure 'Non trovato'",
+  "vincitore_reale": "Casa o Ospite o Pareggio o 'Non trovato'",
+  "pronostico_corretto": true o false,
+  "esito_scommessa": "VINTO o PERSO o PAREGGIO o NON_VERIFICABILE",
+  "accuratezza": "ESATTO o PARZIALE o SBAGLIATO o NON_VERIFICABILE",
+  "cosa_ha_indovinato": "cosa l'AI aveva previsto correttamente",
+  "cosa_ha_sbagliato": "cosa l'AI aveva previsto in modo errato, o 'Nulla' se ha indovinato tutto",
+  "nota_apprendimento": "lezione concreta per migliorare pronostici simili in futuro, basata sull'analisi dell'errore o della conferma"
+}`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 800, messages: [{ role: "user", content: evalPrompt }] })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'Errore');
+    const raw = data.content.map(i => i.text || '').join('');
+    const v = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+    // Auto-update status
+    const newStatus = v.esito_scommessa === 'VINTO' ? 'vinto'
+      : v.esito_scommessa === 'PERSO' ? 'perso'
+      : v.esito_scommessa === 'PAREGGIO' ? 'pareggio'
+      : entry.status;
+
+    const hist = loadHistory();
+    const idx = hist.findIndex(e => e.id === id);
+    if (idx >= 0) {
+      hist[idx].status = newStatus;
+      hist[idx].verifica = { timestamp: new Date().toISOString(), ...v, webText: risultatoWeb };
+      saveHistory(hist);
+    }
+
+    // Render panel
+    const headerClass = v.accuratezza === 'ESATTO' ? 'corretto' : v.accuratezza === 'SBAGLIATO' ? 'sbagliato' : 'parziale';
+    const esitoIcon = v.esito_scommessa === 'VINTO' ? '✅' : v.esito_scommessa === 'PERSO' ? '❌' : v.esito_scommessa === 'PAREGGIO' ? '➖' : '❓';
+    const esitoColor = v.esito_scommessa === 'VINTO' ? 'var(--accent)' : v.esito_scommessa === 'PERSO' ? 'var(--danger)' : 'var(--gold)';
+
+    panel.innerHTML = `
+      <div class="verifica-header ${headerClass}">
+        <span class="verifica-esito" style="color:${esitoColor}">${esitoIcon} ${v.esito_scommessa} — ${v.accuratezza}</span>
+        <span class="verifica-score">Risultato reale: <strong>${v.punteggio_reale}</strong></span>
+      </div>
+      <div class="verifica-body">
+        <div class="verifica-row">
+          <div class="verifica-item">
+            <div class="verifica-key">Pronostico dato</div>
+            <div class="verifica-val">${entry.pronostico}</div>
+          </div>
+          <div class="verifica-item">
+            <div class="verifica-key">Esito reale</div>
+            <div class="verifica-val">${v.vincitore_reale}</div>
+          </div>
+          <div class="verifica-item">
+            <div class="verifica-key">✅ Cosa ha indovinato</div>
+            <div class="verifica-val ok">${v.cosa_ha_indovinato}</div>
+          </div>
+          <div class="verifica-item">
+            <div class="verifica-key">❌ Cosa ha sbagliato</div>
+            <div class="verifica-val ko">${v.cosa_ha_sbagliato}</div>
+          </div>
+        </div>
+        <div class="verifica-key" style="margin-bottom:8px">🧠 Nota di Apprendimento</div>
+        <div class="verifica-note">${v.nota_apprendimento}</div>
+      </div>`;
+    panel.classList.add('visible');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Re-render to update card color
+    renderHistory();
+
+  } catch(err) {
+    if (panel) panel.innerHTML = `<div style="padding:14px;color:var(--danger);font-size:0.85rem">❌ Errore verifica: ${err.message}</div>`;
+    panel.classList.add('visible');
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = '🔍 VERIFICA RISULTATO'; }
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function wait(ms) { return new Promise(r=>setTimeout(r,ms)); }
+function showLoading(v,text='Analisi in corso...') {
+  document.getElementById('loadingState').classList.toggle('visible',v);
+  document.getElementById('loadingText').textContent = text;
+  if (!v) document.querySelectorAll('.loading-step').forEach(s=>s.classList.remove('show'));
+}
+function hideResult() { const c=document.getElementById('resultCard'); c.classList.remove('visible'); c.innerHTML=''; currentResult=null; }
+function showError(m) { const e=document.getElementById('errorState'); e.textContent=m; e.classList.add('visible'); }
+function hideError() { document.getElementById('errorState').classList.remove('visible'); }
+</script>
+</body>
+</html>
