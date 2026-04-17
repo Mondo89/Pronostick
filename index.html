@@ -627,6 +627,53 @@ textarea{resize:vertical;min-height:80px;}
   .upload-box{flex-direction:column;text-align:center;}
   .diff-grid{grid-template-columns:1fr;}
 }
+
+/* WEB SEARCH TOGGLE + COST PANEL */
+.cost-panel {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cost-left { flex: 1; }
+.cost-title {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.cost-breakdown { display: flex; gap: 16px; flex-wrap: wrap; align-items: baseline; margin-bottom: 6px; }
+.cost-item { font-size: 0.78rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+.cost-item strong { color: var(--text); }
+.cost-total { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); letter-spacing: 1px; }
+.cost-billing-link {
+  font-size: 0.72rem; color: var(--accent3); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.cost-billing-link:hover { text-decoration: underline; }
+.toggle-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; }
+.toggle-label { font-size: 0.62rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); text-align: center; }
+.toggle { position: relative; width: 52px; height: 28px; cursor: pointer; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-slider {
+  position: absolute; inset: 0;
+  background: var(--border); border-radius: 28px;
+  transition: all 0.25s; border: 1px solid transparent;
+}
+.toggle-slider::before {
+  content: ''; position: absolute;
+  width: 20px; height: 20px; border-radius: 50%;
+  left: 3px; top: 3px;
+  background: var(--muted); transition: all 0.25s;
+}
+.toggle input:checked + .toggle-slider { background: rgba(0,229,160,0.15); border-color: var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(24px); background: var(--accent); }
+.toggle-status { font-size: 0.68rem; font-family: 'DM Mono', monospace; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -771,6 +818,29 @@ textarea{resize:vertical;min-height:80px;}
     </div>
   </div>
 
+  <!-- COST PANEL + WEB SEARCH TOGGLE -->
+  <div class="cost-panel">
+    <div class="cost-left">
+      <div class="cost-title">💰 Costo stimato pronostico</div>
+      <div class="cost-breakdown">
+        <span class="cost-item">🧠 Token AI: <strong id="costToken">~$0.04</strong></span>
+        <span class="cost-item" id="costWebWrap">🌐 Web search: <strong id="costWeb">~$0.10</strong></span>
+        <span class="cost-total" id="costTotal">≈ $0.14</span>
+      </div>
+      <a class="cost-billing-link" href="https://console.anthropic.com/settings/billing" target="_blank">
+        💳 Controlla credito residuo →
+      </a>
+    </div>
+    <div class="toggle-wrap">
+      <span class="toggle-label">Web<br>Search</span>
+      <label class="toggle">
+        <input type="checkbox" id="webSearchToggle" checked onchange="updateCostPanel()"/>
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="toggle-status" id="toggleStatus" style="color:var(--accent)">ON</span>
+    </div>
+  </div>
+
   <button class="btn-analyze" id="analyzeBtn" onclick="analyzeMatch()">⚡ ANALIZZA &amp; PRONOSTICA</button>
 </div>
 
@@ -885,7 +955,29 @@ let activeStatusId = null;
 let activeFilter = 'attesa';
 let ouSoglia = '2.5';
 
-// ─── MERCATI HELPERS ──────────────────────────────────────────────────────────
+// ─── COST PANEL ───────────────────────────────────────────────────────────────
+function isWebSearchEnabled() {
+  const toggle = document.getElementById('webSearchToggle');
+  return toggle ? toggle.checked : true;
+}
+
+function updateCostPanel() {
+  const webOn = isWebSearchEnabled();
+  const tokenCost = 0.04;
+  const webCost = 0.10;
+  const total = webOn ? tokenCost + webCost : tokenCost;
+
+  document.getElementById('costToken').textContent = `~$${tokenCost.toFixed(2)}`;
+  const webWrap = document.getElementById('costWebWrap');
+  if (webWrap) webWrap.style.opacity = webOn ? '1' : '0.35';
+  document.getElementById('costWeb').textContent = webOn ? `~$${webCost.toFixed(2)}` : '$0.00';
+  document.getElementById('costTotal').textContent = `≈ $${total.toFixed(2)}`;
+  const status = document.getElementById('toggleStatus');
+  if (status) {
+    status.textContent = webOn ? 'ON' : 'OFF';
+    status.style.color = webOn ? 'var(--accent)' : 'var(--muted)';
+  }
+}
 function toggleMercato(chip, key) {
   chip.classList.toggle('selected');
   const cb = chip.querySelector('input[type=checkbox]');
@@ -1000,6 +1092,7 @@ document.querySelectorAll('.sport-tab').forEach(tab => {
 document.getElementById('matchDate').value = new Date().toISOString().split('T')[0];
 document.getElementById('fileInput').addEventListener('change', function(){ handleFiles(this.files); this.value=''; });
 updateApiKeyUI();
+updateCostPanel();
 
 const zone = document.getElementById('uploadZone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
@@ -1201,10 +1294,15 @@ async function analyzeMatch() {
 
   hideError(); hideResult();
   showLoading(true,'Analisi in corso...');
+  document.getElementById('step1').textContent = isWebSearchEnabled()
+    ? '🌐 Ricerca dati in tempo reale...'
+    : '📚 Analisi con dati storici...';
   document.getElementById('analyzeBtn').disabled = true;
 
   document.getElementById('step1').classList.add('show');
-  const webData = await fetchWebData(team1,team2,competition,selectedSport,matchDate);
+  const webData = isWebSearchEnabled()
+    ? await fetchWebData(team1,team2,competition,selectedSport,matchDate)
+    : { text: '' };
   document.getElementById('step2').classList.add('show');
   await wait(300);
   document.getElementById('step3').classList.add('show');
