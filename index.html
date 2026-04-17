@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PronosticoAI — Analisi Sportiva Intelligente</title>
+<title>PRONOSTICK — Analisi Sportiva Intelligente</title>
 <meta name="description" content="Pronosticatore sportivo con intelligenza artificiale. Analisi live, value bet e storico partite.">
 <meta name="theme-color" content="#00e5a0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="PronosticoAI">
+<meta name="apple-mobile-web-app-title" content="PRONOSTICK">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -639,7 +639,7 @@ textarea{resize:vertical;min-height:80px;}
 
 <header>
   <div class="logo">
-    <span class="logo-text">PronosticoAI</span>
+    <span class="logo-text">PRONOSTICK</span>
     <span class="logo-badge">Beta</span>
   </div>
   <p class="tagline">Analisi sportiva potenziata dall'intelligenza artificiale</p>
@@ -909,7 +909,7 @@ function getSelectedMercati() {
 }
 
 // ─── API KEY ─────────────────────────────────────────────────────────────────
-const APIKEY_KEY = 'pronosticoai_apikey';
+const APIKEY_KEY = 'pronostick_apikey';
 
 function getApiKey() {
   return localStorage.getItem(APIKEY_KEY) || '';
@@ -942,7 +942,7 @@ function updateApiKeyUI() {
   }
 }
 // Use a fixed key so data persists across file renames/moves
-const STORAGE_KEY = 'pronosticoai_v3_history';
+const STORAGE_KEY = 'pronostick_v3_history';
 
 function loadHistory() {
   try {
@@ -950,7 +950,7 @@ function loadHistory() {
     const main = localStorage.getItem(STORAGE_KEY);
     if (main) return JSON.parse(main);
     // Migration: check old key names from previous versions
-    const oldKeys = ['pronostico_history', 'pronosticoai_history'];
+    const oldKeys = ['pronostico_history', 'pronostick_history'];
     for (const k of oldKeys) {
       const old = localStorage.getItem(k);
       if (old) {
@@ -1035,7 +1035,7 @@ Riassumi in italiano in modo strutturato.`;
     let iterations = 0;
     while (iterations < 5) {
       iterations++;
-      const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,tools,messages})});
+      const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-3-5-sonnet-20241022",max_tokens:2000,tools,messages})});
       const data = await res.json();
       if (!res.ok) break;
       const assistantContent = data.content || [];
@@ -1163,7 +1163,7 @@ ${mercatiSchema}
 
 // ─── CALL AI ──────────────────────────────────────────────────────────────────
 async function callAI(prompt, maxTokens=1500) {
-  const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})});
+  const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-3-5-sonnet-20241022",max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})});
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message||'Errore API');
   const raw = data.content.map(i=>i.text||'').join('');
@@ -1409,14 +1409,14 @@ function shareWhatsApp() {
 
   const json = getBackupJSON();
   const date = new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-');
-  const filename = `pronosticoai_backup_${date}.json`;
+  const filename = `pronostick_backup_${date}.json`;
 
   // Method 1: Web Share API with actual file (Android Chrome, iOS Safari)
   if (navigator.share && navigator.canShare) {
     const blob = new Blob([json], { type: 'application/json' });
     const file = new File([blob], filename, { type: 'application/json' });
     if (navigator.canShare({ files: [file] })) {
-      navigator.share({ files: [file], title: 'PronosticoAI Backup' })
+      navigator.share({ files: [file], title: 'PRONOSTICK Backup' })
         .then(() => { showToast('✅ File condiviso!', 'success'); closeBackupModal(); })
         .catch(err => { if (err.name !== 'AbortError') downloadFile(json, filename); });
       return;
@@ -1992,7 +1992,7 @@ Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se 
       iterations++;
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, tools, messages })
+        body: JSON.stringify({ model: "claude-3-5-sonnet-20241022", max_tokens: 1000, tools, messages })
       });
       const data = await res.json();
       if (!res.ok) break;
@@ -2035,7 +2035,7 @@ Analizza e rispondi SOLO con JSON valido:
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST", headers: { "Content-Type": "application/json", "x-api-key": getApiKey(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 800, messages: [{ role: "user", content: evalPrompt }] })
+      body: JSON.stringify({ model: "claude-3-5-sonnet-20241022", max_tokens: 800, messages: [{ role: "user", content: evalPrompt }] })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error?.message || 'Errore');
