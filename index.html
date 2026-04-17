@@ -628,7 +628,66 @@ textarea{resize:vertical;min-height:80px;}
   .diff-grid{grid-template-columns:1fr;}
 }
 
-/* WEB SEARCH TOGGLE + COST PANEL */
+/* FIREBASE AUTH */
+.auth-card {
+  background: linear-gradient(135deg, rgba(77,166,255,0.06), rgba(0,229,160,0.04));
+  border: 1px solid rgba(77,166,255,0.25);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.auth-info { flex: 1; }
+.auth-title { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px; color: var(--text); margin-bottom: 4px; }
+.auth-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+.auth-user { display: flex; align-items: center; gap: 10px; }
+.auth-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent); }
+.auth-name { font-size: 0.85rem; color: var(--text); font-weight: 500; }
+.btn-google {
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-google:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.btn-logout {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-logout:hover { color: var(--danger); border-color: rgba(255,71,87,0.3); }
+.sync-badge {
+  font-size: 0.7rem;
+  background: rgba(0,229,160,0.1);
+  border: 1px solid rgba(0,229,160,0.25);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-family: 'DM Mono', monospace;
+  display: inline-block;
+  margin-top: 4px;
+}
 .cost-panel {
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -713,6 +772,21 @@ textarea{resize:vertical;min-height:80px;}
     </select>
   </div>
   <div class="apikey-status missing" id="apikeyStatus">⚠️ API key non configurata — l'app non funzionerà senza</div>
+</div>
+
+<!-- FIREBASE AUTH -->
+<div class="auth-card" id="authCard">
+  <div class="auth-info">
+    <div class="auth-title">☁️ Sincronizzazione Cloud</div>
+    <div class="auth-desc" id="authDesc">Accedi con Google per sincronizzare lo storico su tutti i dispositivi.</div>
+    <div class="sync-badge" id="syncBadge" style="display:none">✅ Storico sincronizzato su cloud</div>
+  </div>
+  <div id="authActions">
+    <button class="btn-google" onclick="loginGoogle()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Accedi con Google
+    </button>
+  </div>
 </div>
 
 <!-- Sport tabs -->
@@ -946,6 +1020,122 @@ textarea{resize:vertical;min-height:80px;}
 
 </div><!-- /container -->
 
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── FIREBASE CONFIG — sostituisci con i tuoi valori dalla console Firebase ──
+const firebaseConfig = {
+  apiKey: "AIzaSyDNPxlGbbU50Xd_67NSDSBWO-IueZ3VJ7o",
+  authDomain: "pronostick-29a0e.firebaseapp.com",
+  projectId: "pronostick-29a0e",
+  storageBucket: "pronostick-29a0e.firebasestorage.app",
+  messagingSenderId: "144868779433",
+  appId: "1:144868779433:web:16f544d6fa924bf47290b8"
+};
+
+const fbConfigured = firebaseConfig.apiKey !== "INSERISCI_QUI";
+
+let app, auth, db, currentUser = null;
+
+if (fbConfigured) {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+
+  onAuthStateChanged(auth, async user => {
+    currentUser = user;
+    updateAuthUI(user);
+    if (user) {
+      // Load history from Firebase on login
+      await syncFromFirebase();
+    }
+  });
+}
+
+window.loginGoogle = async function() {
+  if (!fbConfigured) { alert('Configura Firebase prima di accedere.'); return; }
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  } catch(e) { console.error(e); }
+};
+
+window.logoutGoogle = async function() {
+  if (auth) {
+    await signOut(auth);
+    currentUser = null;
+    updateAuthUI(null);
+  }
+};
+
+window.saveToFirebase = async function(history) {
+  if (!currentUser || !db) return;
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid, 'data', 'history'), {
+      entries: history,
+      updatedAt: new Date().toISOString()
+    });
+  } catch(e) { console.error('Firebase save error:', e); }
+};
+
+async function syncFromFirebase() {
+  if (!currentUser || !db) return;
+  try {
+    const snap = await getDoc(doc(db, 'users', currentUser.uid, 'data', 'history'));
+    if (snap.exists()) {
+      const data = snap.data();
+      const firebaseHistory = data.entries || [];
+      if (firebaseHistory.length > 0) {
+        // Merge with local
+        const local = loadHistory();
+        const localIds = new Set(local.map(e => e.id));
+        const merged = [...local];
+        let added = 0;
+        firebaseHistory.forEach(e => {
+          if (!localIds.has(e.id)) { merged.push(e); added++; }
+        });
+        merged.sort((a,b) => new Date(b.savedAt) - new Date(a.savedAt));
+        saveHistory(merged);
+        renderHistory();
+        if (added > 0) showToast(`☁️ Sincronizzati ${added} pronostici dal cloud`, 'success');
+      }
+    }
+  } catch(e) { console.error('Firebase sync error:', e); }
+}
+
+function updateAuthUI(user) {
+  const actions = document.getElementById('authActions');
+  const desc = document.getElementById('authDesc');
+  const badge = document.getElementById('syncBadge');
+  if (!actions) return;
+  if (user) {
+    actions.innerHTML = `
+      <div class="auth-user">
+        <img class="auth-avatar" src="${user.photoURL || ''}" onerror="this.style.display='none'"/>
+        <span class="auth-name">${user.displayName || user.email}</span>
+        <button class="btn-logout" onclick="logoutGoogle()">Esci</button>
+      </div>`;
+    desc.textContent = 'Storico sincronizzato automaticamente su tutti i dispositivi.';
+    badge.style.display = 'inline-block';
+  } else {
+    actions.innerHTML = `<button class="btn-google" onclick="loginGoogle()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Accedi con Google</button>`;
+    desc.textContent = 'Accedi con Google per sincronizzare lo storico su tutti i dispositivi.';
+    badge.style.display = 'none';
+  }
+}
+
+// Override saveHistory to also sync to Firebase
+const _origSaveHistory = window._origSaveHistory;
+window.firebaseSaveHistory = function(h) {
+  if (currentUser) window.saveToFirebase(h);
+};
+</script>
+
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let selectedSport = 'Calcio';
@@ -1079,6 +1269,8 @@ function loadHistory() {
 }
 function saveHistory(h) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(h));
+  // Sync to Firebase if logged in
+  if (window.firebaseSaveHistory) window.firebaseSaveHistory(h);
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
