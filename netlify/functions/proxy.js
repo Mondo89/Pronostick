@@ -1,4 +1,17 @@
+// Netlify background function timeout: 26 seconds max for regular functions
 exports.handler = async function(event) {
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: ''
+    };
+  }
+
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -6,6 +19,14 @@ exports.handler = async function(event) {
   try {
     const body = JSON.parse(event.body);
     const apiKey = event.headers['x-api-key'] || '';
+
+    if (!apiKey) {
+      return {
+        statusCode: 401,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: { message: 'API key mancante' } })
+      };
+    }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -23,13 +44,15 @@ exports.handler = async function(event) {
       statusCode: response.status,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, x-api-key'
       },
       body: JSON.stringify(data)
     };
   } catch (err) {
     return {
       statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ error: { message: err.message } })
     };
   }
