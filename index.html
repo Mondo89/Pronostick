@@ -1924,6 +1924,8 @@ function saveCurrentPronostico() {
     lezioni_applicate: r.lezioni_applicate||0,
     lezioni_note: r.lezioni_note||null,
     importo_giocato: getImportoGiocata(),
+    quota_reale: null,
+    bookmaker: '',
     status: 'attesa',
     ricalcoli: []
   };
@@ -2037,15 +2039,24 @@ function deleteEntry(id) {
   else card.appendChild(bar);
 }
 
-function salvaImporto(input) {
+function salvaGiocata(input) {
   const id = input.dataset.id;
-  const val = parseFloat(input.value) || 0;
+  const field = input.dataset.field;
+  const val = field === 'bookmaker' ? input.value.trim() : (parseFloat(input.value) || 0);
   const history = loadHistory();
   const idx = history.findIndex(e => e.id === id);
   if (idx >= 0) {
-    history[idx].importo_giocato = val;
+    history[idx][field] = val;
     saveHistory(history);
-    showToast('💰 Importo €' + val + ' salvato', 'success');
+    // Update vincita display if both importo and quota_reale are set
+    const e = history[idx];
+    if (e.importo_giocato && e.quota_reale) {
+      const vincita = (parseFloat(e.importo_giocato) * parseFloat(e.quota_reale)).toFixed(2);
+      showToast('💰 Vincita potenziale: €' + vincita, 'success');
+    } else {
+      showToast('✅ Salvato', 'success');
+    }
+    renderHistory();
   }
 }
 
@@ -2137,7 +2148,10 @@ function renderStats() {
     const imp = parseFloat(e.importo_giocato) || 0;
     if (!imp) return;
     totalInvestito += imp;
-    if (e.status === 'vinto') totalVinto += imp * (parseFloat(e.quota) || 1);
+    if (e.status === 'vinto') {
+      const q = parseFloat(e.quota_reale) || parseFloat(e.quota) || 1;
+      totalVinto += imp * q;
+    }
   });
   const roi = totalInvestito > 0 ? ((totalVinto - totalInvestito) / totalInvestito * 100).toFixed(1) : null;
   const profittoReale = (totalVinto - totalInvestito).toFixed(2);
@@ -2464,9 +2478,21 @@ function renderHistory() {
       + verificaHtml
       + diffHtml
       + '<div class="hcard-actions">'
-      + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">'
-      + '<label style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">💰 Importo €</label>'
-      + '<input type="number" min="0" step="1" value="' + (e.importo_giocato||'') + '" placeholder="0" data-id="' + e.id + '" onchange="salvaImporto(this)" style="width:70px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-family:\'DM Mono\',monospace;font-size:0.82rem;outline:none;"/>'
+      + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:8px;width:100%;">'
+      + '<span style="font-size:0.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);width:100%;margin-bottom:2px;">📝 Dati Giocata</span>'
+      + '<div style="display:flex;align-items:center;gap:4px;">'
+      + '<label style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">💰€</label>'
+      + '<input type="number" min="0" step="1" value="' + (e.importo_giocato||'') + '" placeholder="Importo" data-id="' + e.id + '" data-field="importo" onchange="salvaGiocata(this)" style="width:65px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-family:\'DM Mono\',monospace;font-size:0.82rem;outline:none;" title="Importo giocato"/>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:4px;">'
+      + '<label style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">📊 Quota</label>'
+      + '<input type="number" min="1" step="0.01" value="' + (e.quota_reale||'') + '" placeholder="es. 1.85" data-id="' + e.id + '" data-field="quota_reale" onchange="salvaGiocata(this)" style="width:72px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-family:\'DM Mono\',monospace;font-size:0.82rem;outline:none;" title="Quota reale bookmaker"/>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:4px;">'
+      + '<label style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">🏦</label>'
+      + '<input type="text" value="' + (e.bookmaker||'') + '" placeholder="Bookmaker" data-id="' + e.id + '" data-field="bookmaker" onchange="salvaGiocata(this)" style="width:88px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-family:\'DM Sans\',sans-serif;font-size:0.78rem;outline:none;" title="Bookmaker usato"/>'
+      + '</div>'
+      + (e.importo_giocato && e.quota_reale ? '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;color:var(--accent);letter-spacing:1px;" title="Vincita potenziale">→ €' + (parseFloat(e.importo_giocato) * parseFloat(e.quota_reale)).toFixed(2) + '</div>' : '')
       + '</div>'
       + '<button class="btn-verifica" id="verificaBtn_' + e.id + '" data-id="' + e.id + '" onclick="verificaRisultato(this.dataset.id)">' + (e.verifica ? '🔍 RIVERIFICA' : '🔍 VERIFICA RISULTATO') + '</button>'
       + '<button class="btn-ricalcolo" id="ricalcBtn_' + e.id + '" data-id="' + e.id + '" onclick="ricalcola(this.dataset.id)">🔄 RICALCOLA</button>'
