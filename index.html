@@ -628,7 +628,95 @@ textarea{resize:vertical;min-height:80px;}
   .diff-grid{grid-template-columns:1fr;}
 }
 
-/* ===== CALCOLATORE GIOCATA ===== */
+/* ===== MERCATI CONSIGLIATI ===== */
+.mercati-cons-section { margin-bottom: 16px; }
+.mercati-cons-title {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.mercati-cons-grid { display: flex; flex-direction: column; gap: 8px; }
+.cons-card {
+  background: var(--surface2); border-radius: 8px; padding: 12px 14px;
+  border-left: 3px solid var(--border); display: flex; align-items: flex-start;
+  gap: 12px; transition: border-color 0.2s;
+}
+.cons-card.alta { border-left-color: var(--accent); }
+.cons-card.media { border-left-color: var(--gold); }
+.cons-card.bassa { border-left-color: var(--muted); }
+.cons-badge {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 4px;
+  flex-shrink: 0; margin-top: 2px;
+}
+.cons-badge.alta { background: rgba(0,229,160,0.12); color: var(--accent); }
+.cons-badge.media { background: rgba(255,215,0,0.12); color: var(--gold); }
+.cons-badge.bassa { background: rgba(107,117,145,0.15); color: var(--muted); }
+.cons-body { flex: 1; }
+.cons-mercato { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 1px; color: var(--text); margin-bottom: 3px; }
+.cons-motivo { font-size: 0.78rem; color: #c5cad8; line-height: 1.5; }
+.cons-quota { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+.cons-activate-btn {
+  background: rgba(0,229,160,0.08); color: var(--accent);
+  border: 1px solid rgba(0,229,160,0.2); border-radius: 6px;
+  padding: 5px 10px; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+}
+.cons-activate-btn:hover { background: rgba(0,229,160,0.15); }
+
+/* ===== GUIDA ===== */
+.guida-section { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); padding-bottom: 48px; display: none; }
+.guida-section.visible { display: block; }
+.guida-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+.guida-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; }
+
+.guida-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+.guida-tab {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); padding: 7px 14px; border-radius: 6px;
+  cursor: pointer; font-size: 0.8rem; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+}
+.guida-tab:hover { border-color: var(--accent3); color: var(--text); }
+.guida-tab.active { background: rgba(77,166,255,0.1); border-color: var(--accent3); color: var(--accent3); }
+
+.guida-content { display: none; }
+.guida-content.active { display: block; }
+
+.guida-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px; margin-bottom: 14px;
+}
+.guida-card-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 1.5px;
+  color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.guida-card-text { font-size: 0.85rem; line-height: 1.75; color: #c5cad8; }
+.guida-card-text strong { color: var(--text); }
+.guida-card-text .highlight {
+  background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.2);
+  border-radius: 6px; padding: 10px 14px; margin: 10px 0; display: block;
+  font-style: italic;
+}
+.guida-mercato-row {
+  display: flex; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--border); align-items: flex-start;
+}
+.guida-mercato-row:last-child { border-bottom: none; }
+.guida-mercato-icon { font-size: 1.4rem; flex-shrink: 0; width: 32px; text-align: center; }
+.guida-mercato-body { flex: 1; }
+.guida-mercato-name { font-weight: 600; color: var(--text); font-size: 0.88rem; margin-bottom: 4px; }
+.guida-mercato-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+.guida-mercato-when { font-size: 0.75rem; color: var(--accent); margin-top: 4px; }
+
+.faq-item { padding: 14px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+.faq-item:last-child { border-bottom: none; }
+.faq-q { font-weight: 600; color: var(--text); font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.faq-arrow { color: var(--muted); font-size: 0.8rem; transition: transform 0.2s; flex-shrink: 0; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+.faq-a { font-size: 0.82rem; color: #c5cad8; line-height: 1.7; margin-top: 10px; display: none; }
+.faq-item.open .faq-a { display: block; }
 .calc-card {
   background: linear-gradient(135deg,rgba(255,215,0,0.06),rgba(0,229,160,0.04));
   border: 1px solid rgba(255,215,0,0.25);
@@ -822,7 +910,10 @@ textarea{resize:vertical;min-height:80px;}
     <span class="logo-text">PRONOSTICK</span>
     <span class="logo-badge">Beta</span>
   </div>
-  <p class="tagline">Analisi sportiva potenziata dall'intelligenza artificiale</p>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+    <p class="tagline">Analisi sportiva potenziata dall'intelligenza artificiale</p>
+    <button onclick="showGuida()" style="background:rgba(77,166,255,0.1);border:1px solid rgba(77,166,255,0.3);color:var(--accent3);border-radius:6px;padding:6px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0;">❓ Guida</button>
+  </div>
 </header>
 
 <!-- API KEY SETUP -->
@@ -1106,6 +1197,206 @@ textarea{resize:vertical;min-height:80px;}
 
 </div>
 
+<!-- GUIDA -->
+<div class="guida-section" id="guidaSection">
+  <div class="guida-header">
+    <span class="guida-title">❓ Come Funziona</span>
+    <button class="btn-back-storico" onclick="hideGuida()">← Torna all'app</button>
+  </div>
+
+  <div class="guida-tabs">
+    <button class="guida-tab active" onclick="switchGuida('intro',this)">🚀 Inizia qui</button>
+    <button class="guida-tab" onclick="switchGuida('mercati',this)">📊 I Mercati</button>
+    <button class="guida-tab" onclick="switchGuida('leggi',this)">📖 Leggi i risultati</button>
+    <button class="guida-tab" onclick="switchGuida('strategia',this)">🎯 Strategia</button>
+    <button class="guida-tab" onclick="switchGuida('faq',this)">❓ FAQ</button>
+  </div>
+
+  <!-- INTRO -->
+  <div class="guida-content active" id="guida-intro">
+    <div class="guida-card">
+      <div class="guida-card-title">🚀 Cos'è PRONOSTICK?</div>
+      <div class="guida-card-text">
+        PRONOSTICK è un analizzatore sportivo basato sull'intelligenza artificiale. <strong>Non è un generatore di soldi</strong> — è uno strumento che ti aiuta a prendere decisioni più informate sulle scommesse sportive.<br><br>
+        Prima di ogni pronostico, l'AI cerca online le ultime notizie sulla partita (infortuni, forma recente, quote reali dei bookmaker) e poi genera un'analisi completa.
+        <span class="highlight">💡 Più contesto inserisci nel campo "Contesto aggiuntivo", più il pronostico sarà preciso.</span>
+      </div>
+    </div>
+    <div class="guida-card">
+      <div class="guida-card-title">⚡ Come si usa in 4 passi</div>
+      <div class="guida-card-text">
+        <strong>1. Inserisci la partita</strong> — squadre, competizione, data. Aggiungi contesto se sai qualcosa (es. "Lautaro infortunato").<br><br>
+        <strong>2. Scegli i mercati</strong> — seleziona su cosa vuoi scommettere. L'AI ti suggerirà anche quelli più adatti dopo l'analisi.<br><br>
+        <strong>3. Analizza</strong> — premi il bottone verde. L'AI cerca dati, calcola probabilità e genera il pronostico completo con la sezione "Come Giocarla".<br><br>
+        <strong>4. Salva e verifica</strong> — salva il pronostico nello storico, inserisci l'importo che hai giocato, e dopo la partita premi "Verifica Risultato" per vedere se hai vinto.
+      </div>
+    </div>
+    <div class="guida-card">
+      <div class="guida-card-title">🌐 Web Search ON/OFF — quando usarla</div>
+      <div class="guida-card-text">
+        <strong>Web Search ON</strong> — l'AI cerca dati aggiornati su infortuni, form, quote. Costo ~$0.14 per analisi. Usala per partite importanti o quando vuoi i dati più freschi.<br><br>
+        <strong>Web Search OFF</strong> — l'AI usa solo la sua conoscenza interna. Costo ~$0.04 per analisi. Va bene per partite di grandi club molto conosciuti (Inter, Juventus, Real Madrid).
+        <span class="highlight">💡 Risparmia usando Web Search OFF per i test e ON solo per le partite su cui vuoi davvero scommettere.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MERCATI -->
+  <div class="guida-content" id="guida-mercati">
+    <div class="guida-card">
+      <div class="guida-card-title">📊 Cosa sono i mercati?</div>
+      <div class="guida-card-text">
+        I mercati sono i diversi tipi di scommessa disponibili su una partita. Invece di scommettere solo su chi vince, puoi scommettere su quanti gol vengono segnati, se entrambe le squadre segnano, ecc. <strong>L'AI ti suggerisce automaticamente i mercati più adatti dopo l'analisi.</strong>
+      </div>
+    </div>
+    <div class="guida-card">
+      <div class="guida-card-title">📋 Tutti i mercati spiegati</div>
+      <div class="guida-card-text">
+        <div class="guida-mercato-row">
+          <div class="guida-mercato-icon">⚽</div>
+          <div class="guida-mercato-body">
+            <div class="guida-mercato-name">1X2 — Risultato finale</div>
+            <div class="guida-mercato-desc">Scommetti su chi vince: 1 = squadra di casa, X = pareggio, 2 = squadra ospite. Il mercato base, sempre attivo.</div>
+            <div class="guida-mercato-when">✅ Usalo sempre come base</div>
+          </div>
+        </div>
+        <div class="guida-mercato-row">
+          <div class="guida-mercato-icon">📈</div>
+          <div class="guida-mercato-body">
+            <div class="guida-mercato-name">Over/Under — Numero di gol</div>
+            <div class="guida-mercato-desc">Scommetti se nella partita vengono segnati più o meno gol di una soglia (1.5, 2.5, 3.5). Over 2.5 significa che si scommette su almeno 3 gol totali.</div>
+            <div class="guida-mercato-when">✅ Quando una squadra segna molto o il portiere è scarso</div>
+          </div>
+        </div>
+        <div class="guida-mercato-row">
+          <div class="guida-mercato-icon">🎯</div>
+          <div class="guida-mercato-body">
+            <div class="guida-mercato-name">Goal/No Goal — Entrambe segnano?</div>
+            <div class="guida-mercato-desc">Goal = entrambe le squadre segnano almeno 1 gol. No Goal = almeno una squadra non segna. Indipendente da chi vince.</div>
+            <div class="guida-mercato-when">✅ Nei derby equilibrati dove entrambe attaccano</div>
+          </div>
+        </div>
+        <div class="guida-mercato-row">
+          <div class="guida-mercato-icon">🔢</div>
+          <div class="guida-mercato-body">
+            <div class="guida-mercato-name">Risultato Esatto</div>
+            <div class="guida-mercato-desc">Indovini esattamente il punteggio finale (es. 2-1). Quota altissima, rischio altissimo. L'AI suggerisce i risultati più probabili.</div>
+            <div class="guida-mercato-when">⚠️ Solo piccole cifre, mai più del 2% del budget</div>
+          </div>
+        </div>
+        <div class="guida-mercato-row">
+          <div class="guida-mercato-icon">⚖️</div>
+          <div class="guida-mercato-body">
+            <div class="guida-mercato-name">Handicap Asiatico</div>
+            <div class="guida-mercato-desc">La squadra favorita parte in svantaggio virtuale. Es. Inter -1 significa che vinci solo se l'Inter vince con 2+ gol di scarto. Quota più alta della semplice vittoria.</div>
+            <div class="guida-mercato-when">✅ Quando la quota 1 è troppo bassa (sotto 1.30)</div>
+          </div>
+        </div>
+        <div class="guida-mercato-row">
+          <div class="guida-mercato-icon">🔀</div>
+          <div class="guida-mercato-body">
+            <div class="guida-mercato-name">Doppia Chance</div>
+            <div class="guida-mercato-desc">Copri 2 risultati su 3: 1X (casa o pareggio), X2 (pareggio o ospite), 12 (vince una delle due). Quota bassa ma alta probabilità.</div>
+            <div class="guida-mercato-when">✅ Nelle partite incerte dove vuoi più sicurezza</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGGI I RISULTATI -->
+  <div class="guida-content" id="guida-leggi">
+    <div class="guida-card">
+      <div class="guida-card-title">📊 Confidenza — cosa significa</div>
+      <div class="guida-card-text">
+        La confidenza (es. 82%) è quanto l'AI è sicura del suo pronostico. <strong>Non è la probabilità di vincere</strong> — è quanto i dati disponibili supportano il pronostico.<br><br>
+        <strong>Sopra 80%</strong> — dati molto chiari, partita abbastanza prevedibile<br>
+        <strong>60-80%</strong> — analisi buona ma con qualche incertezza<br>
+        <strong>Sotto 60%</strong> — partita incerta, considera se vale la pena
+        <span class="highlight">💡 La confidenza reale dell'AI puoi vederla nelle Statistiche — confronta quella stimata con i risultati reali.</span>
+      </div>
+    </div>
+    <div class="guida-card">
+      <div class="guida-card-title">⚡ Value Bet — cos'è e perché conta</div>
+      <div class="guida-card-text">
+        Un Value Bet è quando la quota del bookmaker vale <strong>più</strong> di quanto la probabilità reale suggerirebbe.<br><br>
+        <strong>Esempio:</strong> L'AI stima 60% di probabilità per una vittoria. Il bookmaker quota 2.00 (che implica 50%). Il calcolo: 0.60 × 2.00 = 1.20 → maggiore di 1 = VALUE BET ✅<br><br>
+        Nel lungo periodo, scommettere solo sui Value Bet è l'unica strategia matematicamente profittevole.
+        <span class="highlight">💡 Quando vedi il badge ⚡ VALUE BET dorato, quella scommessa vale matematicamente la pena.</span>
+      </div>
+    </div>
+    <div class="guida-card">
+      <div class="guida-card-title">🎰 Come Giocarla — come usarla</div>
+      <div class="guida-card-text">
+        La sezione "Come Giocarla" è la guida pratica passo per passo per mettere la scommessa. L'AI ti dice esattamente cosa cercare sul bookmaker, quale quota minima accettare e quanto mettere.<br><br>
+        <strong>Quota da cercare:</strong> non accettare quote inferiori a quella indicata — se il bookmaker paga meno, il value non c'è più.<br><br>
+        <strong>Importo consigliato:</strong> mai superare il 5% del tuo budget totale per le scommesse su una singola giocata.
+      </div>
+    </div>
+  </div>
+
+  <!-- STRATEGIA -->
+  <div class="guida-content" id="guida-strategia">
+    <div class="guida-card">
+      <div class="guida-card-title">🎯 Come usare PRONOSTICK in modo intelligente</div>
+      <div class="guida-card-text">
+        <strong>1. Stabilisci un budget fisso</strong> — decidi quanto puoi permetterti di perdere in un mese. Es. €50. Quella è la tua banca.<br><br>
+        <strong>2. Gioca sempre la stessa percentuale</strong> — mai più del 5% per giocata. Con €50 di banca, massimo €2.50 per scommessa.<br><br>
+        <strong>3. Punta solo sui Value Bet</strong> — ignora i pronostici senza il badge ⚡. Nel lungo periodo solo quelli sono profittevoli.<br><br>
+        <strong>4. Verifica sempre i risultati</strong> — usa "Verifica Risultato" dopo ogni partita. L'AI impara dai suoi errori e migliora i prossimi pronostici.<br><br>
+        <strong>5. Guarda le Statistiche ogni settimana</strong> — il grafico ROI ti dice se stai guadagnando o perdendo realmente.
+        <span class="highlight">💡 L'obiettivo non è vincere ogni scommessa — è avere un ROI positivo nel lungo periodo.</span>
+      </div>
+    </div>
+    <div class="guida-card">
+      <div class="guida-card-title">🧠 Come funziona la Memoria AI</div>
+      <div class="guida-card-text">
+        Ogni volta che verifichi il risultato di una partita, l'AI genera una "nota di apprendimento" — capisce cosa ha sbagliato o indovinato e perché.<br><br>
+        La volta successiva che analizzi una partita simile, l'AI legge queste note e corregge i suoi bias. Se ha sbagliato 3 volte di fila l'Over 2.5 domenica sera, la prossima volta sarà più cauta.<br><br>
+        Più verifiche completi, più il sistema migliora per te specificamente.
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="guida-content" id="guida-faq">
+    <div class="guida-card">
+      <div class="guida-card-title">❓ Domande Frequenti</div>
+      <div class="guida-card-text">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Il pronostico è garantito? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">No. PRONOSTICK è uno strumento di analisi, non una macchina per fare soldi. L'AI analizza i dati disponibili e calcola probabilità, ma l'esito delle partite non è mai certo. Gioca sempre responsabilmente.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Perché il ricalcolo dà risultati diversi? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Il ricalcolo rifà una ricerca web aggiornata. Se sono passati giorni dalla prima analisi, possono essere emersi nuovi infortuni, cambi di formazione o notizie che cambiano il quadro. È normale e utile — ti mostra se la situazione è cambiata.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Quanto costa ogni analisi? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Con Web Search ON circa $0.10-0.15 per analisi completa. Con Web Search OFF circa $0.03-0.05. Con $5 di credito Anthropic fai 30-50 analisi complete con web search, o 100+ senza.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Lo storico è sicuro? Non lo vede nessuno? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Lo storico è salvato sul tuo account Firebase (Google) personale. Solo tu hai accesso ai tuoi dati. La API key di Anthropic è salvata solo nel browser locale e non viene mai caricata online.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Quale modello AI devo usare? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Haiku 4.5 è più veloce ed economico. Sonnet 4.5 è più preciso nell'analisi ma costa 3 volte di più. Consiglio: usa Haiku per testare, Sonnet per le partite importanti su cui vuoi realmente scommettere.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Come funziona il grafico ROI nelle statistiche? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Il grafico si costruisce automaticamente dai pronostici che hai salvato con un importo e verificato. Ogni partita vinta aggiunge la vincita, ogni partita persa sottrae l'importo giocato. Più dati hai, più è accurato.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Posso usare PRONOSTICK su più dispositivi? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Sì — accedi con lo stesso account Google su qualsiasi dispositivo e trovi lo storico sincronizzato. La API key va inserita una volta per dispositivo perché per sicurezza non viene mai salvata online.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <!-- Status picker (floating) -->
 <div class="status-picker" id="statusPicker">
   <button class="status-option" style="color:var(--gold)" onclick="setStatus('attesa')">⏳ In Attesa</button>
@@ -1277,7 +1568,7 @@ window.firebaseSaveHistory = function(h) {
 </script>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────────────────────────
+// --- STATE -------------------------------------------------------------------
 let selectedSport = 'Calcio';
 let attachedFiles = [];
 let currentResult = null;
@@ -1285,7 +1576,7 @@ let activeStatusId = null;
 let activeFilter = 'attesa';
 let ouSoglia = '2.5';
 
-// ─── COST PANEL ───────────────────────────────────────────────────────────────
+// --- COST PANEL ---------------------------------------------------------------
 function isWebSearchEnabled() {
   const toggle = document.getElementById('webSearchToggle');
   return toggle ? toggle.checked : true;
@@ -1297,11 +1588,11 @@ function updateCostPanel() {
   const webCost = 0.10;
   const total = webOn ? tokenCost + webCost : tokenCost;
 
-  document.getElementById('costToken').textContent = `~$${tokenCost.toFixed(2)}`;
+  document.getElementById('costToken').textContent = '~$' + tokenCost.toFixed(2);
   const webWrap = document.getElementById('costWebWrap');
   if (webWrap) webWrap.style.opacity = webOn ? '1' : '0.35';
-  document.getElementById('costWeb').textContent = webOn ? `~$${webCost.toFixed(2)}` : '$0.00';
-  document.getElementById('costTotal').textContent = `≈ $${total.toFixed(2)}`;
+  document.getElementById('costWeb').textContent = webOn ? '~$' + webCost.toFixed(2) : '$0.00';
+  document.getElementById('costTotal').textContent = '≈ $' + total.toFixed(2);
   const status = document.getElementById('toggleStatus');
   if (status) {
     status.textContent = webOn ? 'ON' : 'OFF';
@@ -1329,7 +1620,7 @@ function getSelectedMercati() {
   const selected = [];
   document.querySelectorAll('.mercato-chip.selected').forEach(chip => {
     const key = chip.querySelector('input').dataset.mercato;
-    if (key === 'ou') selected.push(`Over/Under ${ouSoglia}`);
+    if (key === 'ou') selected.push('Over/Under ' + ouSoglia);
     else if (key === '1x2') selected.push('1X2');
     else if (key === 'gg') selected.push('Goal/No Goal');
     else if (key === 'esatto') selected.push('Risultato Esatto');
@@ -1339,7 +1630,7 @@ function getSelectedMercati() {
   return selected;
 }
 
-// ─── API KEY ─────────────────────────────────────────────────────────────────
+// --- API KEY -----------------------------------------------------------------
 const APIKEY_KEY = 'pronostick_apikey';
 
 function getApiKey() {
@@ -1378,7 +1669,7 @@ function updateApiKeyUI() {
   } else {
     card.classList.remove('configured');
     status.className = 'apikey-status missing';
-    status.textContent = '⚠️ API key non configurata — l\'app non funzionerà senza';
+    status.textContent = '⚠️ API key non configurata — l'app non funzionerà senza';
     input.value = '';
   }
 }
@@ -1413,7 +1704,7 @@ function saveHistory(h) {
   if (window.firebaseSaveHistory) window.firebaseSaveHistory(h);
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// --- INIT ---------------------------------------------------------------------
 document.querySelectorAll('.sport-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
@@ -1441,12 +1732,12 @@ document.addEventListener('click', e => {
 
 renderHistory();
 
-// ─── FILE HANDLING ────────────────────────────────────────────────────────────
+// --- FILE HANDLING ------------------------------------------------------------
 function handleFiles(files) {
   Array.from(files).forEach(file => {
     if (attachedFiles.find(f => f.name === file.name)) return;
     const ext = file.name.split('.').pop().toLowerCase();
-    if (!['csv','txt','json','tsv'].includes(ext)) { showError(`⚠️ Formato non supportato: .${ext}`); return; }
+    if (!['csv','txt','json','tsv'].includes(ext)) { showError('⚠️ Formato non supportato: .' + ext); return; }
     const reader = new FileReader();
     reader.onload = e => { attachedFiles.push({name:file.name,size:file.size,content:e.target.result}); renderChips(); hideError(); };
     reader.readAsText(file,'UTF-8');
@@ -1454,25 +1745,19 @@ function handleFiles(files) {
 }
 function removeFile(name) { attachedFiles = attachedFiles.filter(f=>f.name!==name); renderChips(); }
 function renderChips() {
-  document.getElementById('fileChips').innerHTML = attachedFiles.map(f=>`
-    <div class="chip">
-      <span class="chip-name">✅ ${f.name} <span class="chip-size">${(f.size/1024).toFixed(1)} KB</span></span>
-      <button class="chip-del" onclick="removeFile(${JSON.stringify(f.name)})">✕</button>
-    </div>`).join('');
+  document.getElementById('fileChips').innerHTML = attachedFiles.map(f=>'\n    <div class="chip">\n      <span class="chip-name">✅ ' + f.name + ' <span class="chip-size">' + (f.size/1024).toFixed(1) + ' KB</span></span>\n      <button class="chip-del" onclick="removeFile(' + JSON.stringify(f.name) + ')">✕</button>\n    </div>').join('');
 }
 function buildFileContext() {
   if (!attachedFiles.length) return '';
   let s = '\n\n=== DATI DA FILE ALLEGATI ===\n';
-  attachedFiles.forEach(f => { s+=`\n--- ${f.name} ---\n`; s+=f.content.length>3000?f.content.slice(0,3000)+'\n...[troncato]':f.content; s+='\n'; });
+  attachedFiles.forEach(f => { s+='\n--- ' + f.name + ' ---\n'; s+=f.content.length>3000?f.content.slice(0,3000)+'\n...[troncato]':f.content; s+='\n'; });
   return s;
 }
 
-// ─── WEB SEARCH ──────────────────────────────────────────────────────────────
+// --- WEB SEARCH --------------------------------------------------------------
 async function fetchWebData(team1, team2, competition, sport, matchDate) {
   try {
-    const userMsg = `Cerca informazioni aggiornate su questa partita di ${sport}: ${team1} vs ${team2}${competition?' - '+competition:''}${matchDate?' del '+matchDate:''}.
-Cerca: forma recente ultime 5 partite, infortuni/squalifiche, quote bookmaker 1X2 e Over/Under, notizie rilevanti.
-Riassumi in italiano in modo strutturato.`;
+    const userMsg = 'Cerca informazioni aggiornate su questa partita di ' + sport + ': ' + team1 + ' vs ' + team2 + competition?' - '+competition:'' + matchDate?' del '+matchDate:'' + '.\nCerca: forma recente ultime 5 partite, infortuni/squalifiche, quote bookmaker 1X2 e Over/Under, notizie rilevanti.\nRiassumi in italiano in modo strutturato.';
     const tools = [{type:"web_search_20250305",name:"web_search"}];
     let messages = [{role:"user",content:userMsg}];
     let finalText = '';
@@ -1487,14 +1772,14 @@ Riassumi in italiano in modo strutturato.`;
       for (const block of assistantContent) { if (block.type==='text'&&block.text) finalText+=block.text+'\n'; }
       const toolUseBlocks = assistantContent.filter(b=>b.type==='tool_use');
       if (!toolUseBlocks.length) break;
-      const toolResults = toolUseBlocks.map(tu=>({type:"tool_result",tool_use_id:tu.id,content:`Ricerca eseguita per: "${tu.input?.query||''}". Procedi con il riassunto.`}));
+      const toolResults = toolUseBlocks.map(tu=>({type:"tool_result",tool_use_id:tu.id,content:'Ricerca eseguita per: "' + tu.input?.query||'' + '". Procedi con il riassunto.'}));
       messages.push({role:"user",content:toolResults});
     }
     return {text:finalText.trim()};
   } catch(e) { return {text:''}; }
 }
 
-// ─── MEMORIA ERRORI ──────────────────────────────────────────────────────────
+// --- MEMORIA ERRORI ----------------------------------------------------------
 function buildMemory(sport, competition) {
   const history = loadHistory();
 
@@ -1527,94 +1812,42 @@ function buildMemory(sport, competition) {
     const date = new Date(e.matchDate).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
     const esito = v.esito_scommessa || '?';
     const accuracy = v.accuratezza || '?';
-    text += `[${i + 1}] ${e.team1} vs ${e.team2} (${e.sport}${e.competition ? ' · ' + e.competition : ''}) — ${date}\n`;
-    text += `    Pronostico: ${e.pronostico} → Esito: ${esito} (${accuracy})\n`;
-    text += `    ✅ Indovinato: ${v.cosa_ha_indovinato || '—'}\n`;
-    text += `    ❌ Sbagliato: ${v.cosa_ha_sbagliato || '—'}\n`;
-    text += `    🧠 Lezione: ${v.nota_apprendimento}\n\n`;
+    text += '[' + i + 1 + '] ' + e.team1 + ' vs ' + e.team2 + ' (' + e.sport + e.competition ? ' · ' + e.competition : '' + ') — ' + date + '\n';
+    text += '    Pronostico: ' + e.pronostico + ' → Esito: ' + esito + ' (' + accuracy + ')\n';
+    text += '    ✅ Indovinato: ' + v.cosa_ha_indovinato || '—' + '\n';
+    text += '    ❌ Sbagliato: ' + v.cosa_ha_sbagliato || '—' + '\n';
+    text += '    🧠 Lezione: ' + v.nota_apprendimento + '\n\n';
   });
 
   return { text, count: top.length };
 }
 
-// ─── BUILD PROMPT ─────────────────────────────────────────────────────────────
+// --- BUILD PROMPT -------------------------------------------------------------
 function buildPrompt(team1, team2, competition, matchDate, context, webText, mercati, memory) {
-  const webSection = webText ? `\n\n=== DATI RICERCATI IN TEMPO REALE ===\n${webText}` : '';
+  const webSection = webText ? '\n\n=== DATI RICERCATI IN TEMPO REALE ===\n' + webText : '';
   const memorySection = (memory && memory.text) ? memory.text : '';
   const mercatiList = (mercati && mercati.length) ? mercati : ['1X2'];
-  const mercatiSection = `\nMERCATI DA ANALIZZARE: ${mercatiList.join(', ')}`;
+  const mercatiSection = '\nMERCATI DA ANALIZZARE: ' + mercatiList.join(', ');
 
   const mercatiSchema = mercatiList.map(m => {
     const key = m.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
-    return `    "mercato_${key}": { "consiglio":"es. Over 2.5", "probabilita":numero 0-100, "quota_stimata":"numero", "quota_bookmaker":"numero se trovata nel web search altrimenti null", "value_bet":true o false, "note":"breve motivazione" }`;
+    return '    "mercato_' + key + '": { "consiglio":"es. Over 2.5", "probabilita":numero 0-100, "quota_stimata":"numero", "quota_bookmaker":"numero se trovata nel web search altrimenti null", "value_bet":true o false, "note":"breve motivazione" }';
   }).join(',\n');
 
-  return `Sei un esperto analista di scommesse sportive con 20 anni di esperienza. Analizza questa partita usando TUTTI i dati disponibili.
-
-SPORT: ${selectedSport}
-PARTITA: ${team1} vs ${team2}
-${competition?'COMPETIZIONE: '+competition:''}
-${matchDate?'DATA: '+matchDate:''}
-${context?'CONTESTO: '+context:''}${mercatiSection}${buildFileContext()}${memorySection}${webSection}
-
-ISTRUZIONI VALUE BET:
-- Per ogni mercato, se hai trovato quote reali dei bookmaker nei dati web, confrontale con la probabilità stimata
-- Una scommessa è VALUE BET se: (probabilità_stimata / 100) × quota_bookmaker > 1.05
-- Esempio: se stimi 60% e bookmaker quota 2.00 → 0.60 × 2.00 = 1.20 → VALUE BET ✅
-- Se non hai quote reali, usa quota_stimata per il calcolo
-
-ISTRUZIONI COME_GIOCARLA:
-- Spiega in modo semplicissimo, come se parli a qualcuno che non ha mai scommesso
-- Indica: dove andare (bookmaker), cosa cercare, cosa cliccare, quanto mettere (max 5% budget)
-- Se ci sono più mercati con value, consiglia la combinata o quale scegliere
-- Usa un linguaggio diretto, concreto, zero gergo tecnico
-
-Rispondi SOLO con JSON valido, nessun testo prima o dopo:
-{
-  "pronostico_principale":"es. 1 o X o 2 o Over 2.5 o GG",
-  "descrizione_pronostico":"breve descrizione",
-  "quota_stimata":"numero es. 1.85",
-  "confidenza":numero 0-100,
-  "probabilita_1":numero,
-  "probabilita_x":numero,
-  "probabilita_2":numero,
-  "analisi_forma":"2-3 frasi",
-  "analisi_tattica":"2-3 frasi",
-  "fattori_chiave":"2-3 fattori",
-  "rischio":"BASSO o MEDIO o ALTO",
-  "risultato_esatto_ipotetico":"es. 2-1",
-  "consiglio_aggiuntivo":"alternativa o nota",
-  "dati_live_usati":true o false,
-  "lezioni_applicate": numero di lezioni delle verifiche precedenti che hai considerato (0 se nessuna),
-  "lezioni_note": "breve nota su come le lezioni passate hanno influenzato questo pronostico, oppure null",
-  "value_bet_principale":true o false,
-  "value_bet_score":"numero es. 1.24 oppure null se non calcolabile",
-  "mercati": {
-${mercatiSchema}
-  },
-  "come_giocarla": {
-    "passo1":"es. Apri Snai, Bet365, Sisal o qualsiasi bookmaker che usi",
-    "passo2":"es. Cerca la partita: Inter vs Cagliari di giovedì 17 aprile",
-    "passo3":"es. Seleziona: 1 - Vittoria Inter",
-    "passo4":"es. Se vuoi più guadagno aggiungi anche: Over 2.5 gol",
-    "quota_da_cercare":"es. cerca una quota di almeno 1.20 per il solo risultato",
-    "importo_consigliato":"es. Metti al massimo il 5% di quello che hai messo da parte per le scommesse. Se hai 100€, gioca massimo 5€",
-    "avvertenza":"es. Questa è una partita considerata sicura ma nessun pronostico è garantito",
-    "vale_la_pena":true o false
-  }
-}`;
+  return 'Sei un esperto analista di scommesse sportive con 20 anni di esperienza. Analizza questa partita usando TUTTI i dati disponibili.\n\nSPORT: ' + selectedSport + '\nPARTITA: ' + team1 + ' vs ' + team2 + (competition ? '\nCOMPETIZIONE: ' + competition : '') + (matchDate ? '\nDATA: ' + matchDate : '') + (context ? '\nCONTESTO: ' + context : '') + mercatiSection + buildFileContext() + memorySection + webSection + '\n\nISTRUZIONI VALUE BET:\n- Per ogni mercato, se hai trovato quote reali dei bookmaker nei dati web, confrontale con la probabilità stimata\n- Una scommessa è VALUE BET se: (probabilità_stimata / 100) × quota_bookmaker > 1.05\n- Esempio: se stimi 60% e bookmaker quota 2.00 → 0.60 × 2.00 = 1.20 → VALUE BET ✅\n- Se non hai quote reali, usa quota_stimata per il calcolo\n\nISTRUZIONI COME_GIOCARLA:\n- Spiega in modo semplicissimo, come se parli a qualcuno che non ha mai scommesso\n- Indica: dove andare (bookmaker), cosa cercare, cosa cliccare, quanto mettere (max 5% budget)\n- Usa un linguaggio diretto, concreto, zero gergo tecnico\n\nRispondi SOLO con JSON valido, nessun testo prima o dopo:\n{\n  "pronostico_principale":"es. 1 o X o 2 o Over 2.5 o GG",\n  "descrizione_pronostico":"breve descrizione",\n  "quota_stimata":"numero es. 1.85",\n  "confidenza":numero 0-100,\n  "probabilita_1":numero,\n  "probabilita_x":numero,\n  "probabilita_2":numero,\n  "analisi_forma":"2-3 frasi",\n  "analisi_tattica":"2-3 frasi",\n  "fattori_chiave":"2-3 fattori",\n  "rischio":"BASSO o MEDIO o ALTO",\n  "risultato_esatto_ipotetico":"es. 2-1",\n  "consiglio_aggiuntivo":"alternativa o nota",\n  "dati_live_usati":true o false,\n  "lezioni_applicate": 0,\n  "lezioni_note": null,\n  "value_bet_principale":true o false,\n  "value_bet_score":"numero es. 1.24 oppure null",\n  "mercati": {\n' + mercatiSchema + '\n  },\n  "come_giocarla": {\n    "passo1":"es. Apri Snai, Bet365 o qualsiasi bookmaker",\n    "passo2":"es. Cerca la partita",\n    "passo3":"es. Seleziona il pronostico consigliato",\n    "passo4":"es. Aggiungi eventuali mercati extra",\n    "quota_da_cercare":"es. cerca quota minima 1.20",\n    "importo_consigliato":"es. Max 5% del budget",\n    "avvertenza":"Nessun pronostico è garantito",\n    "vale_la_pena":true o false\n  },\n  "mercati_consigliati": [\n    {\n      "mercato": "es. Over 2.5",\n      "motivo": "motivazione specifica per questa partita",\n      "priorita": "ALTA o MEDIA o BASSA",\n      "quota_indicativa": "numero es. 1.52"\n    }\n  ]\n}';
 }
 
-// ─── CALL AI ──────────────────────────────────────────────────────────────────
+
 async function callAI(prompt, maxTokens=1500) {
-  const res = await fetch("/api/proxy",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:getModel(),max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})});
+  const res = await fetch("/api/proxy",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01"},body:JSON.stringify({model:getModel(),max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})});
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message||'Errore API');
   const raw = data.content.map(i=>i.text||'').join('');
-  return JSON.parse(raw.replace(/```json|```/g,'').trim());
+  const t = raw.trim();
+  const jsonStr = t.startsWith('{') ? t : t.substring(t.indexOf('{'));
+  return JSON.parse(jsonStr);
 }
 
-// ─── ANALYZE ─────────────────────────────────────────────────────────────────
 async function analyzeMatch() {
   const team1 = document.getElementById('team1').value.trim();
   const team2 = document.getElementById('team2').value.trim();
@@ -1653,14 +1886,13 @@ async function analyzeMatch() {
   } catch(err) {
     showLoading(false);
     const msg = err.message.includes('exceeded_limit') || err.message.includes('rate')
-      ? '⏳ Limite API raggiunto — hai fatto troppe richieste ravvicinate. Aspetta qualche minuto e riprova.'
+      ? '⏳ Limite API raggiunto — aspetta qualche minuto e riprova.'
       : '❌ Errore: ' + err.message;
     showError(msg);
   }
   document.getElementById('analyzeBtn').disabled = false;
 }
 
-// ─── SAVE ─────────────────────────────────────────────────────────────────────
 function saveCurrentPronostico() {
   if (!currentResult) return;
   const {r,team1,team2,competition,matchDate,sport,webText,mercati} = currentResult;
@@ -1695,29 +1927,22 @@ function saveCurrentPronostico() {
   };
   history.unshift(entry);
   saveHistory(history);
-
-  // Update save button
   const btn = document.getElementById('btnSave');
   if (btn) { btn.textContent='✅ SALVATO'; btn.classList.add('saved'); btn.disabled=true; }
-
   renderHistory();
 }
 
-// ─── RICALCOLO ───────────────────────────────────────────────────────────────
 async function ricalcola(id) {
   const history = loadHistory();
   const entry = history.find(e=>e.id===id);
   if (!entry) return;
-
   const btn = document.getElementById('ricalcBtn_'+id);
   if (btn) { btn.disabled=true; btn.textContent='🔄 Ricalcolo...'; }
   showLoading(true,'Ricalcolo in corso...');
   document.getElementById('step1').classList.add('show');
-
   const webData = await fetchWebData(entry.team1,entry.team2,entry.competition,entry.sport,entry.matchDate);
   document.getElementById('step2').classList.add('show');
   document.getElementById('step3').classList.add('show');
-
   try {
     const prevSport = selectedSport;
     selectedSport = entry.sport;
@@ -1729,8 +1954,6 @@ async function ricalcola(id) {
     document.getElementById('step4').classList.add('show');
     await wait(300);
     showLoading(false);
-
-    // Build full diff with all key fields
     const diff = {
       timestamp: new Date().toISOString(),
       pronostico_new: r.pronostico_principale,
@@ -1753,23 +1976,17 @@ async function ricalcola(id) {
     history[idx] = entry;
     saveHistory(history);
     renderHistory();
-
     setTimeout(() => {
       const panel = document.getElementById('diff_'+id);
       if (panel) { panel.classList.add('visible'); panel.scrollIntoView({behavior:'smooth',block:'nearest'}); }
     }, 100);
-
   } catch(err) {
     showLoading(false);
-    const msg = err.message.includes('exceeded_limit') || err.message.includes('rate')
-      ? '⏳ Limite API raggiunto — hai fatto troppe richieste ravvicinate. Aspetta qualche minuto e riprova.'
-      : '❌ Errore ricalcolo: ' + err.message;
-    showError(msg);
+    showError('❌ Errore ricalcolo: ' + err.message);
   }
   if (btn) { btn.disabled=false; btn.textContent='🔄 RICALCOLA'; }
 }
 
-// ─── STATUS ──────────────────────────────────────────────────────────────────
 function openStatusPicker(id, el) {
   activeStatusId = id;
   const picker = document.getElementById('statusPicker');
@@ -1788,26 +2005,31 @@ function setStatus(status) {
   renderHistory();
 }
 
-// ─── DELETE ──────────────────────────────────────────────────────────────────
 function deleteEntry(id) {
-  // Show inline confirm inside the card instead of browser confirm() which is blocked on mobile
   const existing = document.getElementById('confirm_' + id);
   if (existing) { existing.remove(); return; }
-
   const card = document.getElementById('hcard_' + id);
   if (!card) return;
-
   const bar = document.createElement('div');
   bar.id = 'confirm_' + id;
   bar.style.cssText = 'margin:0 20px 14px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.35);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;';
-  bar.innerHTML = `
-    <span style="font-size:0.85rem;color:var(--text)">🗑 Eliminare questo pronostico?</span>
-    <div style="display:flex;gap:8px;">
-      <button onclick="confirmDelete('${id}')" style="background:var(--danger);color:#fff;border:none;border-radius:6px;padding:7px 16px;font-weight:600;font-size:0.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">Sì, elimina</button>
-      <button onclick="document.getElementById('confirm_${id}').remove()" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:7px 14px;font-size:0.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">Annulla</button>
-    </div>`;
-
-  // Insert before hcard-actions
+  const btnSi = document.createElement('button');
+  btnSi.textContent = 'Sì, elimina';
+  btnSi.style.cssText = 'background:var(--danger);color:#fff;border:none;border-radius:6px;padding:7px 16px;font-weight:600;font-size:0.82rem;cursor:pointer;';
+  btnSi.onclick = () => confirmDelete(id);
+  const btnNo = document.createElement('button');
+  btnNo.textContent = 'Annulla';
+  btnNo.style.cssText = 'background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:7px 14px;font-size:0.82rem;cursor:pointer;';
+  btnNo.onclick = () => bar.remove();
+  const msg = document.createElement('span');
+  msg.textContent = '🗑 Eliminare questo pronostico?';
+  msg.style.cssText = 'font-size:0.85rem;color:var(--text)';
+  const btnWrap = document.createElement('div');
+  btnWrap.style.cssText = 'display:flex;gap:8px;';
+  btnWrap.appendChild(btnSi);
+  btnWrap.appendChild(btnNo);
+  bar.appendChild(msg);
+  bar.appendChild(btnWrap);
   const actions = card.querySelector('.hcard-actions');
   if (actions) card.insertBefore(bar, actions);
   else card.appendChild(bar);
@@ -1819,10 +2041,36 @@ function confirmDelete(id) {
   renderHistory();
 }
 
-// ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
-// ─── CALCOLATORE GIOCATA ─────────────────────────────────────────────────────
+function showGuida() {
+  document.getElementById('guidaSection').classList.add('visible');
+  document.getElementById('guidaSection').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function hideGuida() {
+  document.getElementById('guidaSection').classList.remove('visible');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function switchGuida(tab, btn) {
+  document.querySelectorAll('.guida-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.guida-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('guida-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleFaq(item) {
+  item.classList.toggle('open');
+}
+
+function buildMercatiConsigliati(mercatiCons) {
+  if (!mercatiCons || !mercatiCons.length) return '';
+  const cards = mercatiCons.map(function(m) {
+    const prio = (m.priorita || 'MEDIA').toLowerCase();
+    const quotaDiv = m.quota_indicativa ? '<div class="cons-quota">Quota indicativa: ' + m.quota_indicativa + '</div>' : '';
+    return '<div class="cons-card ' + prio + '"><span class="cons-badge ' + prio + '">' + (m.priorita || 'MEDIA') + '</span><div class="cons-body"><div class="cons-mercato">📊 ' + m.mercato + '</div><div class="cons-motivo">' + m.motivo + '</div>' + quotaDiv + '</div></div>';
+  }).join('');
+  return '<div class="mercati-cons-section"><div class="mercati-cons-title">⭐ Mercati Consigliati per questa partita</div><div class="mercati-cons-grid">' + cards + '</div></div>';
+}
+
 function aggiornaCalc(quota) {
-  const imp = parseFloat(document.getElementById('calcImporto')?.value) || 0;
+  const imp = parseFloat(document.getElementById('calcImporto') ? document.getElementById('calcImporto').value : 0) || 0;
   const vincita = imp * quota;
   const profitto = vincita - imp;
   const vEl = document.getElementById('calcVincita');
@@ -1832,8 +2080,8 @@ function aggiornaCalc(quota) {
 }
 
 function aggiornaStatsCalc() {
-  const imp = parseFloat(document.getElementById('statsCalcImporto')?.value) || 0;
-  const quota = parseFloat(document.getElementById('statsCalcQuota')?.value) || 1;
+  const imp = parseFloat(document.getElementById('statsCalcImporto') ? document.getElementById('statsCalcImporto').value : 0) || 0;
+  const quota = parseFloat(document.getElementById('statsCalcQuota') ? document.getElementById('statsCalcQuota').value : 1) || 1;
   const vincita = imp * quota;
   const profitto = vincita - imp;
   const vEl = document.getElementById('statsVincita');
@@ -1847,7 +2095,6 @@ function getImportoGiocata() {
   return el ? parseFloat(el.value) || 0 : 0;
 }
 
-// ─── STATISTICHE ─────────────────────────────────────────────────────────────
 let roiChartInstance = null;
 
 function showStats() {
@@ -1865,16 +2112,14 @@ function hideStats() {
 
 function renderStats() {
   const history = loadHistory();
-  const verified = history.filter(e => e.status === 'vinto' || e.status === 'perso' || e.status === 'pareggio');
-  const vinti = history.filter(e => e.status === 'vinto').length;
-  const persi = history.filter(e => e.status === 'perso').length;
-  const attesa = history.filter(e => e.status === 'attesa' || e.status === 'pareggio').length;
+  const verified = history.filter(function(e) { return e.status === 'vinto' || e.status === 'perso'; });
+  const vinti = history.filter(function(e) { return e.status === 'vinto'; }).length;
+  const persi = history.filter(function(e) { return e.status === 'perso'; }).length;
   const totale = history.length;
   const winRate = verified.length ? Math.round(vinti / verified.length * 100) : 0;
 
-  // ROI calc
   let totalInvestito = 0, totalVinto = 0;
-  verified.forEach(e => {
+  verified.forEach(function(e) {
     const imp = parseFloat(e.importo_giocato) || 0;
     if (!imp) return;
     totalInvestito += imp;
@@ -1882,36 +2127,19 @@ function renderStats() {
   });
   const roi = totalInvestito > 0 ? ((totalVinto - totalInvestito) / totalInvestito * 100).toFixed(1) : null;
   const profittoReale = (totalVinto - totalInvestito).toFixed(2);
+  const loseRate = verified.length ? Math.round(persi/verified.length*100) : 0;
+  const roiColor = (roi !== null && parseFloat(roi) >= 0) ? 'var(--accent)' : 'var(--danger)';
 
-  // KPI
-  document.getElementById('statsKpi').innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-label">Totale</div>
-      <div class="kpi-val" style="color:var(--accent3)">${totale}</div>
-      <div class="kpi-sub">pronostici salvati</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Vinti</div>
-      <div class="kpi-val" style="color:var(--accent)">${vinti}</div>
-      <div class="kpi-sub">${winRate}% win rate</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Persi</div>
-      <div class="kpi-val" style="color:var(--danger)">${persi}</div>
-      <div class="kpi-sub">${verified.length ? Math.round(persi/verified.length*100) : 0}% lose rate</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">ROI Reale</div>
-      <div class="kpi-val" style="color:${roi >= 0 ? 'var(--accent)' : 'var(--danger)'}">${roi !== null ? roi + '%' : 'N/D'}</div>
-      <div class="kpi-sub">${totalInvestito > 0 ? 'su €' + totalInvestito.toFixed(0) + ' giocati' : 'inserisci importi'}</div>
-    </div>`;
+  document.getElementById('statsKpi').innerHTML =
+    '<div class="kpi-card"><div class="kpi-label">Totale</div><div class="kpi-val" style="color:var(--accent3)">' + totale + '</div><div class="kpi-sub">pronostici salvati</div></div>' +
+    '<div class="kpi-card"><div class="kpi-label">Vinti</div><div class="kpi-val" style="color:var(--accent)">' + vinti + '</div><div class="kpi-sub">' + winRate + '% win rate</div></div>' +
+    '<div class="kpi-card"><div class="kpi-label">Persi</div><div class="kpi-val" style="color:var(--danger)">' + persi + '</div><div class="kpi-sub">' + loseRate + '% lose rate</div></div>' +
+    '<div class="kpi-card"><div class="kpi-label">ROI Reale</div><div class="kpi-val" style="color:' + roiColor + '">' + (roi !== null ? roi + '%' : 'N/D') + '</div><div class="kpi-sub">' + (totalInvestito > 0 ? 'su €' + totalInvestito.toFixed(0) + ' giocati' : 'inserisci importi') + '</div></div>';
 
-  // ROI chart
   renderRoiChart(history);
 
-  // Sport bars
   const sportMap = {};
-  history.forEach(e => {
+  history.forEach(function(e) {
     if (!sportMap[e.sport]) sportMap[e.sport] = { v:0, p:0, t:0 };
     sportMap[e.sport].t++;
     if (e.status === 'vinto') sportMap[e.sport].v++;
@@ -1919,31 +2147,23 @@ function renderStats() {
   });
   const colors = ['var(--accent)', 'var(--accent3)', 'var(--gold)', 'var(--accent2)', '#9b59b6'];
   let sportHtml = '';
-  Object.entries(sportMap).forEach(([sport, d], i) => {
+  Object.entries(sportMap).forEach(function([sport, d], i) {
     const pct = d.t > 0 && (d.v+d.p) > 0 ? Math.round(d.v/(d.v+d.p)*100) : 0;
-    sportHtml += `<div class="sport-row">
-      <span class="sport-name">${sport}</span>
-      <div class="sport-bar-wrap"><div class="sport-bar" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div>
-      <span class="sport-pct">${pct}%</span>
-      <span class="sport-count">${d.t}</span>
-    </div>`;
+    sportHtml += '<div class="sport-row"><span class="sport-name">' + sport + '</span><div class="sport-bar-wrap"><div class="sport-bar" style="width:' + pct + '%;background:' + colors[i%colors.length] + '"></div></div><span class="sport-pct">' + pct + '%</span><span class="sport-count">' + d.t + '</span></div>';
   });
   document.getElementById('sportBars').innerHTML = sportHtml || '<div style="color:var(--muted);font-size:0.82rem">Nessun dato ancora</div>';
 
-  // Confidence compare
-  const withConf = verified.filter(e => e.confidenza);
-  const avgConf = withConf.length ? Math.round(withConf.reduce((s,e) => s + e.confidenza, 0) / withConf.length) : null;
+  const withConf = verified.filter(function(e) { return e.confidenza; });
+  const avgConf = withConf.length ? Math.round(withConf.reduce(function(s,e) { return s + e.confidenza; }, 0) / withConf.length) : null;
   document.getElementById('confCompare').innerHTML = avgConf
-    ? `<span style="color:var(--accent3)">${avgConf}% stimata</span> → <span style="color:${winRate >= avgConf ? 'var(--accent)' : 'var(--danger)'}">${winRate}% reale</span>`
+    ? '<span style="color:var(--accent3)">' + avgConf + '% stimata</span> → <span style="color:' + (winRate >= avgConf ? 'var(--accent)' : 'var(--danger)') + '">' + winRate + '% reale</span>'
     : '<span style="color:var(--muted)">Dati insufficienti</span>';
 
-  // ROI footer
-  document.getElementById('roiFooter').innerHTML = `
-    <span class="roi-stat">Investito: <strong>€${totalInvestito.toFixed(2)}</strong></span>
-    <span class="roi-stat">Vinto: <strong>€${totalVinto.toFixed(2)}</strong></span>
-    <span class="roi-stat" style="color:${profittoReale >= 0 ? 'var(--accent)' : 'var(--danger)'}">Profitto: <strong>${profittoReale >= 0 ? '+' : ''}€${profittoReale}</strong></span>`;
+  document.getElementById('roiFooter').innerHTML =
+    '<span class="roi-stat">Investito: <strong>€' + totalInvestito.toFixed(2) + '</strong></span>' +
+    '<span class="roi-stat">Vinto: <strong>€' + totalVinto.toFixed(2) + '</strong></span>' +
+    '<span class="roi-stat" style="color:' + (parseFloat(profittoReale) >= 0 ? 'var(--accent)' : 'var(--danger)') + '">Profitto: <strong>' + (parseFloat(profittoReale) >= 0 ? '+' : '') + '€' + profittoReale + '</strong></span>';
 
-  // Bias analysis
   renderBiasPanel(history);
 }
 
@@ -1951,194 +2171,116 @@ function renderRoiChart(history) {
   const canvas = document.getElementById('roiChart');
   if (!canvas) return;
   if (roiChartInstance) { roiChartInstance.destroy(); roiChartInstance = null; }
-
-  // Build cumulative ROI data points from verified entries with importo
   const entries = history
-    .filter(e => (e.status === 'vinto' || e.status === 'perso') && parseFloat(e.importo_giocato) > 0)
-    .sort((a,b) => new Date(a.savedAt) - new Date(b.savedAt));
-
+    .filter(function(e) { return (e.status === 'vinto' || e.status === 'perso') && parseFloat(e.importo_giocato) > 0; })
+    .sort(function(a,b) { return new Date(a.savedAt) - new Date(b.savedAt); });
   if (entries.length < 2) {
     canvas.parentElement.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:30px 0">Inserisci importi nei pronostici e verifica i risultati per vedere il grafico</div>';
     return;
   }
-
   let cumulative = 0;
-  const labels = [];
+  const labels = ['Inizio'];
   const data = [0];
-  entries.forEach(e => {
+  entries.forEach(function(e) {
     const imp = parseFloat(e.importo_giocato);
     if (e.status === 'vinto') cumulative += imp * (parseFloat(e.quota)||1) - imp;
     else cumulative -= imp;
     labels.push(e.team1.slice(0,3) + '-' + e.team2.slice(0,3));
     data.push(parseFloat(cumulative.toFixed(2)));
   });
-  labels.unshift('Inizio');
-
   const color = cumulative >= 0 ? '#00e5a0' : '#ff4757';
   roiChartInstance = new Chart(canvas, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data,
-        borderColor: color,
-        backgroundColor: color + '15',
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: color,
-        fill: true,
-        tension: 0.3
-      }]
-    },
+    data: { labels, datasets: [{ data, borderColor: color, backgroundColor: color + '15', borderWidth: 2, pointRadius: 3, pointBackgroundColor: color, fill: true, tension: 0.3 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: {
-        x: { display: false },
-        y: {
-          display: true,
-          grid: { color: '#1e2330' },
-          ticks: { color: '#6b7591', font: { size: 10 }, callback: v => '€'+v }
-        }
-      }
+      scales: { x: { display: false }, y: { display: true, grid: { color: '#1e2330' }, ticks: { color: '#6b7591', font: { size: 10 }, callback: function(v) { return '€'+v; } } } }
     }
   });
 }
 
 function renderBiasPanel(history) {
-  const verified = history.filter(e => e.verifica && e.verifica.nota_apprendimento);
+  const verified = history.filter(function(e) { return e.verifica && e.verifica.nota_apprendimento; });
   if (!verified.length) {
-    document.getElementById('biasPanel').innerHTML = '<div style="color:var(--muted);font-size:0.82rem">Nessuna verifica completata ancora. Usa "Verifica Risultato" dopo ogni partita per vedere i pattern.</div>';
+    document.getElementById('biasPanel').innerHTML = '<div style="color:var(--muted);font-size:0.82rem">Nessuna verifica completata ancora.</div>';
     return;
   }
-
-  // Group notes and find patterns
-  const notes = verified.map(e => ({
-    nota: e.verifica.nota_apprendimento,
-    esito: e.verifica.esito_scommessa,
-    sport: e.sport,
-    competition: e.competition
-  }));
-
-  // Count errors vs successes
-  const errors = notes.filter(n => n.esito === 'PERSO');
-  const wins = notes.filter(n => n.esito === 'VINTO');
-
+  const errors = verified.filter(function(n) { return n.verifica.esito_scommessa === 'PERSO'; });
+  const wins = verified.filter(function(n) { return n.verifica.esito_scommessa === 'VINTO'; });
   let html = '';
-
   if (errors.length > 0) {
-    html += `<div class="bias-item">
-      <div class="bias-dot bad"></div>
-      <div class="bias-text"><strong>Errori frequenti (${errors.length}):</strong> ${errors[0].nota}</div>
-    </div>`;
-    if (errors.length > 1) {
-      html += `<div class="bias-item">
-        <div class="bias-dot warn"></div>
-        <div class="bias-text"><strong>Pattern rilevato:</strong> ${errors[1].nota}</div>
-      </div>`;
-    }
+    html += '<div class="bias-item"><div class="bias-dot bad"></div><div class="bias-text"><strong>Errori (' + errors.length + '):</strong> ' + errors[0].verifica.nota_apprendimento + '</div></div>';
+    if (errors.length > 1) html += '<div class="bias-item"><div class="bias-dot warn"></div><div class="bias-text"><strong>Pattern:</strong> ' + errors[1].verifica.nota_apprendimento + '</div></div>';
   }
-
-  if (wins.length > 0) {
-    html += `<div class="bias-item">
-      <div class="bias-dot ok"></div>
-      <div class="bias-text"><strong>Punti di forza (${wins.length} vinti):</strong> ${wins[0].nota}</div>
-    </div>`;
-  }
-
-  if (!html) html = '<div style="color:var(--muted);font-size:0.82rem">Dati insufficienti per rilevare pattern.</div>';
+  if (wins.length > 0) html += '<div class="bias-item"><div class="bias-dot ok"></div><div class="bias-text"><strong>Punti di forza (' + wins.length + '):</strong> ' + wins[0].verifica.nota_apprendimento + '</div></div>';
+  if (!html) html = '<div style="color:var(--muted);font-size:0.82rem">Dati insufficienti.</div>';
   document.getElementById('biasPanel').innerHTML = html;
 }
-function openBackupModal() {
-  showExportTab();
-  document.getElementById('backupModal').classList.add('visible');
-}
-function closeBackupModal() {
-  document.getElementById('backupModal').classList.remove('visible');
-}
+
+function openBackupModal() { showExportTab(); document.getElementById('backupModal').classList.add('visible'); }
+function closeBackupModal() { document.getElementById('backupModal').classList.remove('visible'); }
 function showExportTab() {
   document.getElementById('backupTabExport').style.display = 'block';
   document.getElementById('backupTabImport').style.display = 'none';
   document.getElementById('downloadLinkContainer').innerHTML = '';
 }
 function showImportTab() {
-  document.getElementById('importText').value = '';
   document.getElementById('backupTabExport').style.display = 'none';
   document.getElementById('backupTabImport').style.display = 'block';
 }
 
 function getBackupJSON() {
   const history = loadHistory();
-  if (!history.length) {
-    showToast('⚠️ Nessun pronostico da esportare', 'error');
-    return null;
-  }
-  return JSON.stringify({
-    version: '3.0',
-    exportedAt: new Date().toISOString(),
-    count: history.length,
-    data: history
-  }, null, 2);
+  if (!history.length) { showToast('⚠️ Nessun pronostico da esportare', 'error'); return null; }
+  return JSON.stringify({ version: '3.0', exportedAt: new Date().toISOString(), count: history.length, data: history }, null, 2);
 }
 
 function shareWhatsApp() {
   const history = loadHistory();
   if (!history.length) { showToast('⚠️ Nessun pronostico da esportare', 'error'); return; }
-
   const json = getBackupJSON();
   const date = new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-');
-  const filename = `pronostick_backup_${date}.json`;
-
-  // Method 1: Web Share API with actual file (Android Chrome, iOS Safari)
+  const filename = 'pronostick_backup_' + date + '.json';
   if (navigator.share && navigator.canShare) {
     const blob = new Blob([json], { type: 'application/json' });
     const file = new File([blob], filename, { type: 'application/json' });
     if (navigator.canShare({ files: [file] })) {
       navigator.share({ files: [file], title: 'PRONOSTICK Backup' })
-        .then(() => { showToast('✅ File condiviso!', 'success'); closeBackupModal(); })
-        .catch(err => { if (err.name !== 'AbortError') downloadFile(json, filename); });
+        .then(function() { showToast('✅ File condiviso!', 'success'); closeBackupModal(); })
+        .catch(function(err) { if (err.name !== 'AbortError') downloadFile(json, filename); });
       return;
     }
   }
-
-  // Method 2: data URI download (fallback for mobile browsers)
   downloadFile(json, filename);
 }
 
 function downloadFile(json, filename) {
-  // Remove any existing download link
   const container = document.getElementById('downloadLinkContainer');
   if (container) container.innerHTML = '';
-
   try {
-    // Use base64 encoded blob URL — most compatible with Android webview
     const bytes = new TextEncoder().encode(json);
-    const binStr = Array.from(bytes).map(b => String.fromCharCode(b)).join('');
+    const binStr = Array.from(bytes).map(function(b) { return String.fromCharCode(b); }).join('');
     const b64 = btoa(binStr);
-    const href = `data:application/octet-stream;base64,${b64}`;
-
+    const href = 'data:application/octet-stream;base64,' + b64;
     if (container) {
       const link = document.createElement('a');
-      link.href = href;
-      link.download = filename;
-      link.textContent = '⬇️ Tocca qui per scaricare il file';
-      link.style.cssText = 'display:block;background:var(--accent);color:var(--bg);border-radius:10px;padding:14px;font-family:"Bebas Neue",sans-serif;font-size:1rem;letter-spacing:2px;text-decoration:none;text-align:center;margin-top:8px;';
+      link.href = href; link.download = filename;
+      link.textContent = '⬇️ Tocca qui per scaricare';
+      link.style.cssText = 'display:block;background:var(--accent);color:var(--bg);border-radius:10px;padding:14px;font-size:1rem;text-decoration:none;text-align:center;margin-top:8px;';
       container.appendChild(link);
     }
     showToast('⬇️ Tocca il tasto verde per scaricare', 'success');
   } catch(e) {
-    // Absolute last resort: Blob URL
-    try {
-      const blob = new Blob([json], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      if (container) {
-        const link = document.createElement('a');
-        link.href = url; link.download = filename;
-        link.textContent = '⬇️ Tocca qui per scaricare il file';
-        link.style.cssText = 'display:block;background:var(--accent);color:var(--bg);border-radius:10px;padding:14px;font-family:"Bebas Neue",sans-serif;font-size:1rem;letter-spacing:2px;text-decoration:none;text-align:center;margin-top:8px;';
-        container.appendChild(link);
-      }
-    } catch(e2) { showExportText(); }
+    const blob = new Blob([json], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    if (container) {
+      const link = document.createElement('a');
+      link.href = url; link.download = filename;
+      link.textContent = '⬇️ Tocca qui per scaricare';
+      link.style.cssText = 'display:block;background:var(--accent);color:var(--bg);border-radius:10px;padding:14px;font-size:1rem;text-decoration:none;text-align:center;margin-top:8px;';
+      container.appendChild(link);
+    }
   }
 }
 
@@ -2146,76 +2288,52 @@ function importFromFile(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
-    processImport(e.target.result);
-    input.value = '';
-  };
+  reader.onload = function(e) { processImport(e.target.result); input.value = ''; };
   reader.readAsText(file, 'UTF-8');
-}
-
-function importFromText() {
-  const raw = document.getElementById('importText') ? document.getElementById('importText').value.trim() : '';
-  if (!raw) { showToast('⚠️ Nessun testo da importare', 'error'); return; }
-  processImport(raw);
 }
 
 function processImport(raw) {
   try {
     const parsed = JSON.parse(raw);
     const incoming = Array.isArray(parsed) ? parsed : (parsed.data || []);
-    if (!incoming.length) { showToast('⚠️ Nessun dato trovato nel backup', 'error'); return; }
-
+    if (!incoming.length) { showToast('⚠️ Nessun dato trovato', 'error'); return; }
     const existing = loadHistory();
-    const existingIds = new Set(existing.map(e => e.id));
-    const merged = [...existing];
+    const existingIds = new Set(existing.map(function(e) { return e.id; }));
+    const merged = existing.slice();
     let added = 0;
-    incoming.forEach(entry => {
+    incoming.forEach(function(entry) {
       if (!existingIds.has(entry.id)) { merged.push(entry); added++; }
     });
-    merged.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+    merged.sort(function(a, b) { return new Date(b.savedAt) - new Date(a.savedAt); });
     saveHistory(merged);
     renderHistory();
     closeBackupModal();
-    showToast(added > 0 ? `✅ Importati ${added} pronostici` : 'ℹ️ Tutti già presenti', 'success');
+    showToast(added > 0 ? '✅ Importati ' + added + ' pronostici' : 'ℹ️ Tutti già presenti', 'success');
   } catch(err) {
-    showToast('❌ Testo non valido — assicurati di incollare tutto il backup', 'error');
+    showToast('❌ File non valido', 'error');
   }
 }
 
-function copyExportText() {
-  const ta = document.getElementById('exportText');
-  ta.select();
-  try {
-    navigator.clipboard.writeText(ta.value)
-      .then(() => showToast('✅ Copiato negli appunti!', 'success'))
-      .catch(() => { document.execCommand('copy'); showToast('✅ Copiato!', 'success'); });
-  } catch(e) {
-    document.execCommand('copy');
-    showToast('✅ Copiato!', 'success');
-  }
-}
-
-function showToast(msg, type='success') {
+function showToast(msg, type) {
+  type = type || 'success';
   const el = document.getElementById('importToast');
   el.textContent = msg;
-  el.className = `import-toast visible ${type}`;
-  setTimeout(() => el.classList.remove('visible'), 3500);
+  el.className = 'import-toast visible ' + type;
+  setTimeout(function() { el.classList.remove('visible'); }, 3500);
 }
+
 function setFilter(filter) {
   activeFilter = filter;
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
   document.getElementById('ftab-' + filter).classList.add('active');
   renderHistory();
 }
 
-// ─── RENDER HISTORY ──────────────────────────────────────────────────────────
 function renderHistory() {
   const history = loadHistory();
   const listEl = document.getElementById('storicoList');
-
-  // Update counts on all tabs
   const counts = { attesa: 0, vinto: 0, perso: 0 };
-  history.forEach(e => {
+  history.forEach(function(e) {
     if (e.status === 'vinto') counts.vinto++;
     else if (e.status === 'perso') counts.perso++;
     else counts.attesa++;
@@ -2223,22 +2341,18 @@ function renderHistory() {
   document.getElementById('fcount-attesa').textContent = counts.attesa;
   document.getElementById('fcount-vinto').textContent = counts.vinto;
   document.getElementById('fcount-perso').textContent = counts.perso;
-
-  // Filter by active tab
-  const filtered = history.filter(e => {
+  const filtered = history.filter(function(e) {
     if (activeFilter === 'vinto') return e.status === 'vinto';
     if (activeFilter === 'perso') return e.status === 'perso';
     return e.status === 'attesa' || e.status === 'pareggio';
   });
-
   if (!filtered.length) {
-    const emptyMsg = {
-      attesa: '⏳ Nessun pronostico in attesa.<br>Genera e salva un pronostico per vederlo qui.',
-      vinto:  '🏆 Nessun pronostico vinto ancora.<br>Verifica i risultati delle partite passate.',
-      perso:  '📭 Nessun pronostico perso registrato.'
-    }[activeFilter];
-    listEl.innerHTML = `<div class="storico-empty">${emptyMsg}</div>`;
+    const emptyMsg = { attesa: '⏳ Nessun pronostico in attesa.', vinto: '🏆 Nessun pronostico vinto ancora.', perso: '📭 Nessun pronostico perso registrato.' }[activeFilter];
+    listEl.innerHTML = '<div class="storico-empty">' + emptyMsg + '</div>';
     return;
+  }
+
+;
   }
 
   listEl.innerHTML = filtered.map(e => {
@@ -2255,7 +2369,7 @@ function renderHistory() {
       const headerClass = v.accuratezza==='ESATTO'?'corretto':v.accuratezza==='SBAGLIATO'?'sbagliato':'parziale';
       const esitoColor = v.esito_scommessa==='VINTO'?'var(--accent)':v.esito_scommessa==='PERSO'?'var(--danger)':'var(--gold)';
       const esitoIcon = v.esito_scommessa==='VINTO'?'✅':v.esito_scommessa==='PERSO'?'❌':'➖';
-      verificaHtml = `
+      verificaHtml = '
         <div class="verifica-panel visible" id="verifica_${e.id}">
           <div class="verifica-header ${headerClass}">
             <span class="verifica-esito" style="color:${esitoColor}">${esitoIcon} ${v.esito_scommessa} — ${v.accuratezza}</span>
@@ -2271,9 +2385,9 @@ function renderHistory() {
             <div class="verifica-key" style="margin-bottom:8px">🧠 Nota di Apprendimento</div>
             <div class="verifica-note">${v.nota_apprendimento}</div>
           </div>
-        </div>`;
+        </div>';
     } else {
-      verificaHtml = `<div class="verifica-panel" id="verifica_${e.id}"></div>`;
+      verificaHtml = '<div class="verifica-panel" id="verifica_${e.id}"></div>';
     }
 
     // Latest ricalcolo diff
@@ -2289,19 +2403,15 @@ function renderHistory() {
       const anyChanged = pronosticoChanged || confidenzaChanged || rischioChanged || prob1Changed || prob2Changed;
 
       const cgNew = latest.come_giocarla_new;
-      const cgSection = cgNew ? `
+      const cgSection = cgNew ? '
         <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
           <div class="diff-col-label" style="margin-bottom:8px">🎰 Come Giocarla Aggiornata</div>
-          ${[cgNew.passo1,cgNew.passo2,cgNew.passo3,cgNew.passo4].filter(Boolean).map((s,i)=>`
-            <div style="display:flex;gap:10px;margin-bottom:6px;align-items:flex-start">
-              <span style="background:var(--accent3);color:var(--bg);width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:2px">${i+1}</span>
-              <span style="font-size:0.8rem;color:#c5cad8;line-height:1.5">${s}</span>
-            </div>`).join('')}
-          ${cgNew.quota_da_cercare?`<div style="margin-top:8px;font-size:0.8rem;color:var(--accent)">🎯 Quota: ${cgNew.quota_da_cercare}</div>`:''}
-          ${cgNew.importo_consigliato?`<div style="font-size:0.8rem;color:var(--muted)">💰 ${cgNew.importo_consigliato}</div>`:''}
-        </div>` : '';
+          ${[cgNew.passo1,cgNew.passo2,cgNew.passo3,cgNew.passo4].filter(Boolean).map((s,i)=>'\n            <div style="display:flex;gap:10px;margin-bottom:6px;align-items:flex-start">\n              <span style="background:var(--accent3);color:var(--bg);width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:2px">' + i+1 + '</span>\n              <span style="font-size:0.8rem;color:#c5cad8;line-height:1.5">' + s + '</span>\n            </div>').join('')}
+          ${cgNew.quota_da_cercare?'<div style="margin-top:8px;font-size:0.8rem;color:var(--accent)">🎯 Quota: ' + cgNew.quota_da_cercare + '</div>':''}
+          ${cgNew.importo_consigliato?'<div style="font-size:0.8rem;color:var(--muted)">💰 ' + cgNew.importo_consigliato + '</div>':''}
+        </div>' : '';
 
-      diffHtml = `
+      diffHtml = '
         <div class="diff-panel" id="diff_${e.id}">
           <div class="diff-title">🔄 Ricalcolo — ${ricalcoloDate} ${anyChanged?'<span style="color:var(--accent2);margin-left:8px">⚠️ Modifiche rilevate</span>':'<span style="color:var(--accent);margin-left:8px">✅ Sostanzialmente confermato</span>'}</div>
           <div class="diff-grid">
@@ -2320,20 +2430,20 @@ function renderHistory() {
               <div class="diff-item"><div class="diff-key">1 / X / 2</div><div class="diff-val ${(prob1Changed||prob2Changed)?'changed':'same'}">${latest.prob1_new||'?'}% / ${latest.probx_new||'?'}% / ${latest.prob2_new||'?'}%</div></div>
             </div>
           </div>
-          ${latest.analisi_forma_new?`<div class="diff-summary"><strong style="color:var(--text)">📈 Forma aggiornata:</strong><br>${latest.analisi_forma_new}</div>`:''}
-          ${latest.fattori_new?`<div class="diff-summary" style="margin-top:8px"><strong style="color:var(--text)">🔑 Fattori chiave aggiornati:</strong><br>${latest.fattori_new}</div>`:''}
+          ${latest.analisi_forma_new?'<div class="diff-summary"><strong style="color:var(--text)">📈 Forma aggiornata:</strong><br>' + latest.analisi_forma_new + '</div>':''}
+          ${latest.fattori_new?'<div class="diff-summary" style="margin-top:8px"><strong style="color:var(--text)">🔑 Fattori chiave aggiornati:</strong><br>' + latest.fattori_new + '</div>':''}
           ${cgSection}
-        </div>`;
+        </div>';
     }
 
-    return `
+    return '
       <div class="hcard ${e.status}" id="hcard_${e.id}">
         <div class="hcard-top" onclick="toggleDetail('${e.id}')">
           <div class="hcard-left">
             <div class="hcard-match">${e.team1} vs ${e.team2}</div>
             <div class="hcard-meta">
               <span>${e.sport}</span>
-              ${e.competition?`<span>${e.competition}</span>`:''}
+              ${e.competition?'<span>' + e.competition + '</span>':''}
               <span>📅 ${e.matchDate}</span>
               <span>💾 ${savedDate} ${savedTime}</span>
               <span>${liveBadge}</span>
@@ -2353,7 +2463,7 @@ function renderHistory() {
           <button class="btn-ricalcolo" id="ricalcBtn_${e.id}" onclick="ricalcola('${e.id}')">🔄 RICALCOLA</button>
           <button class="btn-delete" onclick="deleteEntry('${e.id}')">🗑 Elimina</button>
         </div>
-      </div>`;
+      </div>';
   }).join('');
 }
 
@@ -2369,20 +2479,20 @@ function toggleDetail(id) {
 function buildFullDetailHTML(e) {
   const rc = e.rischio==='BASSO'?'#00e5a0':e.rischio==='MEDIO'?'#ffd700':'#ff4757';
   const liveBadge = e.dati_live
-    ? `<span style="background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.3);border-radius:20px;padding:2px 9px;font-size:0.68rem;font-weight:600;color:var(--accent);">🌐 LIVE</span>`
-    : `<span style="background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.2);border-radius:20px;padding:2px 9px;font-size:0.68rem;font-weight:600;color:var(--accent2);">📚 STORICO</span>`;
+    ? '<span style="background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.3);border-radius:20px;padding:2px 9px;font-size:0.68rem;font-weight:600;color:var(--accent);">🌐 LIVE</span>'
+    : '<span style="background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.2);border-radius:20px;padding:2px 9px;font-size:0.68rem;font-weight:600;color:var(--accent2);">📚 STORICO</span>';
 
-  const webSection = e.webText ? `
+  const webSection = e.webText ? '
     <div class="fd-web-title">🌐 Dati Ricercati in Tempo Reale</div>
-    <div class="fd-web-box">${e.webText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>` : '';
+    <div class="fd-web-box">${e.webText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>' : '';
 
-  const consiglio = e.consiglio ? `
+  const consiglio = e.consiglio ? '
     <div class="fd-card wide">
       <div class="fd-card-title">💡 Consiglio Alternativo</div>
       <div class="fd-card-text">${e.consiglio}</div>
-    </div>` : '';
+    </div>' : '';
 
-  return `
+  return '
     <div class="full-detail" id="detail_${e.id}">
       <!-- Banner -->
       <div class="full-detail-banner">
@@ -2440,18 +2550,14 @@ function buildFullDetailHTML(e) {
           <div class="fd-card-text">${e.fattori_chiave||'—'}</div>
         </div>
         ${consiglio}
-        ${e.lezioni_note ? `
-        <div class="fd-card wide" style="border-color:rgba(255,215,0,0.2);background:rgba(255,215,0,0.03)">
-          <div class="fd-card-title" style="color:var(--gold)">🧠 Lezioni Applicate (${e.lezioni_applicate||0})</div>
-          <div class="fd-card-text">${e.lezioni_note}</div>
-        </div>` : ''}
+        ${e.lezioni_note ? '\n        <div class="fd-card wide" style="border-color:rgba(255,215,0,0.2);background:rgba(255,215,0,0.03)">\n          <div class="fd-card-title" style="color:var(--gold)">🧠 Lezioni Applicate (' + e.lezioni_applicate||0 + ')</div>\n          <div class="fd-card-text">' + e.lezioni_note + '</div>\n        </div>' : ''}
       </div>
 
-      ${e.mercati_data && Object.keys(e.mercati_data).length ? `
+      ${e.mercati_data && Object.keys(e.mercati_data).length ? '
         <div style="margin-bottom:12px">
           <div class="fd-card-title" style="margin-bottom:10px">📊 Mercati Analizzati</div>
           <div class="mercati-result-grid">
-            ${Object.entries(e.mercati_data).map(([key,m],i)=>`
+            ${Object.entries(e.mercati_data).map(([key,m],i)=>'
               <div class="mercato-result-card ${i===0?'top-pick':''}">
                 <div class="mr-label">${key.replace('mercato_','').replace(/_/g,' ').toUpperCase()}</div>
                 <div class="mr-pick">${m.consiglio||'—'}</div>
@@ -2459,74 +2565,60 @@ function buildFullDetailHTML(e) {
                   <span class="mr-prob">${m.probabilita||'?'}% prob.</span>
                   <span class="mr-quota">${m.quota_stimata||'?'}</span>
                 </div>
-                ${m.value_bet?`<div class="mr-value"><span class="value-badge">⚡ VALUE BET</span></div>`:''}
-                ${m.note?`<div class="mr-note">${m.note}</div>`:''}
-              </div>`).join('')}
+                ${m.value_bet?'<div class="mr-value"><span class="value-badge">⚡ VALUE BET</span></div>':''}
+                ${m.note?'<div class="mr-note">' + m.note + '</div>':''}
+              </div>').join('')}
           </div>
-        </div>` : ''}
+        </div>' : ''}
 
       ${e.come_giocarla ? (() => {
         const cg = e.come_giocarla;
         const steps = [cg.passo1,cg.passo2,cg.passo3,cg.passo4].filter(Boolean);
-        return `
-        <div class="come-giocarla" style="margin-bottom:12px">
-          <div class="cg-header">
-            <span class="cg-title">🎰 Come Giocarla</span>
-            <span class="${cg.vale_la_pena?'cg-vale-si':'cg-vale-no'}">${cg.vale_la_pena?'✅ Vale la pena':'⚠️ Valuta bene'}</span>
-          </div>
-          <div class="cg-steps">
-            ${steps.map((s,i)=>`<div class="cg-step"><div class="cg-step-num">${i+1}</div><div class="cg-step-text">${s}</div></div>`).join('')}
-          </div>
-          <div class="cg-footer">
-            <div class="cg-info-box"><div class="cg-info-label">🎯 Quota da cercare</div><div class="cg-info-val highlight">${cg.quota_da_cercare||'—'}</div></div>
-            <div class="cg-info-box"><div class="cg-info-label">💰 Quanto mettere</div><div class="cg-info-val">${cg.importo_consigliato||'—'}</div></div>
-            <div class="cg-avvertenza">⚠️ ${cg.avvertenza||''}</div>
-          </div>
-        </div>`; })() : `
+        return '\n        <div class="come-giocarla" style="margin-bottom:12px">\n          <div class="cg-header">\n            <span class="cg-title">🎰 Come Giocarla</span>\n            <span class="' + cg.vale_la_pena?'cg-vale-si':'cg-vale-no' + '">' + cg.vale_la_pena?'✅ Vale la pena':'⚠️ Valuta bene' + '</span>\n          </div>\n          <div class="cg-steps">\n            ${steps.map((s,i)=>'<div class="cg-step"><div class="cg-step-num">${i+1}</div><div class="cg-step-text">${s}</div></div>').join('')}\n          </div>\n          <div class="cg-footer">\n            <div class="cg-info-box"><div class="cg-info-label">🎯 Quota da cercare</div><div class="cg-info-val highlight">' + cg.quota_da_cercare||'—' + '</div></div>\n            <div class="cg-info-box"><div class="cg-info-label">💰 Quanto mettere</div><div class="cg-info-val">' + cg.importo_consigliato||'—' + '</div></div>\n            <div class="cg-avvertenza">⚠️ ' + cg.avvertenza||'' + '</div>\n          </div>\n        </div>'; })() : '
         <div style="background:rgba(77,166,255,0.06);border:1px dashed rgba(77,166,255,0.25);border-radius:10px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;">
           <span style="font-size:1.6rem">🔄</span>
           <div>
             <div style="font-size:0.85rem;font-weight:600;color:var(--accent3);margin-bottom:4px">Sezione non disponibile</div>
             <div style="font-size:0.8rem;color:var(--muted);line-height:1.5">Questo pronostico è stato salvato con una versione precedente dell'app.<br>Rigenera il pronostico per vedere la sezione <strong style="color:var(--text)">🎰 Come Giocarla</strong> e il calcolo Value Bet.</div>
           </div>
-        </div>`}
+        </div>'}
 
       ${webSection}
-    </div>`;
+    </div>';
 }
 
-// ─── RENDER RESULT ────────────────────────────────────────────────────────────
+// --- RENDER RESULT ------------------------------------------------------------
 function renderResult(r, team1, team2, competition, webText, showSave, mercati, memoryCount) {
   const rc = r.rischio==='BASSO'?'#00e5a0':r.rischio==='MEDIO'?'#ffd700':'#ff4757';
   const liveBadge = r.dati_live_usati
-    ? `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.3);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--accent);margin-left:10px;">🌐 DATI LIVE</span>`
-    : `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--accent2);margin-left:10px;">📚 DATI STORICI</span>`;
+    ? '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.3);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--accent);margin-left:10px;">🌐 DATI LIVE</span>'
+    : '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--accent2);margin-left:10px;">📚 DATI STORICI</span>';
 
-  const webPanel = webText ? `
+  const webPanel = webText ? '
     <div class="analysis-card full-width" style="border-color:rgba(0,229,160,0.2);background:rgba(0,229,160,0.03)">
       <div class="card-heading">🌐 Dati Ricercati in Tempo Reale</div>
       <div class="analysis-content" style="font-size:0.82rem;white-space:pre-wrap;max-height:200px;overflow-y:auto">${webText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-    </div>` : '';
+    </div>' : '';
 
   const memoryBadge = (memoryCount && memoryCount > 0)
-    ? `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--gold);margin-left:6px;">🧠 ${memoryCount} lezioni applicate</span>`
+    ? '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;letter-spacing:1px;color:var(--gold);margin-left:6px;">🧠 ${memoryCount} lezioni applicate</span>'
     : '';
 
   // Lezioni note box
   const lezioniBox = (r.lezioni_note && memoryCount > 0)
-    ? `<div class="analysis-card full-width" style="border-color:rgba(255,215,0,0.2);background:rgba(255,215,0,0.03)">
+    ? '<div class="analysis-card full-width" style="border-color:rgba(255,215,0,0.2);background:rgba(255,215,0,0.03)">
         <div class="card-heading" style="color:var(--gold)">🧠 Come le Lezioni Passate Hanno Influenzato Questo Pronostico</div>
         <div class="analysis-content">${r.lezioni_note}</div>
-       </div>`
+       </div>'
     : '';
   let mercatiHtml = '';
   if (r.mercati && Object.keys(r.mercati).length) {
     const cards = Object.entries(r.mercati).map(([key, m], i) => {
       const isTop = i === 0;
       const valueBadge = m.value_bet
-        ? `<div class="mr-value"><span class="value-badge">⚡ VALUE BET</span>${m.quota_bookmaker?` <span class="value-score">bk: ${m.quota_bookmaker}</span>`:''}</div>`
+        ? '<div class="mr-value"><span class="value-badge">⚡ VALUE BET</span>${m.quota_bookmaker?' <span class="value-score">bk: ' + m.quota_bookmaker + '</span>':''}</div>'
         : '';
-      return `
+      return '
         <div class="mercato-result-card ${isTop?'top-pick':''}">
           <div class="mr-label">${key.replace('mercato_','').replace(/_/g,' ').toUpperCase()}</div>
           <div class="mr-pick">${m.consiglio||'—'}</div>
@@ -2535,19 +2627,19 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
             <span class="mr-quota">${m.quota_stimata||'?'}</span>
           </div>
           ${valueBadge}
-          ${m.note?`<div class="mr-note">${m.note}</div>`:''}
-        </div>`;
+          ${m.note?'<div class="mr-note">' + m.note + '</div>':''}
+        </div>';
     }).join('');
-    mercatiHtml = `
+    mercatiHtml = '
       <div class="mercati-result-section">
         <div class="mercati-result-title">📊 Analisi Mercati Selezionati</div>
         <div class="mercati-result-grid">${cards}</div>
-      </div>`;
+      </div>';
   }
 
   // Value bet badge on main pronostico
   const valueBetMain = r.value_bet_principale
-    ? `<span class="value-badge" style="margin-left:8px">⚡ VALUE BET${r.value_bet_score?' · '+r.value_bet_score:''}</span>`
+    ? '<span class="value-badge" style="margin-left:8px">⚡ VALUE BET${r.value_bet_score?' · '+r.value_bet_score:''}</span>'
     : '';
 
   // Come giocarla section
@@ -2557,18 +2649,14 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
     const valeClass = cg.vale_la_pena ? 'cg-vale-si' : 'cg-vale-no';
     const valeText = cg.vale_la_pena ? '✅ Vale la pena giocarla' : '⚠️ Valuta bene prima di giocare';
     const steps = [cg.passo1, cg.passo2, cg.passo3, cg.passo4].filter(Boolean);
-    comeGiocarlаHtml = `
+    comeGiocarlаHtml = '
       <div class="come-giocarla">
         <div class="cg-header">
           <span class="cg-title">🎰 Come Giocarla</span>
           <span class="${valeClass}">${valeText}</span>
         </div>
         <div class="cg-steps">
-          ${steps.map((s,i)=>`
-            <div class="cg-step">
-              <div class="cg-step-num">${i+1}</div>
-              <div class="cg-step-text">${s}</div>
-            </div>`).join('')}
+          ${steps.map((s,i)=>'\n            <div class="cg-step">\n              <div class="cg-step-num">' + i+1 + '</div>\n              <div class="cg-step-text">' + s + '</div>\n            </div>').join('')}
         </div>
         <div class="cg-footer">
           <div class="cg-info-box">
@@ -2581,11 +2669,11 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
           </div>
           <div class="cg-avvertenza">⚠️ ${cg.avvertenza||'Nessun pronostico è garantito. Gioca responsabilmente.'}</div>
         </div>
-      </div>`;
+      </div>';
   }
 
   const quota = parseFloat(r.quota_stimata) || 1.5;
-  const calcHtml = showSave ? `
+  const calcHtml = showSave ? '
     <div class="calc-card">
       <div class="calc-title">💰 Calcolatore Giocata</div>
       <div class="calc-row">
@@ -2606,22 +2694,22 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
             <span class="calc-result-label">Profitto netto</span>
             <span class="calc-result-val" style="color:var(--accent)" id="calcProfitto">+€${(10*quota-10).toFixed(2)}</span>
           </div>
-          ${r.value_bet_principale?`<div class="calc-result-item"><span class="calc-result-label">Value</span><span class="calc-result-val" style="color:var(--gold)">⚡ SI</span></div>`:''}
+          ${r.value_bet_principale?'<div class="calc-result-item"><span class="calc-result-label">Value</span><span class="calc-result-val" style="color:var(--gold)">⚡ SI</span></div>':''}
         </div>
       </div>
       <div class="calc-save-note">💡 L'importo verrà salvato con il pronostico e contribuirà al calcolo del tuo ROI reale nelle statistiche.</div>
-    </div>` : '';
+    </div>' : '';
 
-  const saveBtn = showSave ? `<button class="btn-save" id="btnSave" onclick="saveCurrentPronostico()">💾 SALVA PRONOSTICO</button>` : '';
+  const saveBtn = showSave ? '<button class="btn-save" id="btnSave" onclick="saveCurrentPronostico()">💾 SALVA PRONOSTICO</button>' : '';
 
-  document.getElementById('resultCard').innerHTML = `
+  document.getElementById('resultCard').innerHTML = '
     <div class="verdict-banner">
       <div class="verdict-header">
         <div>
           <div class="verdict-match" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px">
             ${team1} vs ${team2}${liveBadge}${memoryBadge}
           </div>
-          ${competition?`<div style="color:var(--muted);font-size:0.8rem;margin-top:4px;letter-spacing:1px">${competition.toUpperCase()}</div>`:''}
+          ${competition?'<div style="color:var(--muted);font-size:0.8rem;margin-top:4px;letter-spacing:1px">' + competition.toUpperCase() + '</div>':''}
         </div>
         <div class="confidence-pill">
           <span class="confidence-label">Confidenza</span>
@@ -2657,24 +2745,25 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
       </div>
     </div>
     ${mercatiHtml}
+    ${buildMercatiConsigliati(r.mercati_consigliati)}
     ${comeGiocarlаHtml}
     <div class="analysis-grid">
       <div class="analysis-card"><div class="card-heading">📈 Forma Recente</div><div class="analysis-content">${r.analisi_forma}</div></div>
       <div class="analysis-card"><div class="card-heading">♟️ Analisi Tattica</div><div class="analysis-content">${r.analisi_tattica}</div></div>
       <div class="analysis-card full-width"><div class="card-heading">🔑 Fattori Chiave</div><div class="analysis-content">${r.fattori_chiave}</div></div>
-      ${r.consiglio_aggiuntivo?`<div class="analysis-card full-width"><div class="card-heading">💡 Consiglio Alternativo</div><div class="analysis-content">${r.consiglio_aggiuntivo}</div></div>`:''}
+      ${r.consiglio_aggiuntivo?'<div class="analysis-card full-width"><div class="card-heading">💡 Consiglio Alternativo</div><div class="analysis-content">' + r.consiglio_aggiuntivo + '</div></div>':''}
       ${lezioniBox}
       ${webPanel}
     </div>
     ${calcHtml}
     ${saveBtn}
     <div class="disclaimer"><strong>⚠️ Gioco Responsabile:</strong> Strumento puramente informativo. I pronostici AI non garantiscono risultati. Il gioco d'azzardo può creare dipendenza — non scommettere più di quanto puoi permetterti di perdere.</div>
-  `;
+  ';
   document.getElementById('resultCard').classList.add('visible');
   document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ─── VERIFICA RISULTATO ───────────────────────────────────────────────────────
+// --- VERIFICA RISULTATO -------------------------------------------------------
 async function verificaRisultato(id) {
   const history = loadHistory();
   const entry = history.find(e => e.id === id);
@@ -2687,12 +2776,12 @@ async function verificaRisultato(id) {
   // Web search per il risultato reale
   let risultatoWeb = '';
   try {
-    const query = `risultato finale ${entry.team1} vs ${entry.team2} ${entry.competition||''} ${entry.matchDate}`;
+    const query = 'risultato finale ${entry.team1} vs ${entry.team2} ${entry.competition||''} ${entry.matchDate}';
     const tools = [{ type: "web_search_20250305", name: "web_search" }];
     let messages = [{
       role: "user",
-      content: `Cerca il risultato finale della partita: ${entry.team1} vs ${entry.team2}${entry.competition ? ' - ' + entry.competition : ''} del ${entry.matchDate}.
-Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se disponibili, eventuali note importanti sulla partita.`
+      content: 'Cerca il risultato finale della partita: ${entry.team1} vs ${entry.team2}${entry.competition ? ' - ' + entry.competition : ''} del ${entry.matchDate}.
+Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se disponibili, eventuali note importanti sulla partita.'
     }];
     let iterations = 0;
     while (iterations < 3) {
@@ -2708,12 +2797,12 @@ Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se 
       for (const block of assistantContent) { if (block.type === 'text' && block.text) risultatoWeb += block.text + '\n'; }
       const toolUse = assistantContent.filter(b => b.type === 'tool_use');
       if (!toolUse.length) break;
-      messages.push({ role: "user", content: toolUse.map(tu => ({ type: "tool_result", tool_use_id: tu.id, content: `Cerca il risultato di ${entry.team1} vs ${entry.team2} del ${entry.matchDate}` })) });
+      messages.push({ role: "user", content: toolUse.map(tu => ({ type: "tool_result", tool_use_id: tu.id, content: 'Cerca il risultato di ${entry.team1} vs ${entry.team2} del ${entry.matchDate}' })) });
     }
   } catch(e) { risultatoWeb = ''; }
 
   // AI valuta se il pronostico era corretto
-  const evalPrompt = `Sei un analista sportivo. Devi valutare se un pronostico era corretto confrontandolo con il risultato reale.
+  const evalPrompt = 'Sei un analista sportivo. Devi valutare se un pronostico era corretto confrontandolo con il risultato reale.
 
 PRONOSTICO ORIGINALE:
 - Partita: ${entry.team1} vs ${entry.team2}
@@ -2737,7 +2826,7 @@ Analizza e rispondi SOLO con JSON valido:
   "cosa_ha_indovinato": "cosa l'AI aveva previsto correttamente",
   "cosa_ha_sbagliato": "cosa l'AI aveva previsto in modo errato, o 'Nulla' se ha indovinato tutto",
   "nota_apprendimento": "lezione concreta per migliorare pronostici simili in futuro, basata sull'analisi dell'errore o della conferma"
-}`;
+}';
 
   try {
     const res = await fetch("/api/proxy", {
@@ -2747,7 +2836,7 @@ Analizza e rispondi SOLO con JSON valido:
     const data = await res.json();
     if (!res.ok) throw new Error(data.error?.message || 'Errore');
     const raw = data.content.map(i => i.text || '').join('');
-    const v = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    const clean = raw.trim(); const v = JSON.parse(clean.startsWith('{') ? clean : clean.substring(clean.indexOf('{')));
 
     // Auto-update status
     const newStatus = v.esito_scommessa === 'VINTO' ? 'vinto'
@@ -2768,7 +2857,7 @@ Analizza e rispondi SOLO con JSON valido:
     const esitoIcon = v.esito_scommessa === 'VINTO' ? '✅' : v.esito_scommessa === 'PERSO' ? '❌' : v.esito_scommessa === 'PAREGGIO' ? '➖' : '❓';
     const esitoColor = v.esito_scommessa === 'VINTO' ? 'var(--accent)' : v.esito_scommessa === 'PERSO' ? 'var(--danger)' : 'var(--gold)';
 
-    panel.innerHTML = `
+    panel.innerHTML = '
       <div class="verifica-header ${headerClass}">
         <span class="verifica-esito" style="color:${esitoColor}">${esitoIcon} ${v.esito_scommessa} — ${v.accuratezza}</span>
         <span class="verifica-score">Risultato reale: <strong>${v.punteggio_reale}</strong></span>
@@ -2794,7 +2883,7 @@ Analizza e rispondi SOLO con JSON valido:
         </div>
         <div class="verifica-key" style="margin-bottom:8px">🧠 Nota di Apprendimento</div>
         <div class="verifica-note">${v.nota_apprendimento}</div>
-      </div>`;
+      </div>';
     panel.classList.add('visible');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
@@ -2802,14 +2891,14 @@ Analizza e rispondi SOLO con JSON valido:
     renderHistory();
 
   } catch(err) {
-    if (panel) panel.innerHTML = `<div style="padding:14px;color:var(--danger);font-size:0.85rem">❌ Errore verifica: ${err.message}</div>`;
+    if (panel) panel.innerHTML = '<div style="padding:14px;color:var(--danger);font-size:0.85rem">❌ Errore verifica: ${err.message}</div>`;
     panel.classList.add('visible');
   }
 
   if (btn) { btn.disabled = false; btn.textContent = '🔍 VERIFICA RISULTATO'; }
 }
 
-// ─── UTILS ───────────────────────────────────────────────────────────────────
+// --- UTILS -------------------------------------------------------------------
 function wait(ms) { return new Promise(r=>setTimeout(r,ms)); }
 function showLoading(v,text='Analisi in corso...') {
   document.getElementById('loadingState').classList.toggle('visible',v);
