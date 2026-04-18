@@ -2645,7 +2645,7 @@ function renderHistory() {
     }
 
     return '<div class="hcard ' + e.status + (combinataMode ? ' combinata-mode' : '') + (combinataSelected.indexOf(e.id) >= 0 ? ' combinata-selected' : '') + '" id="hcard_' + e.id + '">'
-      + '<div class="hcard-top" onclick="combinataMode ? toggleCombinataCard(\'' + e.id + '\') : toggleDetail(\'' + e.id + '\')">'
+      + '<div class="hcard-top" onclick="handleCardClick(\'' + e.id + '\')">'
       + '<div class="hcard-left">'
       + '<div class="hcard-match">' + e.team1 + ' vs ' + e.team2 + '</div>'
       + '<div class="hcard-meta">'
@@ -2685,6 +2685,14 @@ function renderHistory() {
       + '<button class="btn-delete" data-id="' + e.id + '" onclick="deleteEntry(this.dataset.id)">🗑 Elimina</button>'
       + '</div></div>';
   }).join('');
+}
+
+function handleCardClick(id) {
+  if (combinataMode) {
+    toggleCombinataCard(id);
+  } else {
+    toggleDetail(id);
+  }
 }
 
 function toggleDetail(id) {
