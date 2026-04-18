@@ -2352,9 +2352,6 @@ function renderHistory() {
     return;
   }
 
-;
-  }
-
   listEl.innerHTML = filtered.map(e => {
     const statusLabel = {attesa:'⏳ In Attesa',vinto:'✅ Vinto',perso:'❌ Perso',pareggio:'➖ Pareggio'}[e.status]||'⏳ In Attesa';
     const statusClass = 'status-'+e.status;
@@ -2624,7 +2621,7 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
       + '<div class="calc-result-item"><span class="calc-result-label">Profitto netto</span><span class="calc-result-val" style="color:var(--accent)" id="calcProfitto">+€' + (10*quota-10).toFixed(2) + '</span></div>'
       + (r.value_bet_principale ? '<div class="calc-result-item"><span class="calc-result-label">Value</span><span class="calc-result-val" style="color:var(--gold)">⚡ SI</span></div>' : '')
       + '</div></div>'
-      + '<div class="calc-save-note">💡 L'importo verrà salvato con il pronostico e contribuirà al calcolo del tuo ROI reale nelle statistiche.</div>'
+      + '<div class="calc-save-note">💡 L\'importo verrà salvato con il pronostico e contribuirà al calcolo del tuo ROI reale nelle statistiche.</div>'
       + '</div>'
     : '';
 
@@ -2662,7 +2659,7 @@ function renderResult(r, team1, team2, competition, webText, showSave, mercati, 
     + '</div>'
     + calcHtml
     + saveBtn
-    + '<div class="disclaimer"><strong>⚠️ Gioco Responsabile:</strong> Strumento puramente informativo. I pronostici AI non garantiscono risultati. Il gioco d'azzardo può creare dipendenza — non scommettere più di quanto puoi permetterti di perdere.</div>';
+    + '<div class="disclaimer"><strong>⚠️ Gioco Responsabile:</strong> Strumento puramente informativo. I pronostici AI non garantiscono risultati. Il gioco d\'azzardo può creare dipendenza — non scommettere più di quanto puoi permetterti di perdere.</div>';
 
   document.getElementById('resultCard').classList.add('visible');
   document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
@@ -2681,12 +2678,11 @@ async function verificaRisultato(id) {
   // Web search per il risultato reale
   let risultatoWeb = '';
   try {
-    const query = 'risultato finale ${entry.team1} vs ${entry.team2} ${entry.competition||''} ${entry.matchDate}';
+    const query = 'risultato finale ' + entry.team1 + ' vs ' + entry.team2 + ' ' + (entry.competition||'') + ' ' + entry.matchDate;
     const tools = [{ type: "web_search_20250305", name: "web_search" }];
     let messages = [{
       role: "user",
-      content: 'Cerca il risultato finale della partita: ${entry.team1} vs ${entry.team2}${entry.competition ? ' - ' + entry.competition : ''} del ${entry.matchDate}.
-Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se disponibili, eventuali note importanti sulla partita.'
+      content: 'Cerca il risultato finale della partita: ' + entry.team1 + ' vs ' + entry.team2 + (entry.competition ? ' - ' + entry.competition : '') + ' del ' + entry.matchDate + '.\nTrova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se disponibili, eventuali note importanti sulla partita.'
     }];
     let iterations = 0;
     while (iterations < 3) {
@@ -2707,31 +2703,28 @@ Trova il punteggio esatto finale. Riporta solo i fatti: risultato, marcatori se 
   } catch(e) { risultatoWeb = ''; }
 
   // AI valuta se il pronostico era corretto
-  const evalPrompt = 'Sei un analista sportivo. Devi valutare se un pronostico era corretto confrontandolo con il risultato reale.
-
-PRONOSTICO ORIGINALE:
-- Partita: ${entry.team1} vs ${entry.team2}
-- Data: ${entry.matchDate}
-- Pronostico: ${entry.pronostico} (${entry.descrizione})
-- Confidenza: ${entry.confidenza}%
-- Risultato ipotetico previsto: ${entry.risultato_ipotetico}
-- Rischio stimato: ${entry.rischio}
-
-DATI TROVATI SUL WEB:
-${risultatoWeb || 'Nessun dato trovato online per questa partita.'}
-
-Analizza e rispondi SOLO con JSON valido:
-{
-  "risultato_trovato": true o false,
-  "punteggio_reale": "es. 3-1 oppure 'Non trovato'",
-  "vincitore_reale": "Casa o Ospite o Pareggio o 'Non trovato'",
-  "pronostico_corretto": true o false,
-  "esito_scommessa": "VINTO o PERSO o PAREGGIO o NON_VERIFICABILE",
-  "accuratezza": "ESATTO o PARZIALE o SBAGLIATO o NON_VERIFICABILE",
-  "cosa_ha_indovinato": "cosa l'AI aveva previsto correttamente",
-  "cosa_ha_sbagliato": "cosa l'AI aveva previsto in modo errato, o 'Nulla' se ha indovinato tutto",
-  "nota_apprendimento": "lezione concreta per migliorare pronostici simili in futuro, basata sull'analisi dell'errore o della conferma"
-}';
+  const evalPrompt = 'Sei un analista sportivo. Devi valutare se un pronostico era corretto confrontandolo con il risultato reale.\n\n'
+    + 'PRONOSTICO ORIGINALE:\n'
+    + '- Partita: ' + entry.team1 + ' vs ' + entry.team2 + '\n'
+    + '- Data: ' + entry.matchDate + '\n'
+    + '- Pronostico: ' + entry.pronostico + ' (' + entry.descrizione + ')\n'
+    + '- Confidenza: ' + entry.confidenza + '%\n'
+    + '- Risultato ipotetico previsto: ' + entry.risultato_ipotetico + '\n'
+    + '- Rischio stimato: ' + entry.rischio + '\n\n'
+    + 'DATI TROVATI SUL WEB:\n'
+    + (risultatoWeb || 'Nessun dato trovato online per questa partita.') + '\n\n'
+    + 'Analizza e rispondi SOLO con JSON valido:\n'
+    + '{\n'
+    + '  "risultato_trovato": true o false,\n'
+    + '  "punteggio_reale": "es. 3-1",\n'
+    + '  "vincitore_reale": "Casa o Ospite o Pareggio o Non trovato",\n'
+    + '  "pronostico_corretto": true o false,\n'
+    + '  "esito_scommessa": "VINTO o PERSO o PAREGGIO o NON_VERIFICABILE",\n'
+    + '  "accuratezza": "ESATTO o PARZIALE o SBAGLIATO o NON_VERIFICABILE",\n'
+    + '  "cosa_ha_indovinato": "cosa l\'AI aveva previsto correttamente",\n'
+    + '  "cosa_ha_sbagliato": "cosa l\'AI aveva previsto in modo errato",\n'
+    + '  "nota_apprendimento": "lezione concreta per migliorare pronostici simili in futuro"\n'
+    + '}';
 
   try {
     const res = await fetch("/api/proxy", {
@@ -2762,33 +2755,19 @@ Analizza e rispondi SOLO con JSON valido:
     const esitoIcon = v.esito_scommessa === 'VINTO' ? '✅' : v.esito_scommessa === 'PERSO' ? '❌' : v.esito_scommessa === 'PAREGGIO' ? '➖' : '❓';
     const esitoColor = v.esito_scommessa === 'VINTO' ? 'var(--accent)' : v.esito_scommessa === 'PERSO' ? 'var(--danger)' : 'var(--gold)';
 
-    panel.innerHTML = '
-      <div class="verifica-header ${headerClass}">
-        <span class="verifica-esito" style="color:${esitoColor}">${esitoIcon} ${v.esito_scommessa} — ${v.accuratezza}</span>
-        <span class="verifica-score">Risultato reale: <strong>${v.punteggio_reale}</strong></span>
-      </div>
-      <div class="verifica-body">
-        <div class="verifica-row">
-          <div class="verifica-item">
-            <div class="verifica-key">Pronostico dato</div>
-            <div class="verifica-val">${entry.pronostico}</div>
-          </div>
-          <div class="verifica-item">
-            <div class="verifica-key">Esito reale</div>
-            <div class="verifica-val">${v.vincitore_reale}</div>
-          </div>
-          <div class="verifica-item">
-            <div class="verifica-key">✅ Cosa ha indovinato</div>
-            <div class="verifica-val ok">${v.cosa_ha_indovinato}</div>
-          </div>
-          <div class="verifica-item">
-            <div class="verifica-key">❌ Cosa ha sbagliato</div>
-            <div class="verifica-val ko">${v.cosa_ha_sbagliato}</div>
-          </div>
-        </div>
-        <div class="verifica-key" style="margin-bottom:8px">🧠 Nota di Apprendimento</div>
-        <div class="verifica-note">${v.nota_apprendimento}</div>
-      </div>';
+    panel.innerHTML = '<div class="verifica-header ' + headerClass + '">'
+      + '<span class="verifica-esito" style="color:' + esitoColor + '">' + esitoIcon + ' ' + v.esito_scommessa + ' — ' + v.accuratezza + '</span>'
+      + '<span class="verifica-score">Risultato reale: <strong>' + v.punteggio_reale + '</strong></span>'
+      + '</div>'
+      + '<div class="verifica-body"><div class="verifica-row">'
+      + '<div class="verifica-item"><div class="verifica-key">Pronostico dato</div><div class="verifica-val">' + entry.pronostico + '</div></div>'
+      + '<div class="verifica-item"><div class="verifica-key">Esito reale</div><div class="verifica-val">' + v.vincitore_reale + '</div></div>'
+      + '<div class="verifica-item"><div class="verifica-key">✅ Cosa ha indovinato</div><div class="verifica-val ok">' + v.cosa_ha_indovinato + '</div></div>'
+      + '<div class="verifica-item"><div class="verifica-key">❌ Cosa ha sbagliato</div><div class="verifica-val ko">' + v.cosa_ha_sbagliato + '</div></div>'
+      + '</div>'
+      + '<div class="verifica-key" style="margin-bottom:8px">🧠 Nota di Apprendimento</div>'
+      + '<div class="verifica-note">' + v.nota_apprendimento + '</div>'
+      + '</div>';
     panel.classList.add('visible');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
@@ -2796,7 +2775,7 @@ Analizza e rispondi SOLO con JSON valido:
     renderHistory();
 
   } catch(err) {
-    if (panel) panel.innerHTML = '<div style="padding:14px;color:var(--danger);font-size:0.85rem">❌ Errore verifica: ${err.message}</div>`;
+    if (panel) panel.innerHTML = '<div style="padding:14px;color:var(--danger);font-size:0.85rem">❌ Errore verifica: ' + err.message + '</div>';
     panel.classList.add('visible');
   }
 
