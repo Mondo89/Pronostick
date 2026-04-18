@@ -228,7 +228,9 @@ textarea{resize:vertical;min-height:80px;}
 .confidence-mini{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);}
 
 /* Card actions */
-.hcard-actions{padding:0 20px 16px;display:flex;gap:10px;flex-wrap:wrap;}
+.hcard.combinata-selected { outline: 2px solid var(--accent3); outline-offset: 2px; cursor: pointer; }
+.hcard.combinata-mode { cursor: pointer; }
+.hcard.combinata-mode:hover { outline: 1px solid rgba(77,166,255,0.4); outline-offset: 2px; }
 .btn-ricalcolo{background:rgba(77,166,255,0.1);color:var(--accent3);border:1px solid rgba(77,166,255,0.3);border-radius:6px;padding:8px 16px;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:1.5px;cursor:pointer;transition:all 0.2s;}
 .btn-ricalcolo:hover{background:rgba(77,166,255,0.2);}
 .btn-ricalcolo:disabled{opacity:0.4;cursor:not-allowed;}
@@ -1109,10 +1111,29 @@ textarea{resize:vertical;min-height:80px;}
   <div class="storico-title-row">
     <span class="storico-title">📚 Storico Pronostici</span>
     <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-backup" onclick="toggleCombinataMode()" id="btnCombinata">🔗 Combinata</button>
       <button class="btn-backup" onclick="showStats()">📊 Statistiche</button>
       <button class="btn-backup" onclick="openBackupModal()">💾 Backup</button>
     </div>
   </div>
+
+  <!-- Combinata bar -->
+  <div id="combinataBar" style="display:none;background:rgba(77,166,255,0.06);border:1px solid rgba(77,166,255,0.25);border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--accent3);margin-bottom:4px;">🔗 Modalità Combinata</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Seleziona 2-4 pronostici dalla lista cliccando sulla card, poi premi Analizza.</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span id="combinataCount" style="font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--accent3);">0 selezionati</span>
+        <button onclick="analizzaCombinata()" id="btnAnalizzaCombinata" disabled style="background:var(--accent3);color:var(--bg);border:none;border-radius:8px;padding:9px 18px;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:1.5px;cursor:pointer;opacity:0.5;">⚡ ANALIZZA</button>
+        <button onclick="toggleCombinataMode()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:0.8rem;cursor:pointer;">Annulla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Combinata result -->
+  <div id="combinataResult" style="display:none;margin-bottom:20px;"></div>
 
   <!-- Filter tabs -->
   <div class="filter-tabs">
@@ -2069,6 +2090,168 @@ function confirmDelete(id) {
   renderHistory();
 }
 
+// --- COMBINATA ---------------------------------------------------------------
+let combinataMode = false;
+let combinataSelected = [];
+
+function toggleCombinataMode() {
+  combinataMode = !combinataMode;
+  combinataSelected = [];
+  const bar = document.getElementById('combinataBar');
+  const btn = document.getElementById('btnCombinata');
+  const result = document.getElementById('combinataResult');
+  if (combinataMode) {
+    bar.style.display = 'block';
+    btn.style.background = 'rgba(77,166,255,0.15)';
+    btn.style.color = 'var(--accent3)';
+    result.style.display = 'none';
+    result.innerHTML = '';
+  } else {
+    bar.style.display = 'none';
+    btn.style.background = '';
+    btn.style.color = '';
+  }
+  updateCombinataCount();
+  renderHistory();
+}
+
+function toggleCombinataCard(id) {
+  if (!combinataMode) return;
+  const idx = combinataSelected.indexOf(id);
+  if (idx >= 0) {
+    combinataSelected.splice(idx, 1);
+  } else {
+    if (combinataSelected.length >= 4) {
+      showToast('⚠️ Massimo 4 partite per combinata', 'error');
+      return;
+    }
+    combinataSelected.push(id);
+  }
+  updateCombinataCount();
+  renderHistory();
+}
+
+function updateCombinataCount() {
+  const n = combinataSelected.length;
+  const countEl = document.getElementById('combinataCount');
+  const btnEl = document.getElementById('btnAnalizzaCombinata');
+  if (countEl) countEl.textContent = n + ' selezionat' + (n === 1 ? 'o' : 'i');
+  if (btnEl) {
+    btnEl.disabled = n < 2;
+    btnEl.style.opacity = n >= 2 ? '1' : '0.5';
+    btnEl.style.cursor = n >= 2 ? 'pointer' : 'not-allowed';
+  }
+}
+
+async function analizzaCombinata() {
+  if (combinataSelected.length < 2) return;
+  if (!getApiKey()) { showToast('⚠️ Inserisci prima la API key', 'error'); return; }
+
+  const history = loadHistory();
+  const partite = combinataSelected.map(function(id) { return history.find(function(e) { return e.id === id; }); }).filter(Boolean);
+
+  const btn = document.getElementById('btnAnalizzaCombinata');
+  btn.textContent = '⏳ Analisi...';
+  btn.disabled = true;
+
+  const prompt = 'Sei un esperto di scommesse sportive. Oggi è ' + new Date().toLocaleDateString('it-IT') + '.\n\n'
+    + 'Analizza questa combinata di ' + partite.length + ' partite e valuta se vale la pena giocarla insieme:\n\n'
+    + partite.map(function(p, i) {
+        return (i+1) + '. ' + p.team1 + ' vs ' + p.team2
+          + ' (' + p.sport + (p.competition ? ' - ' + p.competition : '') + ')'
+          + ' del ' + p.matchDate
+          + '\n   Pronostico AI: ' + p.pronostico + ' - ' + p.descrizione
+          + '\n   Quota AI stimata: ' + p.quota
+          + (p.quota_reale ? '\n   Quota bookmaker reale: ' + p.quota_reale : '')
+          + '\n   Confidenza: ' + p.confidenza + '%'
+          + '\n   Rischio: ' + p.rischio;
+      }).join('\n\n')
+    + '\n\nRispondi SOLO con JSON valido:\n'
+    + '{\n'
+    + '  "quota_combinata": numero prodotto delle quote,\n'
+    + '  "probabilita_combinata": numero 0-100,\n'
+    + '  "vale_la_pena": true o false,\n'
+    + '  "rischio_combinata": "BASSO o MEDIO o ALTO",\n'
+    + '  "analisi": "2-3 frasi che spiegano perche conviene o no questa combinata",\n'
+    + '  "punto_debole": "la partita piu rischiosa della combinata e perche",\n'
+    + '  "importo_consigliato": "es. Max 2% del budget",\n'
+    + '  "alternativa": "suggerimento su come migliorare la combinata"\n'
+    + '}';
+
+  try {
+    const res = await fetch('/api/proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': getApiKey() },
+      body: JSON.stringify({ model: getModel(), max_tokens: 800, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'Errore');
+    const raw = data.content.map(function(i) { return i.text || ''; }).join('');
+    const t = raw.trim();
+    const r = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}')+1));
+    renderCombinataResult(r, partite);
+  } catch(err) {
+    showToast('❌ Errore analisi combinata: ' + err.message, 'error');
+  }
+
+  btn.textContent = '⚡ ANALIZZA';
+  btn.disabled = combinataSelected.length < 2;
+  btn.style.opacity = combinataSelected.length >= 2 ? '1' : '0.5';
+}
+
+function renderCombinataResult(r, partite) {
+  const result = document.getElementById('combinataResult');
+  result.style.display = 'block';
+  const riskColor = r.rischio_combinata === 'BASSO' ? 'var(--accent)' : r.rischio_combinata === 'MEDIO' ? 'var(--gold)' : 'var(--danger)';
+  const vale = r.vale_la_pena;
+  const quotaReale = partite.every(function(p) { return p.quota_reale; })
+    ? partite.reduce(function(acc, p) { return acc * parseFloat(p.quota_reale); }, 1).toFixed(2)
+    : null;
+
+  result.innerHTML = '<div style="background:var(--surface);border:2px solid ' + (vale ? 'rgba(0,229,160,0.3)' : 'rgba(255,71,87,0.3)') + ';border-radius:12px;padding:20px;">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;">'
+    + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(--text);">🔗 Analisi Combinata</div>'
+    + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;padding:6px 16px;border-radius:20px;background:' + (vale ? 'rgba(0,229,160,0.12)' : 'rgba(255,71,87,0.12)') + ';color:' + (vale ? 'var(--accent)' : 'var(--danger)') + ';border:1px solid ' + (vale ? 'rgba(0,229,160,0.3)' : 'rgba(255,71,87,0.3)') + ';">' + (vale ? '✅ VALE LA PENA' : '⚠️ RISCHIO ELEVATO') + '</span>'
+    + '</div>'
+    + '<div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px;">'
+    + '<div style="text-align:center;"><div style="font-size:0.62rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Quota AI</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:2.2rem;color:var(--accent3);">' + parseFloat(r.quota_combinata).toFixed(2) + '</div></div>'
+    + (quotaReale ? '<div style="text-align:center;"><div style="font-size:0.62rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Quota reale</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:2.2rem;color:var(--gold);">' + quotaReale + '</div></div>' : '')
+    + '<div style="text-align:center;"><div style="font-size:0.62rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Probabilità</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:2.2rem;color:var(--text);">' + r.probabilita_combinata + '%</div></div>'
+    + '<div style="text-align:center;"><div style="font-size:0.62rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Rischio</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:2.2rem;color:' + riskColor + ';">' + r.rischio_combinata + '</div></div>'
+    + '</div>'
+    + '<div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:12px;">'
+    + '<div style="font-size:0.62rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">📊 Analisi</div>'
+    + '<div style="font-size:0.85rem;color:#c5cad8;line-height:1.7;">' + r.analisi + '</div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">'
+    + '<div style="background:rgba(255,71,87,0.06);border:1px solid rgba(255,71,87,0.2);border-radius:8px;padding:12px;">'
+    + '<div style="font-size:0.62rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--danger);margin-bottom:6px;">⚠️ Punto debole</div>'
+    + '<div style="font-size:0.8rem;color:#c5cad8;line-height:1.6;">' + r.punto_debole + '</div>'
+    + '</div>'
+    + '<div style="background:rgba(77,166,255,0.06);border:1px solid rgba(77,166,255,0.2);border-radius:8px;padding:12px;">'
+    + '<div style="font-size:0.62rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent3);margin-bottom:6px;">💡 Alternativa</div>'
+    + '<div style="font-size:0.8rem;color:#c5cad8;line-height:1.6;">' + r.alternativa + '</div>'
+    + '</div>'
+    + '</div>'
+    + '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);border-radius:8px;padding:12px;margin-bottom:14px;">'
+    + '<div style="font-size:0.62rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">💰 Importo consigliato</div>'
+    + '<div style="font-size:0.85rem;color:#c5cad8;">' + r.importo_consigliato + '</div>'
+    + '</div>'
+    + '<div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Partite in combinata:</div>'
+    + partite.map(function(p) {
+        return '<div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--muted);margin-bottom:4px;">'
+          + '<span style="color:var(--accent3);">→</span>'
+          + '<span style="color:var(--text);">' + p.team1 + ' vs ' + p.team2 + '</span>'
+          + '<span>· ' + p.pronostico + '</span>'
+          + '<span style="color:var(--accent3);">@' + (p.quota_reale || p.quota) + '</span>'
+          + '</div>';
+      }).join('')
+    + '</div>';
+
+  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// --- GUIDA ---------------------------------------------------------------
 function showGuida() {
   document.getElementById('guidaSection').classList.add('visible');
   document.getElementById('guidaSection').scrollIntoView({behavior:'smooth', block:'start'});
@@ -2461,7 +2644,7 @@ function renderHistory() {
         + '</div>';
     }
 
-    return '<div class="hcard ' + e.status + '" id="hcard_' + e.id + '">'
+    return '<div class="hcard ' + e.status + (combinataMode ? ' combinata-mode' : '') + (combinataSelected.indexOf(e.id) >= 0 ? ' combinata-selected' : '') + '" id="hcard_' + e.id + '"' + (combinataMode ? ' onclick="toggleCombinataCard(\'' + e.id + '\')"' : '') + '>'
       + '<div class="hcard-top" onclick="toggleDetail(\'' + e.id + '\')">'
       + '<div class="hcard-left">'
       + '<div class="hcard-match">' + e.team1 + ' vs ' + e.team2 + '</div>'
