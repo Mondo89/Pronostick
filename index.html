@@ -898,6 +898,18 @@ textarea{resize:vertical;min-height:80px;}
 .toggle input:checked + .toggle-slider::before { transform: translateX(24px); background: var(--accent); }
 .toggle-status { font-size: 0.68rem; font-family: 'DM Mono', monospace; font-weight: 600; }
 
+/* ===== DESKTOP NAV ===== */
+.dnav-btn {
+  background: transparent; border: none; color: var(--muted);
+  padding: 6px 14px; border-radius: 6px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.dnav-btn:hover { background: var(--surface2); color: var(--text); }
+.dnav-btn.dnav-active { background: rgba(0,229,160,0.1); color: var(--accent); }
+@media (max-width: 640px) { #desktopNav { display: none !important; } }
+@media (min-width: 641px) { .tab-bar { display: none !important; } body { padding-bottom: 20px; } }
+
 /* ===== TAB BAR NAVIGATION ===== */
 body { padding-bottom: 70px; } /* space for tab bar */
 .tab-bar {
@@ -980,25 +992,57 @@ body { padding-bottom: 70px; } /* space for tab bar */
 <div id="app">
 
 <!-- GLOBAL HEADER -->
-<div style="position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;">
-  <div style="display:flex;align-items:baseline;gap:8px;">
-    <span style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--text);">PRONOSTICK</span>
-    <span style="background:var(--accent);color:var(--bg);font-size:0.55rem;font-weight:700;letter-spacing:2px;padding:2px 6px;border-radius:3px;">BETA</span>
+<div style="position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;">
+  <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;gap:16px;">
+    <!-- Logo -->
+    <div style="display:flex;align-items:baseline;gap:8px;flex-shrink:0;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--text);">PRONOSTICK</span>
+      <span style="background:var(--accent);color:var(--bg);font-size:0.55rem;font-weight:700;letter-spacing:2px;padding:2px 6px;border-radius:3px;">BETA</span>
+    </div>
+    <!-- Desktop nav tabs (hidden on mobile) -->
+    <nav id="desktopNav" style="display:flex;gap:4px;align-items:center;">
+      <button onclick="switchTab('home')" id="dnav-home" class="dnav-btn dnav-active">⚡ Analizza</button>
+      <button onclick="switchTab('storico')" id="dnav-storico" class="dnav-btn">📚 Storico</button>
+      <button onclick="switchTab('guida')" id="dnav-guida" class="dnav-btn">❓ Guida</button>
+      <button onclick="switchTab('menu')" id="dnav-menu" class="dnav-btn">⚙️ Menu</button>
+    </nav>
+    <!-- Header status -->
+    <div id="headerStatus" style="font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--muted);flex-shrink:0;"></div>
   </div>
-  <div id="headerStatus" style="font-size:0.72rem;font-family:'DM Mono',monospace;"></div>
 </div>
 
 <!-- PAGE: HOME (Analizza) -->
 <div class="page active" id="page-home">
 <div class="container">
-<!-- Sport tabs -->
-<div class="sport-tabs">
-  <button class="sport-tab active" data-sport="Calcio">⚽ Calcio</button>
-  <button class="sport-tab" data-sport="Tennis">🎾 Tennis</button>
-  <button class="sport-tab" data-sport="Basket">🏀 Basket</button>
-  <button class="sport-tab" data-sport="Rugby">🏉 Rugby</button>
-  <button class="sport-tab" data-sport="Baseball">⚾ Baseball</button>
-  <button class="sport-tab" data-sport="Hockey">🏒 Hockey</button>
+
+<!-- Sport selector -->
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;margin-top:20px;flex-wrap:wrap;">
+  <div style="position:relative;flex-shrink:0;">
+    <select id="sportSelect" onchange="selectSportFromDropdown(this)" style="appearance:none;-webkit-appearance:none;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 36px 9px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;outline:none;cursor:pointer;min-width:160px;">
+      <option value="Calcio">⚽ Calcio</option>
+      <option value="Tennis">🎾 Tennis</option>
+      <option value="Basket">🏀 Basket</option>
+      <option value="Football Americano">🏈 Football Americano</option>
+      <option value="Rugby">🏉 Rugby</option>
+      <option value="Baseball">⚾ Baseball</option>
+      <option value="Hockey su Ghiaccio">🏒 Hockey su Ghiaccio</option>
+      <option value="MMA">🥊 MMA / UFC</option>
+      <option value="Boxe">🥊 Boxe</option>
+      <option value="Golf">⛳ Golf</option>
+      <option value="Formula 1">🏎️ Formula 1</option>
+      <option value="Ciclismo">🚴 Ciclismo</option>
+      <option value="Pallavolo">🏐 Pallavolo</option>
+      <option value="Nuoto">🏊 Nuoto</option>
+      <option value="Atletica">🏃 Atletica</option>
+      <option value="Altro">✏️ Altro (scrivi sotto)</option>
+    </select>
+    <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:0.8rem;">▼</span>
+  </div>
+  <div id="sportCustomWrap" style="display:none;flex:1;min-width:150px;">
+    <input type="text" id="sportCustom" placeholder="Scrivi lo sport..." oninput="setCustomSport(this.value)" autocomplete="off"
+      style="width:100%;background:var(--surface);border:1px solid var(--accent3);color:var(--text);padding:9px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;"/>
+  </div>
+  <div style="font-size:0.8rem;color:var(--muted);">Sport selezionato: <strong id="sportLabel" style="color:var(--accent);">Calcio</strong></div>
 </div>
 
 <!-- Form -->
@@ -1858,13 +1902,7 @@ function saveHistory(h) {
 }
 
 // --- INIT ---------------------------------------------------------------------
-document.querySelectorAll('.sport-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    selectedSport = tab.dataset.sport;
-  });
-});
+// Sport dropdown already handled by selectSportFromDropdown()
 document.getElementById('matchDate').value = new Date().toISOString().split('T')[0];
 document.getElementById('fileInput').addEventListener('change', function(){ handleFiles(this.files); this.value=''; });
 updateApiKeyUI();
@@ -2381,11 +2419,36 @@ function renderCombinataResult(r, partite) {
 function switchTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dnav-btn').forEach(t => t.classList.remove('dnav-active'));
   document.getElementById('page-' + tab).classList.add('active');
-  document.getElementById('tab-' + tab).classList.add('active');
+  const tabEl = document.getElementById('tab-' + tab);
+  if (tabEl) tabEl.classList.add('active');
+  const dnavEl = document.getElementById('dnav-' + tab);
+  if (dnavEl) dnavEl.classList.add('dnav-active');
   window.scrollTo(0, 0);
   if (tab === 'storico') renderHistory();
   if (tab === 'menu') updateApiKeyUI();
+}
+
+// --- SPORT DROPDOWN ----------------------------------------------------------
+function selectSportFromDropdown(sel) {
+  const val = sel.value;
+  const customWrap = document.getElementById('sportCustomWrap');
+  if (val === 'Altro') {
+    customWrap.style.display = 'flex';
+    document.getElementById('sportCustom').focus();
+  } else {
+    customWrap.style.display = 'none';
+    selectedSport = val;
+    document.getElementById('sportLabel').textContent = val;
+  }
+}
+
+function setCustomSport(val) {
+  if (val.trim()) {
+    selectedSport = val.trim();
+    document.getElementById('sportLabel').textContent = val.trim();
+  }
 }
 
 function showStats() {
