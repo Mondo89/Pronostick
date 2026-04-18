@@ -2037,6 +2037,18 @@ function deleteEntry(id) {
   else card.appendChild(bar);
 }
 
+function salvaImporto(input) {
+  const id = input.dataset.id;
+  const val = parseFloat(input.value) || 0;
+  const history = loadHistory();
+  const idx = history.findIndex(e => e.id === id);
+  if (idx >= 0) {
+    history[idx].importo_giocato = val;
+    saveHistory(history);
+    showToast('💰 Importo €' + val + ' salvato', 'success');
+  }
+}
+
 function confirmDelete(id) {
   const history = loadHistory().filter(e => e.id !== id);
   saveHistory(history);
@@ -2452,6 +2464,10 @@ function renderHistory() {
       + verificaHtml
       + diffHtml
       + '<div class="hcard-actions">'
+      + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">'
+      + '<label style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">💰 Importo €</label>'
+      + '<input type="number" min="0" step="1" value="' + (e.importo_giocato||'') + '" placeholder="0" data-id="' + e.id + '" onchange="salvaImporto(this)" style="width:70px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-family:\'DM Mono\',monospace;font-size:0.82rem;outline:none;"/>'
+      + '</div>'
       + '<button class="btn-verifica" id="verificaBtn_' + e.id + '" data-id="' + e.id + '" onclick="verificaRisultato(this.dataset.id)">' + (e.verifica ? '🔍 RIVERIFICA' : '🔍 VERIFICA RISULTATO') + '</button>'
       + '<button class="btn-ricalcolo" id="ricalcBtn_' + e.id + '" data-id="' + e.id + '" onclick="ricalcola(this.dataset.id)">🔄 RICALCOLA</button>'
       + '<button class="btn-delete" data-id="' + e.id + '" onclick="deleteEntry(this.dataset.id)">🗑 Elimina</button>'
