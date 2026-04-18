@@ -1599,6 +1599,8 @@ let currentResult = null;
 let activeStatusId = null;
 let activeFilter = 'attesa';
 let ouSoglia = '2.5';
+let combinataMode = false;
+let combinataSelected = [];
 
 // --- COST PANEL ---------------------------------------------------------------
 function isWebSearchEnabled() {
@@ -2091,9 +2093,6 @@ function confirmDelete(id) {
 }
 
 // --- COMBINATA ---------------------------------------------------------------
-let combinataMode = false;
-let combinataSelected = [];
-
 function toggleCombinataMode() {
   combinataMode = !combinataMode;
   combinataSelected = [];
