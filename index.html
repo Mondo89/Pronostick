@@ -1844,8 +1844,10 @@ async function callAI(prompt, maxTokens=1500) {
   if (!res.ok) throw new Error(data.error?.message||'Errore API');
   const raw = data.content.map(i=>i.text||'').join('');
   const t = raw.trim();
-  const jsonStr = t.startsWith('{') ? t : t.substring(t.indexOf('{'));
-  return JSON.parse(jsonStr);
+  const start = t.indexOf('{');
+  const end = t.lastIndexOf('}');
+  if (start === -1 || end === -1) throw new Error('Risposta AI non valida');
+  return JSON.parse(t.slice(start, end + 1));
 }
 
 async function analyzeMatch() {
@@ -2733,8 +2735,10 @@ async function verificaRisultato(id) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error?.message || 'Errore');
-    const raw = data.content.map(i => i.text || '').join('');
-    const clean = raw.trim(); const v = JSON.parse(clean.startsWith('{') ? clean : clean.substring(clean.indexOf('{')));
+    const rawV = data.content.map(i => i.text || '').join('');
+    const tV = rawV.trim();
+    const sV = tV.indexOf('{'); const eV = tV.lastIndexOf('}');
+    const v = JSON.parse(tV.slice(sV, eV+1));
 
     // Auto-update status
     const newStatus = v.esito_scommessa === 'VINTO' ? 'vinto'
