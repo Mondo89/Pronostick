@@ -897,68 +897,100 @@ textarea{resize:vertical;min-height:80px;}
 .toggle input:checked + .toggle-slider { background: rgba(0,229,160,0.15); border-color: var(--accent); }
 .toggle input:checked + .toggle-slider::before { transform: translateX(24px); background: var(--accent); }
 .toggle-status { font-size: 0.68rem; font-family: 'DM Mono', monospace; font-weight: 600; }
+
+/* ===== TAB BAR NAVIGATION ===== */
+body { padding-bottom: 70px; } /* space for tab bar */
+.tab-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--surface); border-top: 1px solid var(--border);
+  display: flex; height: 62px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+}
+.tab-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px; cursor: pointer;
+  color: var(--muted); font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  transition: color 0.2s; border: none; background: transparent;
+  padding: 8px 4px;
+}
+.tab-item .tab-icon { font-size: 1.3rem; line-height: 1; }
+.tab-item.active { color: var(--accent); }
+.tab-item.active .tab-icon { filter: drop-shadow(0 0 6px rgba(0,229,160,0.5)); }
+
+/* ===== PAGES ===== */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== PAGE HEADER (inside pages) ===== */
+.page-header {
+  padding: 24px 0 20px; border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.page-header-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.page-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+  letter-spacing: 2px; color: var(--text);
+}
+.page-subtitle { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+
+/* ===== MENU PAGE ===== */
+.menu-section-title {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted);
+  padding: 0 4px; margin-bottom: 8px; margin-top: 20px;
+}
+.menu-section-title:first-child { margin-top: 0; }
+.menu-item {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 8px;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.menu-item:hover { border-color: var(--accent3); background: rgba(77,166,255,0.04); }
+.menu-item-icon { font-size: 1.3rem; flex-shrink: 0; width: 28px; text-align: center; }
+.menu-item-body { flex: 1; }
+.menu-item-label { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.menu-item-desc { font-size: 0.75rem; color: var(--muted); }
+.menu-item-arrow { color: var(--muted); font-size: 0.9rem; }
+.menu-item-badge { font-size: 0.65rem; background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.25); border-radius: 20px; padding: 2px 8px; font-weight: 600; }
+
+/* ===== SETTINGS PAGE ===== */
+.settings-section { margin-bottom: 28px; }
+.settings-section-title {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 12px; padding: 0 2px;
+}
+.settings-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px; margin-bottom: 10px;
+}
 </style>
 </head>
 <body>
 <div id="protocolBanner" style="display:none;background:rgba(255,71,87,0.12);border-bottom:1px solid rgba(255,71,87,0.3);padding:12px 20px;text-align:center;font-size:0.82rem;color:var(--danger);line-height:1.5;position:sticky;top:0;z-index:50;">
-  ⚠️ <strong>Apri da un server web</strong> — su file locale le API non funzionano.<br>
-  Carica su <strong>Netlify</strong> o <strong>GitHub Pages</strong> per usarla correttamente.
+  ⚠️ <strong>Apri da un server web</strong> — su file locale le API non funzionano.
 </div>
-<!-- Trick per impedire a Chrome di aprire il gestore password sui campi numerici -->
 <input type="text" style="display:none" autocomplete="username"/>
 <input type="password" style="display:none" autocomplete="current-password"/>
 
+<div id="app">
+
+<!-- GLOBAL HEADER -->
+<div style="position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;">
+  <div style="display:flex;align-items:baseline;gap:8px;">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--text);">PRONOSTICK</span>
+    <span style="background:var(--accent);color:var(--bg);font-size:0.55rem;font-weight:700;letter-spacing:2px;padding:2px 6px;border-radius:3px;">BETA</span>
+  </div>
+  <div id="headerStatus" style="font-size:0.72rem;font-family:'DM Mono',monospace;"></div>
+</div>
+
+<!-- PAGE: HOME (Analizza) -->
+<div class="page active" id="page-home">
 <div class="container">
-
-<header>
-  <div class="logo">
-    <span class="logo-text">PRONOSTICK</span>
-    <span class="logo-badge">Beta</span>
-  </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
-    <p class="tagline">Analisi sportiva potenziata dall'intelligenza artificiale</p>
-    <button onclick="showGuida()" style="background:rgba(77,166,255,0.1);border:1px solid rgba(77,166,255,0.3);color:var(--accent3);border-radius:6px;padding:6px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0;">❓ Guida</button>
-  </div>
-</header>
-
-<!-- API KEY SETUP -->
-<div class="apikey-card" id="apikeyCard">
-  <div class="apikey-title">🔑 Configurazione API Key</div>
-  <div class="apikey-desc">
-    Inserisci la tua API key di Anthropic per usare l'app. Viene salvata solo sul tuo dispositivo, mai condivisa.
-    <br><a class="apikey-link" href="https://console.anthropic.com/keys" target="_blank">→ Ottieni la tua API key su console.anthropic.com</a>
-  </div>
-  <div class="apikey-row">
-    <input type="password" class="apikey-input" id="apikeyInput" placeholder="sk-ant-api03-..." />
-    <button class="apikey-btn" onclick="saveApiKey()">SALVA</button>
-  </div>
-  <div style="margin-top:10px">
-    <label style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Modello AI</label>
-    <select id="modelSelect" onchange="saveModel()" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
-      <option value="claude-haiku-4-5-20251001">claude-haiku-4.5 ⚡ (veloce, economico)</option>
-      <option value="claude-sonnet-4-5-20250929">claude-sonnet-4.5 ⭐ (consigliato)</option>
-      <option value="claude-sonnet-4-20250514">claude-sonnet-4 (ottimo)</option>
-      <option value="claude-opus-4-20250514">claude-opus-4 (più potente)</option>
-    </select>
-  </div>
-  <div class="apikey-status missing" id="apikeyStatus">⚠️ API key non configurata — l'app non funzionerà senza</div>
-</div>
-
-<!-- FIREBASE AUTH -->
-<div class="auth-card" id="authCard">
-  <div class="auth-info">
-    <div class="auth-title">☁️ Sincronizzazione Cloud</div>
-    <div class="auth-desc" id="authDesc">Accedi con Google per sincronizzare lo storico su tutti i dispositivi.</div>
-    <div class="sync-badge" id="syncBadge" style="display:none">✅ Storico sincronizzato su cloud</div>
-  </div>
-  <div id="authActions">
-    <button class="btn-google" onclick="loginGoogle()">
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
-      Accedi con Google
-    </button>
-  </div>
-</div>
-
 <!-- Sport tabs -->
 <div class="sport-tabs">
   <button class="sport-tab active" data-sport="Calcio">⚽ Calcio</button>
@@ -1106,6 +1138,13 @@ textarea{resize:vertical;min-height:80px;}
 <!-- Result -->
 <div class="result-card" id="resultCard"></div>
 
+
+</div>
+</div>
+
+<!-- PAGE: STORICO -->
+<div class="page" id="page-storico">
+<div class="container" style="padding-top:20px;">
 <!-- STORICO -->
 <div class="storico-section" id="storicoSection">
   <div class="storico-title-row">
@@ -1221,14 +1260,18 @@ textarea{resize:vertical;min-height:80px;}
 
 </div>
 
-<!-- GUIDA -->
-<div class="guida-section" id="guidaSection">
-  <div class="guida-header">
-    <span class="guida-title">❓ Come Funziona</span>
-    <button class="btn-back-storico" onclick="hideGuida()">← Torna all'app</button>
-  </div>
 
-  <div class="guida-tabs">
+</div>
+</div>
+
+<!-- PAGE: GUIDA -->
+<div class="page" id="page-guida">
+<div class="container" style="padding-top:20px;">
+  <div style="margin-bottom:20px;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;margin-bottom:4px;">❓ Come Funziona</div>
+    <div style="font-size:0.82rem;color:var(--muted);">Guida completa a PRONOSTICK</div>
+  </div>
+<div class="guida-tabs">
     <button class="guida-tab active" onclick="switchGuida('intro',this)">🚀 Inizia qui</button>
     <button class="guida-tab" onclick="switchGuida('mercati',this)">📊 I Mercati</button>
     <button class="guida-tab" onclick="switchGuida('leggi',this)">📖 Leggi i risultati</button>
@@ -1419,6 +1462,68 @@ textarea{resize:vertical;min-height:80px;}
     </div>
   </div>
 
+
+</div>
+</div>
+
+<!-- PAGE: MENU -->
+<div class="page" id="page-menu">
+<div class="container" style="padding-top:20px;">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;margin-bottom:20px;">⚙️ Menu</div>
+
+  <div style="font-size:0.62rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Account</div>
+  <div class="auth-card" id="authCard" style="margin-bottom:16px;">
+    <div class="auth-info">
+      <div class="auth-title">☁️ Sincronizzazione Cloud</div>
+      <div class="auth-desc" id="authDesc">Accedi con Google per sincronizzare lo storico su tutti i dispositivi.</div>
+      <div class="sync-badge" id="syncBadge" style="display:none">✅ Storico sincronizzato su cloud</div>
+    </div>
+    <div id="authActions">
+      <button class="btn-google" onclick="loginGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+        Accedi con Google
+      </button>
+    </div>
+  </div>
+
+  <div style="font-size:0.62rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Impostazioni</div>
+  <div class="settings-card" id="apikeyCard" style="margin-bottom:10px;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px;color:var(--text);margin-bottom:12px;">🔑 API Key Anthropic</div>
+    <div class="apikey-row">
+      <input type="password" class="apikey-input" id="apikeyInput" placeholder="sk-ant-api03-..." autocomplete="new-password"/>
+      <button class="apikey-btn" onclick="saveApiKey()">SALVA</button>
+    </div>
+    <div class="apikey-status missing" id="apikeyStatus" style="margin-top:8px;">⚠️ API key non configurata</div>
+    <a class="apikey-link" href="https://console.anthropic.com/keys" target="_blank" style="margin-top:6px;display:inline-block;">→ Ottieni la tua API key</a>
+  </div>
+
+  <div class="settings-card" style="margin-bottom:16px;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px;color:var(--text);margin-bottom:12px;">🤖 Modello AI</div>
+    <select id="modelSelect" onchange="saveModel()" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
+      <option value="claude-haiku-4-5-20251001">claude-haiku-4.5 ⚡ (veloce, economico)</option>
+      <option value="claude-sonnet-4-5-20250929">claude-sonnet-4.5 ⭐ (consigliato)</option>
+      <option value="claude-sonnet-4-20250514">claude-sonnet-4 (ottimo)</option>
+      <option value="claude-opus-4-20250514">claude-opus-4 (più potente)</option>
+    </select>
+  </div>
+
+  <div style="font-size:0.62rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Strumenti</div>
+  <div onclick="openBackupModal()" style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;cursor:pointer;">
+    <span style="font-size:1.3rem;">💾</span>
+    <div style="flex:1;"><div style="font-size:0.9rem;font-weight:600;color:var(--text);">Backup Storico</div><div style="font-size:0.75rem;color:var(--muted);">Esporta o importa i tuoi pronostici</div></div>
+    <span style="color:var(--muted);">›</span>
+  </div>
+  <a href="https://console.anthropic.com/settings/billing" target="_blank" style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;text-decoration:none;">
+    <span style="font-size:1.3rem;">💳</span>
+    <div style="flex:1;"><div style="font-size:0.9rem;font-weight:600;color:var(--text);">Credito Anthropic</div><div style="font-size:0.75rem;color:var(--muted);">Controlla il tuo saldo API</div></div>
+    <span style="color:var(--muted);">↗</span>
+  </a>
+
+  <div style="text-align:center;padding:28px 0 8px;color:var(--muted);font-size:0.72rem;line-height:1.8;">
+    PRONOSTICK Beta<br>Analisi sportiva potenziata dall'AI<br>
+    <span style="color:var(--border)">pronostick.netlify.app</span>
+  </div>
+</div>
 </div>
 
 <!-- Status picker (floating) -->
@@ -1473,6 +1578,28 @@ textarea{resize:vertical;min-height:80px;}
 </div>
 
 </div><!-- /container -->
+
+
+<!-- TAB BAR -->
+<nav class="tab-bar">
+  <button class="tab-item active" id="tab-home" onclick="switchTab('home')">
+    <span class="tab-icon">⚡</span>
+    <span>Analizza</span>
+  </button>
+  <button class="tab-item" id="tab-storico" onclick="switchTab('storico')">
+    <span class="tab-icon">📚</span>
+    <span>Storico</span>
+  </button>
+  <button class="tab-item" id="tab-guida" onclick="switchTab('guida')">
+    <span class="tab-icon">❓</span>
+    <span>Guida</span>
+  </button>
+  <button class="tab-item" id="tab-menu" onclick="switchTab('menu')">
+    <span class="tab-icon">⚙️</span>
+    <span>Menu</span>
+  </button>
+</nav>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <!-- Firebase SDK -->
@@ -2250,15 +2377,35 @@ function renderCombinataResult(r, partite) {
   result.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// --- GUIDA ---------------------------------------------------------------
-function showGuida() {
-  document.getElementById('guidaSection').classList.add('visible');
-  document.getElementById('guidaSection').scrollIntoView({behavior:'smooth', block:'start'});
+// --- TAB NAVIGATION ----------------------------------------------------------
+function switchTab(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  window.scrollTo(0, 0);
+  if (tab === 'storico') renderHistory();
+  if (tab === 'menu') updateApiKeyUI();
 }
-function hideGuida() {
-  document.getElementById('guidaSection').classList.remove('visible');
-  window.scrollTo({top:0, behavior:'smooth'});
+
+function showStats() {
+  switchTab('storico');
+  setTimeout(function() {
+    document.getElementById('storicoSection').style.display = 'none';
+    const s = document.getElementById('statsSection');
+    s.classList.add('visible');
+    s.scrollIntoView({behavior:'smooth', block:'start'});
+    renderStats();
+  }, 50);
 }
+
+function hideStats() {
+  document.getElementById('statsSection').classList.remove('visible');
+  document.getElementById('storicoSection').style.display = 'block';
+}
+
+function showGuida() { switchTab('guida'); }
+function hideGuida() { switchTab('home'); }
 function switchGuida(tab, btn) {
   document.querySelectorAll('.guida-content').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.guida-tab').forEach(t => t.classList.remove('active'));
@@ -2306,19 +2453,6 @@ function getImportoGiocata() {
 }
 
 let roiChartInstance = null;
-
-function showStats() {
-  document.getElementById('storicoSection').style.display = 'none';
-  const s = document.getElementById('statsSection');
-  s.classList.add('visible');
-  s.scrollIntoView({behavior:'smooth', block:'start'});
-  renderStats();
-}
-
-function hideStats() {
-  document.getElementById('statsSection').classList.remove('visible');
-  document.getElementById('storicoSection').style.display = 'block';
-}
 
 function renderStats() {
   const history = loadHistory();
