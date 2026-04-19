@@ -1916,7 +1916,7 @@ function getApiKey() {
 function saveApiKey() {
   const val = document.getElementById('apikeyInput').value.trim();
   if (!val) { showToast('⚠️ Inserisci una API key', 'error'); return; }
-  if (!val.startsWith('sk-ant-')) { showToast('⚠️ Formato non valido — deve iniziare con "sk-ant-"', 'error'); return; }
+  if (!val.startsWith('sk-')) { showToast('⚠️ Formato non valido — la API key deve iniziare con "sk-"', 'error'); return; }
   localStorage.setItem(APIKEY_KEY, val);
   updateApiKeyUI();
   showToast('✅ API key salvata correttamente!', 'success');
