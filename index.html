@@ -1015,6 +1015,12 @@ body { padding-bottom: 70px; } /* space for tab bar */
 <!-- PAGE: HOME (Analizza) -->
 <div class="page active" id="page-home">
 <div class="container">
+<div class="apikey-missing-banner" style="display:none;align-items:center;gap:12px;background:rgba(255,71,87,0.12);border:1px solid rgba(255,71,87,0.35);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+  <span style="font-size:1.2rem;">🔑</span>
+  <div style="flex:1;font-size:0.85rem;color:var(--danger);">API key non configurata — le funzioni AI non funzioneranno.</div>
+  <button onclick="switchTab('menu')" style="background:var(--danger);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:1px;cursor:pointer;white-space:nowrap;">⚙️ VAI AL MENU</button>
+</div>
+
 
 <!-- Sport selector -->
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;margin-top:20px;flex-wrap:wrap;">
@@ -1190,6 +1196,11 @@ body { padding-bottom: 70px; } /* space for tab bar */
 <!-- PAGE: STORICO -->
 <div class="page" id="page-storico">
 <div class="container" style="padding-top:20px;">
+<div class="apikey-missing-banner" style="display:none;align-items:center;gap:12px;background:rgba(255,71,87,0.12);border:1px solid rgba(255,71,87,0.35);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+  <span style="font-size:1.2rem;">🔑</span>
+  <div style="flex:1;font-size:0.85rem;color:var(--danger);">API key non configurata — le funzioni AI non funzioneranno.</div>
+  <button onclick="switchTab('menu')" style="background:var(--danger);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:1px;cursor:pointer;white-space:nowrap;">⚙️ VAI AL MENU</button>
+</div>
 <!-- STORICO -->
 <div class="storico-section" id="storicoSection">
   <div class="storico-title-row">
@@ -1535,7 +1546,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
   <div class="settings-card" id="apikeyCard" style="margin-bottom:10px;">
     <div style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px;color:var(--text);margin-bottom:12px;">🔑 API Key Anthropic</div>
     <div class="apikey-row">
-      <input type="password" class="apikey-input" id="apikeyInput" placeholder="sk-ant-api03-..." autocomplete="new-password"/>
+      <input type="password" class="apikey-input" id="apikeyInput" placeholder="sk-ant-api03-..." autocomplete="new-password" onkeydown="if(event.key==='Enter') saveApiKey()"/>
       <button class="apikey-btn" onclick="saveApiKey()">SALVA</button>
     </div>
     <div class="apikey-status missing" id="apikeyStatus" style="margin-top:8px;">⚠️ API key non configurata</div>
@@ -1628,6 +1639,12 @@ body { padding-bottom: 70px; } /* space for tab bar */
 <!-- PAGE: CALENDARIO -->
 <div class="page" id="page-calendario">
 <div class="container" style="padding-top:20px;">
+
+<div class="apikey-missing-banner" style="display:none;align-items:center;gap:12px;background:rgba(255,71,87,0.12);border:1px solid rgba(255,71,87,0.35);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+  <span style="font-size:1.2rem;">🔑</span>
+  <div style="flex:1;font-size:0.85rem;color:var(--danger);">API key non configurata — le funzioni AI non funzioneranno.</div>
+  <button onclick="switchTab('menu')" style="background:var(--danger);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:1px;cursor:pointer;white-space:nowrap;">⚙️ VAI AL MENU</button>
+</div>
 
   <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
     <div>
@@ -1898,11 +1915,11 @@ function getApiKey() {
 
 function saveApiKey() {
   const val = document.getElementById('apikeyInput').value.trim();
-  if (!val) { showToast('⚠️ Inserisci una API key valida', 'error'); return; }
-  if (!val.startsWith('sk-')) { showToast('⚠️ La API key deve iniziare con "sk-"', 'error'); return; }
+  if (!val) { showToast('⚠️ Inserisci una API key', 'error'); return; }
+  if (!val.startsWith('sk-ant-')) { showToast('⚠️ Formato non valido — deve iniziare con "sk-ant-"', 'error'); return; }
   localStorage.setItem(APIKEY_KEY, val);
   updateApiKeyUI();
-  showToast('✅ API key salvata!', 'success');
+  showToast('✅ API key salvata correttamente!', 'success');
 }
 
 function saveModel() {
@@ -1931,6 +1948,24 @@ function updateApiKeyUI() {
     status.textContent = "⚠️ API key non configurata — l'app non funzionerà senza";
     input.value = '';
   }
+  // Aggiorna banner globale in tutte le pagine
+  document.querySelectorAll('.apikey-missing-banner').forEach(function(b) {
+    b.style.display = key ? 'none' : 'flex';
+  });
+}
+
+// Gestione centralizzata errori API key
+function handleApiError(err, statusEl) {
+  const msg = (err.message || '').toLowerCase();
+  const isKeyErr = msg.includes('api-key') || msg.includes('api key') || msg.includes('authentication') || msg.includes('401') || msg.includes('invalid x-api');
+  if (isKeyErr) {
+    const friendlyMsg = 'API key non valida o non salvata — apertura Menu...';
+    showToast('🔑 ' + friendlyMsg, 'error');
+    if (statusEl) statusEl.textContent = '❌ ' + friendlyMsg;
+    setTimeout(function() { switchTab('menu'); }, 1800);
+    return true;
+  }
+  return false;
 }
 // Use a fixed key so data persists across file renames/moves
 const STORAGE_KEY = 'pronostick_v3_history';
@@ -2140,10 +2175,12 @@ async function analyzeMatch() {
     renderResult(r, team1, team2, competition, webData.text, true, mercati, memory.count);
   } catch(err) {
     showLoading(false);
-    const msg = err.message.includes('exceeded_limit') || err.message.includes('rate')
-      ? '⏳ Limite API raggiunto — aspetta qualche minuto e riprova.'
-      : '❌ Errore: ' + err.message;
-    showError(msg);
+    if (!handleApiError(err, null)) {
+      const msg = err.message.includes('exceeded_limit') || err.message.includes('rate')
+        ? '⏳ Limite API raggiunto — aspetta qualche minuto e riprova.'
+        : '❌ Errore: ' + err.message;
+      showError(msg);
+    }
   }
   document.getElementById('analyzeBtn').disabled = false;
 }
@@ -2578,8 +2615,10 @@ async function cercaPartite() {
     status.textContent = '✅ Trovate ' + (parsed.partite||[]).length + ' partite, ' + added + ' nuove aggiunte.';
     showToast('✅ ' + added + ' partite aggiunte al calendario', 'success');
   } catch(err) {
-    status.textContent = '❌ Errore: ' + err.message;
-    showToast('❌ Errore ricerca: ' + err.message, 'error');
+    if (!handleApiError(err, status)) {
+      status.textContent = '❌ Errore: ' + err.message;
+      showToast('❌ Errore ricerca: ' + err.message, 'error');
+    }
   }
   btn.disabled = false;
   btn.textContent = '🔍 CERCA PARTITE';
@@ -3483,8 +3522,10 @@ async function verificaRisultato(id) {
     renderHistory();
 
   } catch(err) {
-    if (panel) panel.innerHTML = '<div style="padding:14px;color:var(--danger);font-size:0.85rem">❌ Errore verifica: ' + err.message + '</div>';
-    panel.classList.add('visible');
+    if (!handleApiError(err, null)) {
+      if (panel) panel.innerHTML = '<div style="padding:14px;color:var(--danger);font-size:0.85rem">❌ Errore verifica: ' + err.message + '</div>';
+      if (panel) panel.classList.add('visible');
+    }
   }
 
   if (btn) { btn.disabled = false; btn.textContent = '🔍 VERIFICA RISULTATO'; }
