@@ -1002,6 +1002,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
     <!-- Desktop nav tabs (hidden on mobile) -->
     <nav id="desktopNav" style="display:flex;gap:4px;align-items:center;">
       <button onclick="switchTab('home')" id="dnav-home" class="dnav-btn dnav-active">⚡ Analizza</button>
+      <button onclick="switchTab('calendario')" id="dnav-calendario" class="dnav-btn">📅 Calendario</button>
       <button onclick="switchTab('storico')" id="dnav-storico" class="dnav-btn">📚 Storico</button>
       <button onclick="switchTab('guida')" id="dnav-guida" class="dnav-btn">❓ Guida</button>
       <button onclick="switchTab('menu')" id="dnav-menu" class="dnav-btn">⚙️ Menu</button>
@@ -1624,11 +1625,72 @@ body { padding-bottom: 70px; } /* space for tab bar */
 </div><!-- /container -->
 
 
+<!-- PAGE: CALENDARIO -->
+<div class="page" id="page-calendario">
+<div class="container" style="padding-top:20px;">
+
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+    <div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;margin-bottom:4px;">📅 Calendario Partite</div>
+      <div style="font-size:0.8rem;color:var(--muted);">Cerca le partite della settimana e salvale. Aggiornamento: ~$0.03 per ricerca.</div>
+    </div>
+    <button id="btnClearCal" onclick="clearCalendario()" style="background:rgba(255,71,87,0.08);color:var(--danger);border:1px solid rgba(255,71,87,0.2);border-radius:8px;padding:8px 14px;font-size:0.78rem;cursor:pointer;display:none;">🗑 Svuota</button>
+  </div>
+
+  <!-- Search controls -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:20px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+      <div style="flex:1;min-width:140px;">
+        <label style="font-size:0.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Sport</label>
+        <div style="position:relative;">
+          <select id="calSportSelect" style="width:100%;appearance:none;-webkit-appearance:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 32px 9px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
+            <option value="Calcio Serie A">⚽ Calcio - Serie A</option>
+            <option value="Calcio Premier League">⚽ Calcio - Premier League</option>
+            <option value="Calcio Champions League">⚽ Calcio - Champions League</option>
+            <option value="Calcio Liga Spagnola">⚽ Calcio - Liga</option>
+            <option value="Calcio Bundesliga">⚽ Calcio - Bundesliga</option>
+            <option value="Tennis ATP">🎾 Tennis - ATP</option>
+            <option value="Tennis WTA">🎾 Tennis - WTA</option>
+            <option value="Basket NBA">🏀 Basket - NBA</option>
+            <option value="Basket Eurolega">🏀 Basket - Eurolega</option>
+            <option value="Formula 1">🏎️ Formula 1</option>
+            <option value="MMA UFC">🥊 MMA - UFC</option>
+            <option value="Rugby Top14">🏉 Rugby - Top14</option>
+            <option value="Football NFL">🏈 Football - NFL</option>
+          </select>
+          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:0.75rem;">▼</span>
+        </div>
+      </div>
+      <div style="flex:1;min-width:120px;">
+        <label style="font-size:0.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Settimana</label>
+        <select id="calPeriodo" style="width:100%;appearance:none;-webkit-appearance:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 32px 9px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
+          <option value="questa settimana">Questa settimana</option>
+          <option value="prossima settimana">Prossima settimana</option>
+          <option value="oggi">Solo oggi</option>
+          <option value="domani">Solo domani</option>
+          <option value="questo weekend">Questo weekend</option>
+        </select>
+      </div>
+      <button onclick="cercaPartite()" id="btnCercaPartite" style="background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:10px 20px;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:1.5px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🔍 CERCA PARTITE</button>
+    </div>
+    <div id="calSearchStatus" style="margin-top:10px;font-size:0.78rem;color:var(--muted);display:none;"></div>
+  </div>
+
+  <!-- Results -->
+  <div id="calendarioList"></div>
+
+</div>
+</div>
+
 <!-- TAB BAR -->
 <nav class="tab-bar">
   <button class="tab-item active" id="tab-home" onclick="switchTab('home')">
     <span class="tab-icon">⚡</span>
     <span>Analizza</span>
+  </button>
+  <button class="tab-item" id="tab-calendario" onclick="switchTab('calendario')">
+    <span class="tab-icon">📅</span>
+    <span>Calendario</span>
   </button>
   <button class="tab-item" id="tab-storico" onclick="switchTab('storico')">
     <span class="tab-icon">📚</span>
@@ -2415,6 +2477,215 @@ function renderCombinataResult(r, partite) {
   result.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// --- CALENDARIO --------------------------------------------------------------
+const CAL_KEY = 'pronostick_calendario';
+
+function loadCalendario() {
+  try { return JSON.parse(localStorage.getItem(CAL_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveCalendario(data) {
+  localStorage.setItem(CAL_KEY, JSON.stringify(data));
+}
+function clearCalendario() {
+  if (!confirm('Svuotare tutto il calendario salvato?')) return;
+  localStorage.removeItem(CAL_KEY);
+  renderCalendario();
+}
+
+async function cercaPartite() {
+  if (!getApiKey()) { showToast('⚠️ Inserisci prima la API key nel Menu', 'error'); return; }
+  const sport = document.getElementById('calSportSelect').value;
+  const periodo = document.getElementById('calPeriodo').value;
+  const btn = document.getElementById('btnCercaPartite');
+  const status = document.getElementById('calSearchStatus');
+  btn.disabled = true;
+  btn.textContent = '⏳ Ricerca...';
+  status.style.display = 'block';
+  status.textContent = '🌐 Cerco partite di ' + sport + ' per ' + periodo + '...';
+
+  const oggi = new Date().toLocaleDateString('it-IT');
+  const prompt = 'Oggi è ' + oggi + '. Trova le partite di ' + sport + ' in programma per ' + periodo + '.\n'
+    + 'Per ogni partita includi: squadre/giocatori, data, ora se disponibile, competizione.\n'
+    + 'Rispondi SOLO con JSON valido:\n'
+    + '{\n'
+    + '  "sport": "' + sport + '",\n'
+    + '  "periodo": "' + periodo + '",\n'
+    + '  "cercato_il": "' + oggi + '",\n'
+    + '  "partite": [\n'
+    + '    {\n'
+    + '      "team1": "nome squadra/giocatore casa",\n'
+    + '      "team2": "nome squadra/giocatore ospite",\n'
+    + '      "data": "YYYY-MM-DD",\n'
+    + '      "ora": "HH:MM oppure null",\n'
+    + '      "competizione": "nome lega o torneo",\n'
+    + '      "stadio": "nome stadio oppure null"\n'
+    + '    }\n'
+    + '  ]\n'
+    + '}';
+
+  try {
+    const tools = [{ type: 'web_search_20250305', name: 'web_search' }];
+    const messages = [{ role: 'user', content: prompt }];
+    let iterations = 0;
+    let finalText = '';
+    let msgs = [...messages];
+
+    while (iterations < 4) {
+      iterations++;
+      const res = await fetch('/api/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': getApiKey() },
+        body: JSON.stringify({ model: getModel(), max_tokens: 2000, tools, messages: msgs })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || 'Errore');
+      const assistantContent = data.content || [];
+      msgs.push({ role: 'assistant', content: assistantContent });
+      const toolUses = assistantContent.filter(b => b.type === 'tool_use');
+      const texts = assistantContent.filter(b => b.type === 'text').map(b => b.text).join('');
+      if (texts) finalText = texts;
+      if (!toolUses.length) break;
+      const toolResults = toolUses.map(t => ({
+        type: 'tool_result', tool_use_id: t.id,
+        content: 'Cerca risultati per: ' + t.input.query
+      }));
+      msgs.push({ role: 'user', content: toolResults });
+    }
+
+    if (!finalText) throw new Error('Nessuna risposta dal modello');
+    const t = finalText.trim();
+    const parsed = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}')+1));
+
+    // Merge with existing calendario (avoid duplicates)
+    const existing = loadCalendario();
+    const existingKeys = new Set(existing.map(p => p.team1 + '|' + p.team2 + '|' + p.data));
+    let added = 0;
+    (parsed.partite || []).forEach(function(p) {
+      p.sport = sport;
+      p.id = Date.now().toString() + Math.random().toString(36).slice(2);
+      p.savedAt = new Date().toISOString();
+      const key = p.team1 + '|' + p.team2 + '|' + p.data;
+      if (!existingKeys.has(key)) {
+        existing.push(p);
+        existingKeys.add(key);
+        added++;
+      }
+    });
+    // Sort by date
+    existing.sort(function(a,b) { return new Date(a.data) - new Date(b.data); });
+    saveCalendario(existing);
+    renderCalendario();
+    status.textContent = '✅ Trovate ' + (parsed.partite||[]).length + ' partite, ' + added + ' nuove aggiunte.';
+    showToast('✅ ' + added + ' partite aggiunte al calendario', 'success');
+  } catch(err) {
+    status.textContent = '❌ Errore: ' + err.message;
+    showToast('❌ Errore ricerca: ' + err.message, 'error');
+  }
+  btn.disabled = false;
+  btn.textContent = '🔍 CERCA PARTITE';
+}
+
+function renderCalendario() {
+  const partite = loadCalendario();
+  const listEl = document.getElementById('calendarioList');
+  const clearBtn = document.getElementById('btnClearCal');
+  if (!listEl) return;
+  if (clearBtn) clearBtn.style.display = partite.length ? 'block' : 'none';
+
+  if (!partite.length) {
+    listEl.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--muted);">'
+      + '<div style="font-size:2.5rem;margin-bottom:12px;">📅</div>'
+      + '<div style="font-size:0.9rem;margin-bottom:6px;">Nessuna partita salvata</div>'
+      + '<div style="font-size:0.78rem;">Usa il pannello sopra per cercare le partite della settimana</div>'
+      + '</div>';
+    return;
+  }
+
+  // Group by date
+  const byDate = {};
+  partite.forEach(function(p) {
+    const d = p.data || 'Data sconosciuta';
+    if (!byDate[d]) byDate[d] = [];
+    byDate[d].push(p);
+  });
+
+  const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+  listEl.innerHTML = Object.entries(byDate).map(function([date, matches]) {
+    const dateObj = new Date(date + 'T12:00:00');
+    const isToday = date === today;
+    const isTomorrow = date === tomorrow;
+    const isPast = date < today;
+    const dayLabel = isToday ? '📍 Oggi' : isTomorrow ? '📌 Domani'
+      : dateObj.toLocaleDateString('it-IT', {weekday:'long', day:'2-digit', month:'long'});
+    const dayColor = isToday ? 'var(--accent)' : isTomorrow ? 'var(--accent3)' : isPast ? 'var(--muted)' : 'var(--text)';
+
+    const cards = matches.map(function(p) {
+      const isPastMatch = p.data < today;
+      return '<div style="background:var(--surface);border:1px solid ' + (isPastMatch ? 'var(--border)' : 'rgba(77,166,255,0.2)') + ';border-radius:10px;padding:14px 16px;margin-bottom:8px;opacity:' + (isPastMatch ? '0.55' : '1') + ';">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">'
+        + '<div style="flex:1;">'
+        + '<div style="font-size:0.65rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">' + (p.competizione||p.sport||'') + (p.ora ? ' · ' + p.ora : '') + (p.stadio ? ' · ' + p.stadio : '') + '</div>'
+        + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.1rem;letter-spacing:1px;color:var(--text);">' + p.team1 + ' <span style="color:var(--muted);font-size:0.8rem;">vs</span> ' + p.team2 + '</div>'
+        + '</div>'
+        + (isPastMatch ? '<span style="font-size:0.7rem;color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:3px 8px;">Passata</span>'
+          : '<div style="display:flex;gap:8px;">'
+          + '<button onclick="analizzaDalCalendario(\'' + p.id + '\')" style="background:var(--accent);color:var(--bg);border:none;border-radius:7px;padding:8px 14px;font-family:\'Bebas Neue\',sans-serif;font-size:0.82rem;letter-spacing:1px;cursor:pointer;">⚡ ANALIZZA</button>'
+          + '<button onclick="rimuoviDalCalendario(\'' + p.id + '\')" style="background:rgba(255,71,87,0.08);color:var(--danger);border:1px solid rgba(255,71,87,0.2);border-radius:7px;padding:8px 10px;font-size:0.8rem;cursor:pointer;">🗑</button>'
+          + '</div>')
+        + '</div>'
+        + '</div>';
+    }).join('');
+
+    return '<div style="margin-bottom:20px;">'
+      + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;letter-spacing:2px;color:' + dayColor + ';margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">' + dayLabel.toUpperCase() + '</div>'
+      + cards
+      + '</div>';
+  }).join('');
+}
+
+function analizzaDalCalendario(id) {
+  const partite = loadCalendario();
+  const p = partite.find(function(x) { return x.id === id; });
+  if (!p) return;
+
+  // Fill home form and switch to home tab
+  switchTab('home');
+  setTimeout(function() {
+    document.getElementById('team1').value = p.team1;
+    document.getElementById('team2').value = p.team2;
+    document.getElementById('competition').value = p.competizione || '';
+    document.getElementById('matchDate').value = p.data || '';
+
+    // Set sport dropdown
+    const sportSel = document.getElementById('sportSelect');
+    if (sportSel) {
+      // Try to match sport
+      const sportBase = (p.sport || 'Calcio').split(' ')[0] + ' ' + ((p.sport||'').split(' ')[1]||'');
+      let matched = false;
+      for (let i = 0; i < sportSel.options.length; i++) {
+        if (sportSel.options[i].value === p.sport || sportSel.options[i].value.startsWith((p.sport||'').split(' ')[0])) {
+          sportSel.selectedIndex = i;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) sportSel.selectedIndex = 0;
+      selectSportFromDropdown(sportSel);
+    }
+
+    document.getElementById('team1').focus();
+    showToast('✅ Partita caricata — premi Analizza!', 'success');
+  }, 200);
+}
+
+function rimuoviDalCalendario(id) {
+  const partite = loadCalendario().filter(function(p) { return p.id !== id; });
+  saveCalendario(partite);
+  renderCalendario();
+}
+
 // --- TAB NAVIGATION ----------------------------------------------------------
 function switchTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2428,6 +2699,7 @@ function switchTab(tab) {
   window.scrollTo(0, 0);
   if (tab === 'storico') renderHistory();
   if (tab === 'menu') updateApiKeyUI();
+  if (tab === 'calendario') renderCalendario();
 }
 
 // --- SPORT DROPDOWN ----------------------------------------------------------
