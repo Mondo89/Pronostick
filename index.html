@@ -2643,13 +2643,21 @@ async function cercaPartite() {
   status.textContent = '🌐 Cerco partite di ' + sport + ' per ' + periodo + '...';
 
   const oggi = new Date().toLocaleDateString('it-IT');
-  const prompt = 'Oggi è ' + oggi + '. Trova le partite di ' + sport + ' in programma per ' + periodo + '.\n'
-    + 'Per ogni partita includi: squadre/giocatori, data, ora se disponibile, competizione.\n'
-    + 'Rispondi SOLO con JSON valido:\n'
+  const dataOggi = new Date().toISOString().split('T')[0];
+  const prompt = 'Oggi è ' + oggi + ' (' + dataOggi + '). '
+    + 'Devi trovare il calendario COMPLETO ed ESAUSTIVO di ' + sport + ' per il periodo: ' + periodo + '.\n\n'
+    + 'ISTRUZIONI IMPORTANTI:\n'
+    + '- Cerca su PIÙ FONTI: sito ufficiale della lega, Flashscore, Sofascore, Wikipedia, sport news italiane\n'
+    + '- Trova TUTTE le partite del periodo, non fermarti ai primi risultati\n'
+    + '- Se una prima ricerca restituisce poche partite, fai una seconda ricerca più specifica\n'
+    + '- Includi OGNI partita in programma, anche quelle meno note\n'
+    + '- Per ogni partita: squadre/atleti esatti, data precisa, ora se disponibile, nome della competizione, stadio/venue\n\n'
+    + 'Rispondi SOLO con JSON valido (nessun testo prima o dopo):\n'
     + '{\n'
     + '  "sport": "' + sport + '",\n'
     + '  "periodo": "' + periodo + '",\n'
     + '  "cercato_il": "' + oggi + '",\n'
+    + '  "fonti_consultate": ["fonte1", "fonte2"],\n'
     + '  "partite": [\n'
     + '    {\n'
     + '      "team1": "nome squadra/giocatore casa",\n'
@@ -2669,7 +2677,7 @@ async function cercaPartite() {
     let finalText = '';
     let msgs = [...messages];
 
-    while (iterations < 4) {
+    while (iterations < 6) {
       iterations++;
       const res = await fetch('/api/proxy', {
         method: 'POST',
@@ -2714,7 +2722,8 @@ async function cercaPartite() {
     existing.sort(function(a,b) { return new Date(a.data) - new Date(b.data); });
     saveCalendario(existing);
     renderCalendario();
-    status.textContent = '✅ Trovate ' + (parsed.partite||[]).length + ' partite, ' + added + ' nuove aggiunte.';
+    const fonti = (parsed.fonti_consultate||[]).length ? ' · Fonti: ' + parsed.fonti_consultate.join(', ') : '';
+    status.textContent = '✅ Trovate ' + (parsed.partite||[]).length + ' partite, ' + added + ' nuove aggiunte.' + fonti;
     showToast('✅ ' + added + ' partite aggiunte al calendario', 'success');
   } catch(err) {
     if (!handleApiError(err, status)) {
