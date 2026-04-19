@@ -1550,6 +1550,8 @@ body { padding-bottom: 70px; } /* space for tab bar */
       <button class="apikey-btn" onclick="saveApiKey()">SALVA</button>
     </div>
     <div class="apikey-status missing" id="apikeyStatus" style="margin-top:8px;">⚠️ API key non configurata</div>
+    <button id="testApiKeyBtn" onclick="testApiKey()" style="margin-top:10px;width:100%;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:0.83rem;cursor:pointer;transition:all 0.2s;display:none;">🧪 Testa chiave</button>
+    <div id="testApiKeyStatus" style="display:none;margin-top:8px;font-size:0.8rem;font-family:'DM Mono',monospace;padding:8px 12px;border-radius:6px;"></div>
     <a class="apikey-link" href="https://console.anthropic.com/keys" target="_blank" style="margin-top:6px;display:inline-block;">→ Ottieni la tua API key</a>
   </div>
 
@@ -1948,10 +1950,72 @@ function updateApiKeyUI() {
     status.textContent = "⚠️ API key non configurata — l'app non funzionerà senza";
     input.value = '';
   }
+  // Mostra/nascondi bottone "Testa chiave"
+  const testBtn = document.getElementById('testApiKeyBtn');
+  const testStatus = document.getElementById('testApiKeyStatus');
+  if (testBtn) testBtn.style.display = key ? 'block' : 'none';
+  if (testStatus && !key) testStatus.style.display = 'none';
   // Aggiorna banner globale in tutte le pagine
   document.querySelectorAll('.apikey-missing-banner').forEach(function(b) {
     b.style.display = key ? 'none' : 'flex';
   });
+}
+
+// --- TEST API KEY -----------------------------------------------------------
+async function testApiKey() {
+  const key = getApiKey();
+  if (!key) { showToast('⚠️ Salva prima la API key', 'error'); return; }
+
+  const btn = document.getElementById('testApiKeyBtn');
+  const statusEl = document.getElementById('testApiKeyStatus');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Test in corso...';
+  statusEl.style.display = 'block';
+  statusEl.style.background = 'rgba(107,117,145,0.12)';
+  statusEl.style.color = 'var(--muted)';
+  statusEl.textContent = '🔄 Invio richiesta di test ad Anthropic...';
+
+  try {
+    const res = await fetch('/api/proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 10,
+        messages: [{ role: 'user', content: 'Di solo: OK' }]
+      })
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      statusEl.style.background = 'rgba(0,229,160,0.1)';
+      statusEl.style.color = 'var(--accent)';
+      statusEl.textContent = '✅ API key valida e funzionante!';
+      showToast('✅ API key verificata con successo!', 'success');
+    } else {
+      const errMsg = data.error?.message || 'Errore sconosciuto';
+      const isInvalidKey = errMsg.toLowerCase().includes('api-key') || errMsg.toLowerCase().includes('authentication') || res.status === 401;
+      statusEl.style.background = 'rgba(255,71,87,0.1)';
+      statusEl.style.color = 'var(--danger)';
+      if (isInvalidKey) {
+        statusEl.textContent = '❌ API key non valida — crea una nuova key su console.anthropic.com';
+      } else if (res.status === 429) {
+        statusEl.textContent = '⚠️ Limite rate raggiunto — la key è valida ma aspetta qualche minuto';
+        statusEl.style.color = 'var(--gold)';
+        statusEl.style.background = 'rgba(255,215,0,0.08)';
+      } else {
+        statusEl.textContent = '❌ Errore: ' + errMsg;
+      }
+    }
+  } catch(err) {
+    statusEl.style.background = 'rgba(255,71,87,0.1)';
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = '❌ Errore connessione: ' + err.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🧪 Testa chiave';
 }
 
 // Gestione centralizzata errori API key
