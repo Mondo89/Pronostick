@@ -1076,9 +1076,17 @@ body { padding-bottom: 70px; } /* space for tab bar */
       <input type="date" id="matchDate"/>
     </div>
   </div>
-  <div class="form-group" style="margin-bottom:20px">
+  <div class="form-group" style="margin-bottom:16px">
     <label>Contesto aggiuntivo</label>
     <textarea id="context" placeholder="es. infortuni, forma recente, statistiche testa a testa..."></textarea>
+  </div>
+  <div class="form-group" style="margin-bottom:20px">
+    <label style="display:flex;align-items:center;gap:6px;">
+      📋 Quote bookmaker
+      <span style="font-size:0.68rem;color:var(--accent);font-weight:400;letter-spacing:0;">(opzionale — migliora il Value Bet)</span>
+    </label>
+    <textarea id="quoteBookmaker" rows="2" placeholder="es. Vittoria Casa 2.15 · Vittoria Ospite 1.70 · Handicap -2.5: 1.90 · Under 170.5: 1.90 · Over 170.5: 1.80" style="font-family:'DM Mono',monospace;font-size:0.8rem;"></textarea>
+    <div style="font-size:0.7rem;color:var(--muted);margin-top:5px;">💡 Copia le quote dal tuo bookmaker (Snai, Bet365, ecc.) — l'AI le userà per calcolare il Value Bet reale e consigliarti la soglia giusta</div>
   </div>
 
   <!-- FILE UPLOAD -->
@@ -2304,7 +2312,7 @@ function buildMemory(sport, competition) {
 }
 
 // --- BUILD PROMPT -------------------------------------------------------------
-function buildPrompt(team1, team2, competition, matchDate, context, webText, mercati, memory) {
+function buildPrompt(team1, team2, competition, matchDate, context, webText, mercati, memory, quoteBookmaker) {
   const webSection = webText ? '\n\n=== DATI RICERCATI IN TEMPO REALE ===\n' + webText : '';
   const memorySection = (memory && memory.text) ? memory.text : '';
   const mercatiList = (mercati && mercati.length) ? mercati : ['1X2'];
@@ -2315,7 +2323,7 @@ function buildPrompt(team1, team2, competition, matchDate, context, webText, mer
     return '    "mercato_' + key + '": { "consiglio":"es. Over 2.5", "probabilita":numero 0-100, "quota_stimata":"numero", "quota_bookmaker":"numero se trovata nel web search altrimenti null", "value_bet":true o false, "note":"breve motivazione" }';
   }).join(',\n');
 
-  return 'Sei un esperto analista di scommesse sportive con 20 anni di esperienza. La data di oggi è ' + new Date().toLocaleDateString('it-IT') + '. Analizza questa partita usando TUTTI i dati disponibili.\n\nSPORT: ' + selectedSport + '\nPARTITA: ' + team1 + ' vs ' + team2 + (competition ? '\nCOMPETIZIONE: ' + competition : '') + (matchDate ? '\nDATA PARTITA: ' + matchDate : '') + (context ? '\nCONTESTO: ' + context : '') + mercatiSection + buildFileContext() + memorySection + webSection + '\n\nIMPORTANTE: Rispondi SEMPRE con JSON valido anche se non hai dati certi — usa le tue conoscenze generali sulle squadre. Non rifiutare di rispondere.\n\nISTRUZIONI VALUE BET:\n- Per ogni mercato, se hai trovato quote reali dei bookmaker nei dati web, confrontale con la probabilità stimata\n- Una scommessa è VALUE BET se: (probabilità_stimata / 100) × quota_bookmaker > 1.05\n- Se non hai quote reali, usa quota_stimata per il calcolo\n\nISTRUZIONI COME_GIOCARLA:\n- Spiega in modo semplicissimo, come se parli a qualcuno che non ha mai scommesso\n- Indica: dove andare (bookmaker), cosa cercare, cosa cliccare, quanto mettere (max 5% budget)\n- Usa un linguaggio diretto, concreto, zero gergo tecnico\n\nRispondi SOLO con JSON valido, nessun testo prima o dopo:\n{\n  "pronostico_principale":"es. 1 o X o 2 o Over 2.5 o GG",\n  "descrizione_pronostico":"breve descrizione",\n  "quota_stimata":"numero es. 1.85",\n  "confidenza":numero 0-100,\n  "probabilita_1":numero,\n  "probabilita_x":numero,\n  "probabilita_2":numero,\n  "analisi_forma":"2-3 frasi",\n  "analisi_tattica":"2-3 frasi",\n  "fattori_chiave":"2-3 fattori",\n  "rischio":"BASSO o MEDIO o ALTO",\n  "risultato_esatto_ipotetico":"es. 2-1",\n  "consiglio_aggiuntivo":"alternativa o nota",\n  "dati_live_usati":true o false,\n  "lezioni_applicate": 0,\n  "lezioni_note": null,\n  "value_bet_principale":true o false,\n  "value_bet_score":"numero es. 1.24 oppure null",\n  "mercati": {\n' + mercatiSchema + '\n  },\n  "come_giocarla": {\n    "passo1":"es. Apri Snai, Bet365 o qualsiasi bookmaker",\n    "passo2":"es. Cerca la partita",\n    "passo3":"es. Seleziona il pronostico consigliato",\n    "passo4":"es. Aggiungi eventuali mercati extra",\n    "quota_da_cercare":"es. cerca quota minima 1.20",\n    "importo_consigliato":"es. Max 5% del budget",\n    "avvertenza":"Nessun pronostico è garantito",\n    "vale_la_pena":true o false\n  },\n  "mercati_consigliati": [\n    {\n      "mercato": "es. Over 2.5",\n      "motivo": "motivazione specifica per questa partita",\n      "priorita": "ALTA o MEDIA o BASSA",\n      "quota_indicativa": "numero es. 1.52"\n    }\n  ]\n}';
+  return 'Sei un esperto analista di scommesse sportive con 20 anni di esperienza. La data di oggi è ' + new Date().toLocaleDateString('it-IT') + '. Analizza questa partita usando TUTTI i dati disponibili.\n\nSPORT: ' + selectedSport + '\nPARTITA: ' + team1 + ' vs ' + team2 + (competition ? '\nCOMPETIZIONE: ' + competition : '') + (matchDate ? '\nDATA PARTITA: ' + matchDate : '') + (context ? '\nCONTESTO: ' + context : '') + (quoteBookmaker ? '\n\nQUOTE BOOKMAKER REALI (fornite dall\'utente):\n' + quoteBookmaker + '\nUSA QUESTE QUOTE per calcolare il Value Bet reale. Consiglia SOLO mercati/soglie presenti nelle quote qui sopra.' : '') + mercatiSection + buildFileContext() + memorySection + webSection + '\n\nIMPORTANTE: Rispondi SEMPRE con JSON valido anche se non hai dati certi — usa le tue conoscenze generali sulle squadre. Non rifiutare di rispondere.\n\nISTRUZIONI VALUE BET:\n- Per ogni mercato, se hai trovato quote reali dei bookmaker nei dati web, confrontale con la probabilità stimata\n- Una scommessa è VALUE BET se: (probabilità_stimata / 100) × quota_bookmaker > 1.05\n- Se non hai quote reali, usa quota_stimata per il calcolo\n\nISTRUZIONI COME_GIOCARLA:\n- Spiega in modo semplicissimo, come se parli a qualcuno che non ha mai scommesso\n- Indica: dove andare (bookmaker), cosa cercare, cosa cliccare, quanto mettere (max 5% budget)\n- Usa un linguaggio diretto, concreto, zero gergo tecnico\n\nRispondi SOLO con JSON valido, nessun testo prima o dopo:\n{\n  "pronostico_principale":"es. 1 o X o 2 o Over 2.5 o GG",\n  "descrizione_pronostico":"breve descrizione",\n  "quota_stimata":"numero es. 1.85",\n  "confidenza":numero 0-100,\n  "probabilita_1":numero,\n  "probabilita_x":numero,\n  "probabilita_2":numero,\n  "analisi_forma":"2-3 frasi",\n  "analisi_tattica":"2-3 frasi",\n  "fattori_chiave":"2-3 fattori",\n  "rischio":"BASSO o MEDIO o ALTO",\n  "risultato_esatto_ipotetico":"es. 2-1",\n  "consiglio_aggiuntivo":"alternativa o nota",\n  "dati_live_usati":true o false,\n  "lezioni_applicate": 0,\n  "lezioni_note": null,\n  "value_bet_principale":true o false,\n  "value_bet_score":"numero es. 1.24 oppure null",\n  "mercati": {\n' + mercatiSchema + '\n  },\n  "come_giocarla": {\n    "passo1":"es. Apri Snai, Bet365 o qualsiasi bookmaker",\n    "passo2":"es. Cerca la partita",\n    "passo3":"es. Seleziona il pronostico consigliato",\n    "passo4":"es. Aggiungi eventuali mercati extra",\n    "quota_da_cercare":"es. cerca quota minima 1.20",\n    "importo_consigliato":"es. Max 5% del budget",\n    "avvertenza":"Nessun pronostico è garantito",\n    "vale_la_pena":true o false\n  },\n  "mercati_consigliati": [\n    {\n      "mercato": "es. Over 2.5",\n      "motivo": "motivazione specifica per questa partita",\n      "priorita": "ALTA o MEDIA o BASSA",\n      "quota_indicativa": "numero es. 1.52"\n    }\n  ]\n}';
 }
 
 
@@ -2337,6 +2345,7 @@ async function analyzeMatch() {
   const competition = document.getElementById('competition').value.trim();
   const matchDate = document.getElementById('matchDate').value;
   const context = document.getElementById('context').value.trim();
+  const quoteBookmaker = document.getElementById('quoteBookmaker').value.trim();
   if (!team1||!team2) { showError('⚠️ Inserisci entrambi i nomi.'); return; }
   if (!getApiKey()) { showError('⚠️ Inserisci la tua API key in cima alla pagina prima di analizzare.'); return; }
 
@@ -2359,7 +2368,7 @@ async function analyzeMatch() {
   const memory = buildMemory(selectedSport, competition);
 
   try {
-    const prompt = buildPrompt(team1,team2,competition,matchDate,context,webData.text,mercati,memory);
+    const prompt = buildPrompt(team1,team2,competition,matchDate,context,webData.text,mercati,memory,quoteBookmaker);
     const r = await callAI(prompt, 2000);
     document.getElementById('step4').classList.add('show');
     await wait(300);
@@ -2946,6 +2955,7 @@ function analizzaDalCalendario(id) {
       selectSportFromDropdown(sportSel);
     }
 
+    document.getElementById('quoteBookmaker').value = '';
     document.getElementById('team1').focus();
     showToast('✅ Partita caricata — premi Analizza!', 'success');
   }, 200);
