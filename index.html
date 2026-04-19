@@ -1102,46 +1102,17 @@ body { padding-bottom: 70px; } /* space for tab bar */
 
   <!-- MERCATI -->
   <div class="mercati-section">
-    <span class="file-section-label">📊 Mercati da analizzare</span>
-    <div class="mercati-grid">
-      <div class="mercato-chip selected" onclick="toggleMercato(this,'1x2')">
-        <div class="mercato-check">✓</div>
-        <span class="mercato-label">⚽ 1X2 — Risultato finale</span>
-        <input type="checkbox" checked data-mercato="1x2"/>
-      </div>
-      <div class="mercato-chip" onclick="toggleMercato(this,'ou')">
-        <div class="mercato-check"></div>
-        <span class="mercato-label">📈 Over / Under</span>
-        <input type="checkbox" data-mercato="ou"/>
-      </div>
-      <div class="mercato-chip" onclick="toggleMercato(this,'gg')">
-        <div class="mercato-check"></div>
-        <span class="mercato-label">🎯 Goal / No Goal</span>
-        <input type="checkbox" data-mercato="gg"/>
-      </div>
-      <div class="mercato-chip" onclick="toggleMercato(this,'esatto')">
-        <div class="mercato-check"></div>
-        <span class="mercato-label">🔢 Risultato Esatto</span>
-        <input type="checkbox" data-mercato="esatto"/>
-      </div>
-      <div class="mercato-chip" onclick="toggleMercato(this,'handicap')">
-        <div class="mercato-check"></div>
-        <span class="mercato-label">⚖️ Handicap Asiatico</span>
-        <input type="checkbox" data-mercato="handicap"/>
-      </div>
-      <div class="mercato-chip" onclick="toggleMercato(this,'doppia')">
-        <div class="mercato-check"></div>
-        <span class="mercato-label">🔀 Doppia Chance</span>
-        <input type="checkbox" data-mercato="doppia"/>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <span class="file-section-label" style="margin-bottom:0;">📊 Mercati da analizzare</span>
+      <span id="mercatiSportTag" style="font-size:0.68rem;color:var(--accent);font-family:'DM Mono',monospace;letter-spacing:1px;">AUTO • CALCIO</span>
+    </div>
+    <div class="mercati-grid" id="mercatiGrid">
+      <!-- Populated dynamically by updateMercatiForSport() -->
     </div>
     <!-- Over/Under soglia -->
-    <div class="ou-select" id="ouSelect">
-      <span style="font-size:0.75rem;color:var(--muted);align-self:center;">Soglia:</span>
-      <button class="ou-btn" onclick="setOuSoglia(this,'1.5')">1.5</button>
-      <button class="ou-btn active" onclick="setOuSoglia(this,'2.5')">2.5</button>
-      <button class="ou-btn" onclick="setOuSoglia(this,'3.5')">3.5</button>
-      <button class="ou-btn" onclick="setOuSoglia(this,'4.5')">4.5</button>
+    <div class="ou-select" id="ouSelect" style="display:none;">
+      <span style="font-size:0.75rem;color:var(--muted);align-self:center;" id="ouLabel">Soglia:</span>
+      <div id="ouButtons"></div>
     </div>
   </div>
 
@@ -1890,10 +1861,7 @@ function toggleMercato(chip, key) {
   const cb = chip.querySelector('input[type=checkbox]');
   cb.checked = chip.classList.contains('selected');
   chip.querySelector('.mercato-check').textContent = cb.checked ? '✓' : '';
-  // Show/hide OU threshold selector
-  if (key === 'ou') {
-    document.getElementById('ouSelect').classList.toggle('visible', cb.checked);
-  }
+  if (key === 'ou') updateOuVisibility();
 }
 
 function setOuSoglia(btn, val) {
@@ -1902,16 +1870,168 @@ function setOuSoglia(btn, val) {
   btn.classList.add('active');
 }
 
+// --- MERCATI DINAMICI PER SPORT -------------------------------------------
+const MERCATI_CONFIG = {
+  'Calcio': {
+    tag: 'CALCIO',
+    mercati: [
+      { key:'1x2',     label:'⚽ 1X2 — Risultato finale',    selected:true  },
+      { key:'ou',      label:'📈 Over / Under Gol',           selected:false },
+      { key:'gg',      label:'🎯 Goal / No Goal',             selected:false },
+      { key:'esatto',  label:'🔢 Risultato Esatto',           selected:false },
+      { key:'handicap',label:'⚖️ Handicap Asiatico',          selected:false },
+      { key:'doppia',  label:'🔀 Doppia Chance',              selected:false },
+    ],
+    ou: { label:'Soglia gol:', valori:['1.5','2.5','3.5','4.5'], default:'2.5' }
+  },
+  'Basket': {
+    tag: 'BASKET',
+    mercati: [
+      { key:'winner',  label:'🏀 Vincitore Match (1/2)',      selected:true  },
+      { key:'ou',      label:'📈 Over / Under Punti',         selected:true  },
+      { key:'handicap',label:'⚖️ Handicap Punti',            selected:false },
+      { key:'1q',      label:'🕐 Primo Quarto',               selected:false },
+    ],
+    ou: { label:'Soglia punti:', valori:['200.5','210.5','220.5','230.5'], default:'210.5' }
+  },
+  'Tennis': {
+    tag: 'TENNIS',
+    mercati: [
+      { key:'winner',  label:'🎾 Vincitore Match',            selected:true  },
+      { key:'ou',      label:'📈 Over / Under Game',          selected:false },
+      { key:'set_hc',  label:'⚖️ Handicap Set',              selected:false },
+      { key:'primo_set',label:'🏁 Vincitore Primo Set',      selected:false },
+    ],
+    ou: { label:'Soglia game:', valori:['20.5','22.5','24.5','26.5'], default:'22.5' }
+  },
+  'Formula 1': {
+    tag: 'F1',
+    mercati: [
+      { key:'winner',   label:'🏎️ Vincitore Gara',            selected:true  },
+      { key:'podio',    label:'🥉 Podio (Top 3)',              selected:false },
+      { key:'h2h',      label:'👥 Testa a Testa (H2H)',        selected:false },
+      { key:'pole',     label:'⚡ Pole Position',              selected:false },
+    ],
+    ou: null
+  },
+  'MMA': {
+    tag: 'MMA/UFC',
+    mercati: [
+      { key:'winner',   label:'🥊 Vincitore',                  selected:true  },
+      { key:'metodo',   label:'💥 Metodo di Vittoria',         selected:true  },
+      { key:'distanza', label:'⏱️ Va la Distanza (Sì/No)',     selected:false },
+      { key:'round',    label:'🔔 Round di Fine',              selected:false },
+    ],
+    ou: null
+  },
+  'Rugby': {
+    tag: 'RUGBY',
+    mercati: [
+      { key:'1x2',      label:'🏉 1X2 — Risultato finale',    selected:true  },
+      { key:'ou',       label:'📈 Over / Under Punti',        selected:false },
+      { key:'handicap', label:'⚖️ Handicap',                  selected:false },
+      { key:'mete',     label:'🎯 Over / Under Mete',         selected:false },
+    ],
+    ou: { label:'Soglia punti:', valori:['35.5','40.5','45.5','50.5'], default:'40.5' }
+  },
+  'Football': {
+    tag: 'NFL',
+    mercati: [
+      { key:'winner',   label:'🏈 Vincitore',                  selected:true  },
+      { key:'ou',       label:'📈 Over / Under Punti',        selected:true  },
+      { key:'handicap', label:'⚖️ Handicap',                  selected:false },
+      { key:'1q',       label:'🕐 Primo Quarto',               selected:false },
+    ],
+    ou: { label:'Soglia punti:', valori:['40.5','44.5','48.5','52.5'], default:'44.5' }
+  },
+  'default': {
+    tag: 'SPORT',
+    mercati: [
+      { key:'winner',   label:'🏆 Vincitore',                  selected:true  },
+      { key:'ou',       label:'📈 Over / Under',              selected:false },
+      { key:'handicap', label:'⚖️ Handicap',                  selected:false },
+    ],
+    ou: null
+  }
+};
+
+function getSportConfig(sport) {
+  if (!sport) return MERCATI_CONFIG['default'];
+  const s = sport.toLowerCase();
+  if (s.includes('calcio') || s.includes('footb') || s.includes('soccer') || s.includes('serie a') || s.includes('premier') || s.includes('champions') || s.includes('liga') || s.includes('bundesliga') || s.includes('ligue')) return MERCATI_CONFIG['Calcio'];
+  if (s.includes('basket') || s.includes('nba') || s.includes('eurolega') || s.includes('lba')) return MERCATI_CONFIG['Basket'];
+  if (s.includes('tennis') || s.includes('atp') || s.includes('wta')) return MERCATI_CONFIG['Tennis'];
+  if (s.includes('formula') || s.includes('f1') || s.includes('motogp') || s.includes('moto')) return MERCATI_CONFIG['Formula 1'];
+  if (s.includes('mma') || s.includes('ufc') || s.includes('boxe') || s.includes('box')) return MERCATI_CONFIG['MMA'];
+  if (s.includes('rugby')) return MERCATI_CONFIG['Rugby'];
+  if (s.includes('nfl') || s.includes('football americano')) return MERCATI_CONFIG['Football'];
+  return MERCATI_CONFIG['default'];
+}
+
+function updateMercatiForSport(sport) {
+  const config = getSportConfig(sport);
+  const grid = document.getElementById('mercatiGrid');
+  const ouSelect = document.getElementById('ouSelect');
+  const ouLabel = document.getElementById('ouLabel');
+  const ouButtons = document.getElementById('ouButtons');
+  const tag = document.getElementById('mercatiSportTag');
+  if (!grid) return;
+
+  // Update tag
+  if (tag) tag.textContent = 'AUTO • ' + config.tag;
+
+  // Build chips
+  grid.innerHTML = config.mercati.map(function(m) {
+    var sel = m.selected ? ' selected' : '';
+    var chk = m.selected ? ' checked' : '';
+    var checkmark = m.selected ? '\u2713' : '';
+    return '<div class="mercato-chip' + sel + '" onclick="toggleMercato(this,&quot;' + m.key + '&quot;)">'
+      + '<div class="mercato-check">' + checkmark + '</div>'
+      + '<span class="mercato-label">' + m.label + '</span>'
+      + '<input type="checkbox"' + chk + ' data-mercato="' + m.key + '"/>'
+      + '</div>';
+  }).join('');
+
+  // Over/Under threshold
+  if (config.ou) {
+    ouSelect.style.display = 'flex';
+    if (ouLabel) ouLabel.textContent = config.ou.label;
+    ouSoglia = config.ou.default;
+    if (ouButtons) {
+      ouButtons.innerHTML = config.ou.valori.map(function(v) {
+        var act = (v === config.ou.default) ? ' active' : '';
+        return '<button class="ou-btn' + act + '" onclick="setOuSoglia(this,&quot;' + v + '&quot;)">' + v + '</button>';
+      }).join('');
+    }
+    // Show/hide based on ou chip selection
+    updateOuVisibility();
+  } else {
+    ouSelect.style.display = 'none';
+  }
+}
+
+function updateOuVisibility() {
+  const ouChip = document.querySelector('.mercato-chip.selected input[data-mercato="ou"]');
+  const ouSelect = document.getElementById('ouSelect');
+  if (ouSelect && getSportConfig(selectedSport).ou) {
+    ouSelect.style.display = ouChip ? 'flex' : 'none';
+  }
+}
+
 function getSelectedMercati() {
   const selected = [];
+  const config = getSportConfig(selectedSport);
   document.querySelectorAll('.mercato-chip.selected').forEach(chip => {
     const key = chip.querySelector('input').dataset.mercato;
-    if (key === 'ou') selected.push('Over/Under ' + ouSoglia);
-    else if (key === '1x2') selected.push('1X2');
-    else if (key === 'gg') selected.push('Goal/No Goal');
-    else if (key === 'esatto') selected.push('Risultato Esatto');
-    else if (key === 'handicap') selected.push('Handicap Asiatico');
-    else if (key === 'doppia') selected.push('Doppia Chance');
+    if (key === 'ou') {
+      const cfg = config.ou;
+      const label = cfg ? cfg.label.replace('Soglia ', '').replace(':', '').trim() : 'Punti';
+      selected.push('Over/Under ' + ouSoglia + ' ' + label);
+    } else {
+      // Find label from config
+      const m = config.mercati.find(x => x.key === key);
+      selected.push(m ? m.label.replace(/^[^\w]+ /, '').split('(')[0].trim() : key);
+    }
   });
   return selected;
 }
@@ -2076,6 +2196,7 @@ document.getElementById('matchDate').value = new Date().toISOString().split('T')
 document.getElementById('fileInput').addEventListener('change', function(){ handleFiles(this.files); this.value=''; });
 updateApiKeyUI();
 updateCostPanel();
+updateMercatiForSport(selectedSport);
 
 const zone = document.getElementById('uploadZone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
@@ -2863,6 +2984,7 @@ function selectSportFromDropdown(sel) {
     customWrap.style.display = 'none';
     selectedSport = val;
     document.getElementById('sportLabel').textContent = val;
+    updateMercatiForSport(val);
   }
 }
 
@@ -2870,6 +2992,7 @@ function setCustomSport(val) {
   if (val.trim()) {
     selectedSport = val.trim();
     document.getElementById('sportLabel').textContent = val.trim();
+    updateMercatiForSport(val.trim());
   }
 }
 
