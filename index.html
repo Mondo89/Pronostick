@@ -1662,23 +1662,31 @@ body { padding-bottom: 70px; } /* space for tab bar */
       <div style="flex:1;min-width:140px;">
         <label style="font-size:0.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Sport</label>
         <div style="position:relative;">
-          <select id="calSportSelect" style="width:100%;appearance:none;-webkit-appearance:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 32px 9px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
+          <select id="calSportSelect" onchange="onCalSportChange(this)" style="width:100%;appearance:none;-webkit-appearance:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 32px 9px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
             <option value="Calcio Serie A">⚽ Calcio - Serie A</option>
             <option value="Calcio Premier League">⚽ Calcio - Premier League</option>
             <option value="Calcio Champions League">⚽ Calcio - Champions League</option>
             <option value="Calcio Liga Spagnola">⚽ Calcio - Liga</option>
             <option value="Calcio Bundesliga">⚽ Calcio - Bundesliga</option>
+            <option value="Calcio Serie B">⚽ Calcio - Serie B</option>
+            <option value="Calcio Ligue 1">⚽ Calcio - Ligue 1</option>
             <option value="Tennis ATP">🎾 Tennis - ATP</option>
             <option value="Tennis WTA">🎾 Tennis - WTA</option>
             <option value="Basket NBA">🏀 Basket - NBA</option>
             <option value="Basket Eurolega">🏀 Basket - Eurolega</option>
+            <option value="Basket Serie A italiana">🏀 Basket - Serie A italiana</option>
             <option value="Formula 1">🏎️ Formula 1</option>
             <option value="MMA UFC">🥊 MMA - UFC</option>
             <option value="Rugby Top14">🏉 Rugby - Top14</option>
             <option value="Football NFL">🏈 Football - NFL</option>
+            <option value="Altro">✏️ Altro (scrivi)</option>
           </select>
           <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:0.75rem;">▼</span>
         </div>
+      </div>
+      <div id="calSportCustomWrap" style="flex:1;min-width:140px;display:none;">
+        <label style="font-size:0.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Sport personalizzato</label>
+        <input type="text" id="calSportCustom" placeholder="es. Basket Serie A, Volley..." oninput="onCalSportCustomInput(this.value)" style="width:100%;background:var(--surface2);border:1px solid var(--accent);color:var(--text);padding:9px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;"/>
       </div>
       <div style="flex:1;min-width:120px;">
         <label style="font-size:0.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Settimana</label>
@@ -2593,12 +2601,42 @@ function clearCalendario() {
   renderCalendario();
 }
 
+function onCalSportChange(sel) {
+  const wrap = document.getElementById('calSportCustomWrap');
+  const customInput = document.getElementById('calSportCustom');
+  if (sel.value === 'Altro') {
+    wrap.style.display = 'flex';
+    customInput.focus();
+  } else {
+    wrap.style.display = 'none';
+    customInput.value = '';
+  }
+}
+
+function onCalSportCustomInput(val) {
+  // Keep input styled while typing
+  const input = document.getElementById('calSportCustom');
+  input.style.borderColor = val.trim() ? 'var(--accent)' : 'var(--border)';
+}
+
+function getCalSport() {
+  const sel = document.getElementById('calSportSelect');
+  if (sel.value === 'Altro') {
+    const custom = document.getElementById('calSportCustom').value.trim();
+    return custom || 'Sport generico';
+  }
+  return sel.value;
+}
+
 async function cercaPartite() {
   if (!getApiKey()) { showToast('⚠️ Inserisci prima la API key nel Menu', 'error'); return; }
-  const sport = document.getElementById('calSportSelect').value;
+  const sport = getCalSport();
   const periodo = document.getElementById('calPeriodo').value;
   const btn = document.getElementById('btnCercaPartite');
   const status = document.getElementById('calSearchStatus');
+  if (document.getElementById('calSportSelect').value === 'Altro' && !document.getElementById('calSportCustom').value.trim()) {
+    showToast('⚠️ Scrivi il nome dello sport nel campo personalizzato', 'error'); return;
+  }
   btn.disabled = true;
   btn.textContent = '⏳ Ricerca...';
   status.style.display = 'block';
