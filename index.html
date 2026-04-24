@@ -2633,7 +2633,9 @@ function buildPrompt(team1, team2, competition, matchDate, context, webText, mer
 
 async function callAI(prompt, maxTokens=1500) {
   const res = await fetch("/api/proxy",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01"},body:JSON.stringify({model:getModel(),max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})});
-  const data = await res.json();
+  const rawTxt = await res.text();
+  if (rawTxt.trim().startsWith('<')) throw new Error('Timeout proxy — riprova tra qualche secondo.');
+  const data = JSON.parse(rawTxt);
   if (!res.ok) throw new Error(data.error?.message||'Errore API');
   const raw = data.content.map(i=>i.text||'').join('');
   const t = raw.trim();
@@ -4349,8 +4351,13 @@ async function callProxy(messages, useWebSearch, maxTokens) {
     headers:{'Content-Type':'application/json','x-api-key':getApiKey()},
     body: JSON.stringify(body)
   });
-  var d = await r.json();
-  if (!r.ok) throw new Error(d.error && d.error.message ? d.error.message : 'Errore API');
+  var rawText = await r.text();
+  if (rawText.trim().startsWith('<') || rawText.toLowerCase().includes('<html')) {
+    throw new Error('Timeout del proxy Netlify — la richiesta ha impiegato troppo. Riprova tra qualche secondo o riduci gli sport selezionati.');
+  }
+  var d;
+  try { d = JSON.parse(rawText); } catch(e) { throw new Error('Risposta non valida dal server: ' + rawText.slice(0,80)); }
+  if (!r.ok) throw new Error(d.error && d.error.message ? d.error.message : 'Errore API ' + r.status);
   return d;
 }
 
@@ -4363,7 +4370,7 @@ async function runWithWebSearch(prompt, maxIter) {
   maxIter = maxIter || 3;
   while (iter < maxIter) {
     iter++;
-    var d = await callProxy(msgs, true, 2000);
+    var d = await callProxy(msgs, true, 1500);
     var ac = d.content || [];
     msgs.push({ role:'assistant', content: ac });
     var texts = ac.filter(function(b){ return b.type==='text'; }).map(function(b){ return b.text; }).join('');
@@ -4377,6 +4384,9 @@ async function runWithWebSearch(prompt, maxIter) {
 
 function parseJSON(text) {
   var t = (text || '').trim();
+  if (t.startsWith('<') || t.toLowerCase().includes('<html')) {
+    throw new Error('Il server ha restituito una pagina di errore invece di dati — probabile timeout del proxy Netlify. Riprova tra qualche secondo.');
+  }
   var start = t.indexOf('{');
   var end = t.lastIndexOf('}');
   if (start < 0 || end < 0) throw new Error('Nessun JSON trovato nella risposta');
@@ -4429,7 +4439,7 @@ async function avviaGiocataConsigliata() {
     setGStep(1,'active');
     var sportsStr = giocataSelectedSports.join(', ');
     var p1 = 'Data: ' + dataISO + '. Partite in programma "' + periodo + '", sport: ' + sportsStr + '. JSON: {"partite":[{"sport":"","team1":"","team2":"","data":"","ora":"","competizione":""}]}';
-    var raw1 = await runWithWebSearch(p1, 3);
+    var raw1 = await runWithWebSearch(p1, 2);
     var partite = parseJSON(raw1).partite || [];
     if (!partite.length) throw new Error('Nessuna partita trovata. Prova un periodo diverso.');
     setGStep(1,'done');
