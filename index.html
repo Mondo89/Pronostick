@@ -4363,7 +4363,7 @@ async function runWithWebSearch(prompt, maxIter) {
   maxIter = maxIter || 3;
   while (iter < maxIter) {
     iter++;
-    var d = await callProxy(msgs, true, 1200);
+    var d = await callProxy(msgs, true, 2000);
     var ac = d.content || [];
     msgs.push({ role:'assistant', content: ac });
     var texts = ac.filter(function(b){ return b.type==='text'; }).map(function(b){ return b.text; }).join('');
@@ -4376,8 +4376,31 @@ async function runWithWebSearch(prompt, maxIter) {
 }
 
 function parseJSON(text) {
-  var t = text.trim();
-  return JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1));
+  var t = (text || '').trim();
+  var start = t.indexOf('{');
+  var end = t.lastIndexOf('}');
+  if (start < 0 || end < 0) throw new Error('Nessun JSON trovato nella risposta');
+  var jsonStr = t.slice(start, end + 1);
+  // Try to fix truncated JSON by completing arrays/objects
+  try {
+    return JSON.parse(jsonStr);
+  } catch(e) {
+    // Count unclosed brackets and try to close them
+    var open = 0, openSq = 0;
+    for (var i = 0; i < jsonStr.length; i++) {
+      if (jsonStr[i] === '{') open++;
+      else if (jsonStr[i] === '}') open--;
+      else if (jsonStr[i] === '[') openSq++;
+      else if (jsonStr[i] === ']') openSq--;
+    }
+    // Remove trailing incomplete entry (last comma + partial object)
+    var fixed = jsonStr.replace(/,\s*\{[^}]*$/, '');
+    // Close unclosed structures
+    for (var j = 0; j < openSq; j++) fixed += ']';
+    for (var k = 0; k < open; k++) fixed += '}';
+    try { return JSON.parse(fixed); }
+    catch(e2) { throw new Error('Risposta AI non valida — riprova. Dettaglio: ' + e.message); }
+  }
 }
 
 async function avviaGiocataConsigliata() {
@@ -4410,13 +4433,14 @@ async function avviaGiocataConsigliata() {
     var partite = parseJSON(raw1).partite || [];
     if (!partite.length) throw new Error('Nessuna partita trovata. Prova un periodo diverso.');
     setGStep(1,'done');
+    await sleep(2000); // brief pause after web search
 
     // FASE 2 — screening rapido (no web)
     setGStep(2,'active');
     var lista = partite.map(function(p,i){ return (i+1)+'. '+p.sport+' | '+p.team1+' vs '+p.team2+' | '+p.data+' '+p.ora+' | '+p.competizione; }).join('\n');
     var p2 = 'Analista scommesse. Valuta queste partite:\n' + lista
       + '\nSeleziona max 5 con confidenza>=65 e rischio BASSO/MEDIO. JSON: {"picks":[{"indice":1,"sport":"","team1":"","team2":"","competizione":"","data":"","pronostico":"","quota_stimata":1.5,"confidenza":70,"rischio":"BASSO","motivo":""}]}';
-    var d2 = await callProxy([{role:'user',content:p2}], false, 1000);
+    var d2 = await callProxy([{role:'user',content:p2}], false, 1500);
     var raw2 = d2.content.map(function(b){ return b.text||''; }).join('');
     var picks = parseJSON(raw2).picks || [];
     if (!picks.length) throw new Error('Nessun pick di qualita trovato. Riprova con sport o periodo diversi.');
@@ -4431,8 +4455,8 @@ async function avviaGiocataConsigliata() {
       var p3 = 'Analisi ' + pk.team1 + ' vs ' + pk.team2 + ' ' + pk.data + '. Pronostico: ' + pk.pronostico
         + '. JSON: {"confermato":true,"confidenza_aggiornata":75,"rischio_aggiornato":"BASSO","quota_reale":"1.70","note":"nota","vale_la_pena":true}';
       var raw3 = '';
-      if (j > 0) { await sleep(3000); } // rate limit pause between calls
-      try { raw3 = await runWithWebSearch(p3, 2); } catch(e) { raw3 = ''; }
+      if (j > 0) { await sleep(5000); } // rate limit pause between calls
+      try { raw3 = await runWithWebSearch(p3, 2); } catch(e2) { raw3 = ''; }
       var det = {};
       try { det = parseJSON(raw3); } catch(e) { det = {confermato:true,vale_la_pena:true,quota_reale:String(pk.quota_stimata),note:pk.motivo}; }
       if (det.confermato && det.vale_la_pena) {
@@ -4460,7 +4484,7 @@ async function avviaGiocataConsigliata() {
       + '"combinata":null,'
       + '"consiglio_generale":"spiega in 1-2 frasi la strategia scelta e perche\u0027"}';
     var singola = true; var combo = true;
-    var d4 = await callProxy([{role:'user',content:p4}], false, 900);
+    var d4 = await callProxy([{role:'user',content:p4}], false, 1200);
     var raw4 = d4.content.map(function(b){ return b.text||''; }).join('');
     var sched = parseJSON(raw4);
     setGStep(4,'done');
