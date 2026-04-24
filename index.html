@@ -980,6 +980,22 @@ body { padding-bottom: 70px; } /* space for tab bar */
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 12px; padding: 18px; margin-bottom: 10px;
 }
+
+/* ===== GIOCATA CONSIGLIATA ===== */
+.g-sport-chip{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:0.82rem;font-weight:500;transition:all 0.2s;user-select:none;}
+.g-sport-chip.selected{background:rgba(0,229,160,0.1);border-color:var(--accent);color:var(--accent);}
+.g-step{display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--muted);padding:9px 14px;border-radius:8px;background:var(--surface2);transition:all 0.4s;}
+.g-step.active{color:var(--text);background:rgba(0,229,160,0.07);border-left:3px solid var(--accent);padding-left:11px;}
+.g-step.done{color:var(--accent);}
+.g-result-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px;}
+.g-pick-row{background:var(--surface2);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+.g-pick-sport{font-size:0.65rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.g-pick-match{font-size:0.9rem;font-weight:600;margin-bottom:3px;}
+.g-pick-bet{font-size:0.82rem;color:var(--accent);}
+.g-budget-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;background:rgba(0,229,160,0.05);border:1px solid rgba(0,229,160,0.15);border-radius:10px;padding:14px;}
+.g-budget-item{text-align:center;}
+.g-budget-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:600;color:var(--accent);}
+.g-budget-lbl{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
 </style>
 </head>
 <body>
@@ -1002,6 +1018,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
     <!-- Desktop nav tabs (hidden on mobile) -->
     <nav id="desktopNav" style="display:flex;gap:4px;align-items:center;">
       <button onclick="switchTab('home')" id="dnav-home" class="dnav-btn dnav-active">⚡ Analizza</button>
+      <button onclick="switchTab('giocata')" id="dnav-giocata" class="dnav-btn">🎯 Giocata</button>
       <button onclick="switchTab('calendario')" id="dnav-calendario" class="dnav-btn">📅 Calendario</button>
       <button onclick="switchTab('storico')" id="dnav-storico" class="dnav-btn">📚 Storico</button>
       <button onclick="switchTab('guida')" id="dnav-guida" class="dnav-btn">❓ Guida</button>
@@ -1717,11 +1734,98 @@ body { padding-bottom: 70px; } /* space for tab bar */
 </div>
 </div>
 
+<!-- PAGE: GIOCATA CONSIGLIATA -->
+<div class="page" id="page-giocata">
+<div class="container" style="padding-top:20px;">
+<div class="apikey-missing-banner" style="display:none;align-items:center;gap:12px;background:rgba(255,71,87,0.12);border:1px solid rgba(255,71,87,0.35);border-radius:10px;padding:12px 16px;margin-bottom:20px;"><span style="font-size:1.2rem;">🔑</span><div style="flex:1;font-size:0.85rem;color:var(--danger);">API key non configurata.</div><button onclick="switchTab('menu')" style="background:var(--danger);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:1px;cursor:pointer;">⚙️ VAI AL MENU</button></div>
+
+<div style="margin-bottom:24px;">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;margin-bottom:4px;">🎯 Giocata Consigliata</div>
+  <div style="font-size:0.85rem;color:var(--muted);">L'AI scansiona le partite di oggi su più sport, seleziona le più sicure e costruisce la schedina ottimale per il tuo budget.</div>
+</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:20px;">
+  <div style="font-size:0.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">⚙️ Impostazioni</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <div>
+      <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;">💰 Budget</label>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="color:var(--muted);">€</span>
+        <input type="number" id="giocataBudget" min="5" max="10000" value="50" step="5"
+          style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:1rem;font-weight:600;outline:none;"
+          oninput="updateGiocataCost()"/>
+      </div>
+    </div>
+    <div>
+      <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;">📅 Periodo</label>
+      <select id="giocataPeriodo" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;">
+        <option value="oggi">Solo oggi</option>
+        <option value="domani">Solo domani</option>
+        <option value="oggi e domani" selected>Oggi e domani</option>
+        <option value="questo weekend">Questo weekend</option>
+        <option value="prossimi 3 giorni">Prossimi 3 giorni</option>
+        <option value="prossimi 5 giorni">Prossimi 5 giorni</option>
+        <option value="prossima settimana">Prossima settimana (7 giorni)</option>
+      </select>
+    </div>
+  </div>
+  <div style="margin-bottom:16px;">
+    <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">🏅 Sport da analizzare</label>
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:10px;">La AI deciderà autonomamente il tipo di giocata (singola, combinata o entrambe) in base alle opportunità trovate.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;" id="giocataSportChips">
+      <div class="g-sport-chip selected" data-sport="Calcio (Serie A, Premier League, Champions League, Liga, Bundesliga, Serie B, Ligue 1)" onclick="toggleGiocataSport(this)">⚽ Calcio</div>
+      <div class="g-sport-chip selected" data-sport="Basket (NBA, Eurolega, LBA Serie A)" onclick="toggleGiocataSport(this)">🏀 Basket</div>
+      <div class="g-sport-chip selected" data-sport="Tennis (ATP, WTA)" onclick="toggleGiocataSport(this)">🎾 Tennis</div>
+      <div class="g-sport-chip" data-sport="MMA e UFC" onclick="toggleGiocataSport(this)">🥊 MMA/UFC</div>
+      <div class="g-sport-chip" data-sport="Formula 1 e MotoGP" onclick="toggleGiocataSport(this)">🏎️ Motori</div>
+      <div class="g-sport-chip" data-sport="Rugby (Top14, Premiership, Pro14)" onclick="toggleGiocataSport(this)">🏉 Rugby</div>
+      <div class="g-sport-chip" data-sport="Football Americano NFL" onclick="toggleGiocataSport(this)">🏈 NFL</div>
+      <div class="g-sport-chip" data-sport="Volley (Serie A, Champions)" onclick="toggleGiocataSport(this)">🏐 Volley</div>
+      <div class="g-sport-chip" data-sport="Hockey su ghiaccio (NHL)" onclick="toggleGiocataSport(this)">🏒 Hockey</div>
+      <div class="g-sport-chip" data-sport="Ciclismo (Tour, Giro, Vuelta, classiche)" onclick="toggleGiocataSport(this)">🚴 Ciclismo</div>
+    </div>
+  </div>
+  <!-- Hidden checkboxes for backward compat with JS -->
+  <input type="checkbox" id="tipoSingola" checked style="display:none"/>
+  <input type="checkbox" id="tipoCombo" checked style="display:none"/>
+  <div style="background:rgba(0,229,160,0.05);border:1px solid rgba(0,229,160,0.15);border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Costo API stimato</div>
+      <div id="giocataCostLabel" style="font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--accent);">~$0.30</div>
+    </div>
+    <button id="btnGiocata" onclick="avviaGiocataConsigliata()"
+      style="background:var(--accent);color:var(--bg);border:none;border-radius:10px;padding:13px 28px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;cursor:pointer;">
+      🎯 TROVA GIOCATA
+    </button>
+  </div>
+</div>
+
+<div id="giocataProgress" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:20px;">
+  <div style="font-size:0.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">⏳ Analisi in corso...</div>
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <div class="g-step" id="gstep1">🔍 Ricerca partite su tutti gli sport selezionati...</div>
+    <div class="g-step" id="gstep2">⚡ Screening rapido e valutazione qualità pick...</div>
+    <div class="g-step" id="gstep3">🔬 Analisi approfondita dei migliori pick...</div>
+    <div class="g-step" id="gstep4">🎯 Costruzione schedina ottimale per il tuo budget...</div>
+  </div>
+</div>
+
+<div id="giocataError" style="display:none;background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.25);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:0.85rem;color:var(--danger);"></div>
+<div id="giocataResult" style="display:none;"></div>
+
+</div>
+</div>
+
+
 <!-- TAB BAR -->
 <nav class="tab-bar">
   <button class="tab-item active" id="tab-home" onclick="switchTab('home')">
     <span class="tab-icon">⚡</span>
     <span>Analizza</span>
+  </button>
+  <button class="tab-item" id="tab-giocata" onclick="switchTab('giocata')">
+    <span class="tab-icon">🎯</span>
+    <span>Giocata</span>
   </button>
   <button class="tab-item" id="tab-calendario" onclick="switchTab('calendario')">
     <span class="tab-icon">📅</span>
@@ -1812,18 +1916,34 @@ async function syncFromFirebase() {
       const data = snap.data();
       const firebaseHistory = data.entries || [];
       if (firebaseHistory.length > 0) {
-        // Merge with local
         const local = loadHistory();
-        const localIds = new Set(local.map(e => e.id));
-        const merged = [...local];
-        let added = 0;
-        firebaseHistory.forEach(e => {
-          if (!localIds.has(e.id)) { merged.push(e); added++; }
+        const localMap = {};
+        local.forEach(e => { localMap[e.id] = e; });
+        const firebaseMap = {};
+        firebaseHistory.forEach(e => { firebaseMap[e.id] = e; });
+
+        // Merge: for each entry, keep the most recently updated version
+        const allIds = new Set([...Object.keys(localMap), ...Object.keys(firebaseMap)]);
+        const merged = [];
+        let added = 0, updated = 0;
+        allIds.forEach(id => {
+          const loc = localMap[id];
+          const rem = firebaseMap[id];
+          if (!loc) { merged.push(rem); added++; }
+          else if (!rem) { merged.push(loc); }
+          else {
+            // Pick the version with the most recent updatedAt, or firebase if equal (cloud wins on ties)
+            const locTime = new Date(loc.updatedAt || loc.savedAt || 0).getTime();
+            const remTime = new Date(rem.updatedAt || rem.savedAt || 0).getTime();
+            if (remTime > locTime) { merged.push(rem); updated++; }
+            else { merged.push(loc); }
+          }
         });
         merged.sort((a,b) => new Date(b.savedAt) - new Date(a.savedAt));
         saveHistory(merged);
         renderHistory();
-        if (added > 0) showToast(`☁️ Sincronizzati ${added} pronostici dal cloud`, 'success');
+        const msg = [added>0 ? added+' nuovi' : '', updated>0 ? updated+' aggiornati' : ''].filter(Boolean).join(', ');
+        if (msg) showToast('☁️ Sincronizzati dal cloud: ' + msg, 'success');
       }
     }
   } catch(e) { console.error('Firebase sync error:', e); }
@@ -2660,7 +2780,7 @@ function setStatus(status) {
   if (!activeStatusId) return;
   const history = loadHistory();
   const idx = history.findIndex(e=>e.id===activeStatusId);
-  if (idx>=0) { history[idx].status=status; saveHistory(history); }
+  if (idx>=0) { history[idx].status=status; history[idx].updatedAt=new Date().toISOString(); saveHistory(history); }
   document.getElementById('statusPicker').classList.remove('open');
   activeStatusId = null;
   renderHistory();
@@ -3905,6 +4025,7 @@ async function verificaRisultato(id) {
     const idx = hist.findIndex(e => e.id === id);
     if (idx >= 0) {
       hist[idx].status = newStatus;
+      hist[idx].updatedAt = new Date().toISOString();
       hist[idx].verifica = { timestamp: new Date().toISOString(), ...v, webText: risultatoWeb };
       saveHistory(hist);
     }
@@ -3942,6 +4063,265 @@ async function verificaRisultato(id) {
 
   if (btn) { btn.disabled = false; btn.textContent = '🔍 VERIFICA RISULTATO'; }
 }
+
+
+// === GIOCATA CONSIGLIATA ===
+var giocataSelectedSports = ['Calcio Serie A e Champions League','Basket NBA e Eurolega e LBA','Tennis ATP e WTA'];
+
+function toggleGiocataSport(chip) {
+  var sport = chip.dataset.sport;
+  chip.classList.toggle('selected');
+  if (chip.classList.contains('selected')) {
+    if (giocataSelectedSports.indexOf(sport) < 0) giocataSelectedSports.push(sport);
+  } else {
+    giocataSelectedSports = giocataSelectedSports.filter(function(s){ return s !== sport; });
+  }
+  updateGiocataCost();
+}
+
+function updateGiocataCost() {
+  var n = giocataSelectedSports.length;
+  var base = 0.20 + (n * 0.03);
+  var singola = document.getElementById('tipoSingola') && document.getElementById('tipoSingola').checked;
+  var combo = document.getElementById('tipoCombo') && document.getElementById('tipoCombo').checked;
+  if (singola && combo) base += 0.05;
+  var lbl = document.getElementById('giocataCostLabel');
+  if (lbl) lbl.textContent = '~$' + base.toFixed(2);
+}
+
+function setGStep(n, state) {
+  for (var i = 1; i <= 4; i++) {
+    var el = document.getElementById('gstep' + i);
+    if (!el) continue;
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add(state);
+  }
+}
+
+function riskColor(r) { return r==='BASSO'?'var(--accent)':r==='MEDIO'?'var(--gold)':'var(--danger)'; }
+function riskBg(r)    { return r==='BASSO'?'rgba(0,229,160,0.1)':r==='MEDIO'?'rgba(255,215,0,0.1)':'rgba(255,71,87,0.1)'; }
+
+async function callProxy(messages, useWebSearch, maxTokens) {
+  var body = { model: getModel(), max_tokens: maxTokens || 2000, messages: messages };
+  if (useWebSearch) body.tools = [{ type:'web_search_20250305', name:'web_search' }];
+  var r = await fetch('/api/proxy', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':getApiKey()},
+    body: JSON.stringify(body)
+  });
+  var d = await r.json();
+  if (!r.ok) throw new Error(d.error && d.error.message ? d.error.message : 'Errore API');
+  return d;
+}
+
+async function runWithWebSearch(prompt, maxIter) {
+  var msgs = [{ role:'user', content: prompt }];
+  var finalText = '';
+  var iter = 0;
+  maxIter = maxIter || 5;
+  while (iter < maxIter) {
+    iter++;
+    var d = await callProxy(msgs, true, 3000);
+    var ac = d.content || [];
+    msgs.push({ role:'assistant', content: ac });
+    var texts = ac.filter(function(b){ return b.type==='text'; }).map(function(b){ return b.text; }).join('');
+    if (texts) finalText = texts;
+    var tu = ac.filter(function(b){ return b.type==='tool_use'; });
+    if (!tu.length) break;
+    msgs.push({ role:'user', content: tu.map(function(t){ return { type:'tool_result', tool_use_id:t.id, content:'Risultati trovati per: ' + t.input.query }; }) });
+  }
+  return finalText;
+}
+
+function parseJSON(text) {
+  var t = text.trim();
+  return JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1));
+}
+
+async function avviaGiocataConsigliata() {
+  if (!getApiKey()) { showToast('Inserisci prima la API key nel Menu','error'); return; }
+  if (giocataSelectedSports.length === 0) { showToast('Seleziona almeno uno sport','error'); return; }
+
+  var btn = document.getElementById('btnGiocata');
+  var progress = document.getElementById('giocataProgress');
+  var errDiv = document.getElementById('giocataError');
+  var resDiv = document.getElementById('giocataResult');
+  var budget = parseFloat(document.getElementById('giocataBudget').value) || 50;
+  var periodo = document.getElementById('giocataPeriodo').value;
+  var singola = document.getElementById('tipoSingola').checked;
+  var combo = document.getElementById('tipoCombo').checked;
+  var oggi = new Date().toLocaleDateString('it-IT');
+  var dataISO = new Date().toISOString().split('T')[0];
+
+  btn.disabled = true; btn.textContent = '⏳ Analisi...';
+  progress.style.display = 'block';
+  errDiv.style.display = 'none';
+  resDiv.style.display = 'none';
+  for (var i=1;i<=4;i++) { var s=document.getElementById('gstep'+i); if(s){s.classList.remove('active','done');} }
+
+  try {
+    // FASE 1 — trova partite
+    setGStep(1,'active');
+    var sportsStr = giocataSelectedSports.join(', ');
+    var p1 = 'Oggi e' + ' ' + oggi + ' (' + dataISO + '). Trova TUTTE le partite in programma per "' + periodo + '" in questi sport: ' + sportsStr + '. '
+      + 'Per ogni partita: sport, team1, team2, data YYYY-MM-DD, ora HH:MM, competizione. '
+      + 'Rispondi SOLO con JSON: {"partite":[{"sport":"","team1":"","team2":"","data":"","ora":"","competizione":""}]}';
+    var raw1 = await runWithWebSearch(p1, 6);
+    var partite = parseJSON(raw1).partite || [];
+    if (!partite.length) throw new Error('Nessuna partita trovata. Prova un periodo diverso.');
+    setGStep(1,'done');
+
+    // FASE 2 — screening rapido (no web)
+    setGStep(2,'active');
+    var lista = partite.map(function(p,i){ return (i+1)+'. '+p.sport+' | '+p.team1+' vs '+p.team2+' | '+p.data+' '+p.ora+' | '+p.competizione; }).join('\n');
+    var p2 = 'Sei un analista scommesse. Valuta queste ' + partite.length + ' partite con le tue conoscenze:\n' + lista
+      + '\n\nPer ognuna: confidenza 0-100, rischio BASSO/MEDIO/ALTO, pronostico consigliato, quota_stimata, motivo breve.'
+      + '\nIncludi SOLO partite con confidenza >= 65 e rischio BASSO o MEDIO. Max 8 risultati, ordinati per confidenza.'
+      + '\nRispondi SOLO con JSON: {"picks":[{"indice":1,"sport":"","team1":"","team2":"","competizione":"","data":"","pronostico":"","quota_stimata":1.5,"confidenza":70,"rischio":"BASSO","motivo":""}]}';
+    var d2 = await callProxy([{role:'user',content:p2}], false, 2000);
+    var raw2 = d2.content.map(function(b){ return b.text||''; }).join('');
+    var picks = parseJSON(raw2).picks || [];
+    if (!picks.length) throw new Error('Nessun pick di qualita trovato. Riprova con sport o periodo diversi.');
+    setGStep(2,'done');
+
+    // FASE 3 — analisi approfondita top 3
+    setGStep(3,'active');
+    var top3 = picks.slice(0,3);
+    var confermati = [];
+    for (var j=0; j<top3.length; j++) {
+      var pk = top3[j];
+      var p3 = 'Oggi e' + ' ' + oggi + '. Analisi rapida: ' + pk.sport + ' - ' + pk.team1 + ' vs ' + pk.team2
+        + ' (' + pk.competizione + ', ' + pk.data + '). Pronostico: ' + pk.pronostico + ' @ ' + pk.quota_stimata
+        + '. Cerca forma recente, infortuni, quote reali bookmaker.'
+        + ' Rispondi SOLO con JSON: {"confermato":true,"confidenza_aggiornata":75,"rischio_aggiornato":"BASSO","quota_reale":"1.70","note":"breve nota","vale_la_pena":true}';
+      var raw3 = '';
+      try { raw3 = await runWithWebSearch(p3, 4); } catch(e) { raw3 = ''; }
+      var det = {};
+      try { det = parseJSON(raw3); } catch(e) { det = {confermato:true,vale_la_pena:true,quota_reale:String(pk.quota_stimata),note:pk.motivo}; }
+      if (det.confermato && det.vale_la_pena) {
+        confermati.push(Object.assign({}, pk, det));
+      }
+    }
+    if (!confermati.length) confermati = top3.map(function(pk){ return Object.assign({},pk,{quota_reale:String(pk.quota_stimata),note:pk.motivo}); });
+    setGStep(3,'done');
+
+    // FASE 4 — schedina ottimale
+    setGStep(4,'active');
+    var picksStr = JSON.stringify(confermati.map(function(pk){
+      return {sport:pk.sport,team1:pk.team1,team2:pk.team2,competizione:pk.competizione,data:pk.data,pronostico:pk.pronostico,quota:pk.quota_reale||pk.quota_stimata,confidenza:pk.confidenza_aggiornata||pk.confidenza,rischio:pk.rischio_aggiornato||pk.rischio,note:pk.note||pk.motivo};
+    }));
+    var p4 = 'Sei un money manager sportivo esperto. Budget disponibile: EUR ' + budget + '.'
+      + ' OBIETTIVO: vincere SPESSO e in SICUREZZA. Preferisci quote basse e certezze alle grandi vincite rischiose.'
+      + '\nPick verificati disponibili: ' + picksStr
+      + '\n\nDECIDI TU il tipo di giocata migliore in base ai pick disponibili:'
+      + '\n- Se c\u0027e\u0027 almeno 1 pick con confidenza >= 75 e rischio BASSO: proponi una SINGOLA sicura'
+      + '\n- Se ci sono 2-3 pick compatibili con rischio BASSO/MEDIO: proponi anche una COMBINATA'
+      + '\n- Se i pick sono di qualita\u0027 media: proponi solo la singola migliore'
+      + '\n- Distribuisci il budget in modo conservativo (singola: 5-8%, combinata: 3-5%)'
+      + '\nRispondi SOLO con JSON: {'
+      + '"singola":{"pick_indice":0,"partita":"team1 vs team2","pronostico":"","quota":1.0,"importo_consigliato":10.0,"vincita_potenziale":0.0,"rischio":"BASSO","motivazione":"","avvertenza":""},'
+      + '"combinata":null,'
+      + '"consiglio_generale":"spiega in 1-2 frasi la strategia scelta e perche\u0027"}';
+    var singola = true; var combo = true;
+    var d4 = await callProxy([{role:'user',content:p4}], false, 1500);
+    var raw4 = d4.content.map(function(b){ return b.text||''; }).join('');
+    var sched = parseJSON(raw4);
+    setGStep(4,'done');
+
+    progress.style.display = 'none';
+    renderGiocataResult(sched, confermati, singola, combo);
+
+  } catch(err) {
+    progress.style.display = 'none';
+    if (!handleApiError(err, errDiv)) {
+      errDiv.style.display = 'block';
+      errDiv.textContent = 'Errore: ' + err.message;
+    }
+  }
+  btn.disabled = false; btn.textContent = '🎯 TROVA GIOCATA';
+}
+
+function renderGiocataResult(sched, picks, singola, combo) {
+  var res = document.getElementById('giocataResult');
+  var html = '';
+
+  if (sched.consiglio_generale) {
+    html += '<div style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:0.85rem;">'
+      + '<span style="color:var(--accent);font-weight:600;">💡 Strategia AI: </span>' + sched.consiglio_generale + '</div>';
+  }
+
+  if (singola && sched.singola) {
+    var s = sched.singola;
+    var pkRef = picks[s.pick_indice] || picks[0] || {};
+    html += '<div class="g-result-card">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">'
+      + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.3rem;letter-spacing:2px;">🏆 Giocata Singola</div>'
+      + '<span style="font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:4px;background:' + riskBg(s.rischio) + ';color:' + riskColor(s.rischio) + ';">' + s.rischio + '</span>'
+      + '</div>'
+      + '<div class="g-pick-row">'
+      + '<div class="g-pick-sport">' + (pkRef.sport||'') + ' &bull; ' + (pkRef.competizione||'') + ' &bull; ' + (pkRef.data||'') + '</div>'
+      + '<div class="g-pick-match">' + (s.partita||(pkRef.team1+' vs '+pkRef.team2)) + '</div>'
+      + '<div class="g-pick-bet">&#10003; ' + s.pronostico + '</div>'
+      + '</div>'
+      + '<div style="font-size:0.82rem;color:var(--muted);margin:10px 0;">' + s.motivazione + '</div>'
+      + '<div class="g-budget-row">'
+      + '<div class="g-budget-item"><div class="g-budget-val">&#8364;' + parseFloat(s.importo_consigliato).toFixed(2) + '</div><div class="g-budget-lbl">Da puntare</div></div>'
+      + '<div class="g-budget-item"><div class="g-budget-val">' + parseFloat(s.quota).toFixed(2) + '</div><div class="g-budget-lbl">Quota</div></div>'
+      + '<div class="g-budget-item"><div class="g-budget-val" style="color:var(--gold);">&#8364;' + parseFloat(s.vincita_potenziale).toFixed(2) + '</div><div class="g-budget-lbl">Vincita netta</div></div>'
+      + '</div>'
+      + '<div style="margin-top:12px;font-size:0.73rem;color:var(--muted);background:rgba(255,215,0,0.05);border-radius:6px;padding:8px 10px;">&#9888;&#65039; ' + s.avvertenza + '</div>'
+      + '</div>';
+  }
+
+  if (combo && sched.combinata) {
+    var c = sched.combinata;
+    var pHtml = (c.picks||[]).map(function(pk){
+      return '<div class="g-pick-row" style="margin-bottom:6px;">'
+        + '<div class="g-pick-match">' + pk.partita + '</div>'
+        + '<div class="g-pick-bet">&#10003; ' + pk.pronostico + ' <span style="color:var(--muted);font-size:0.75rem;">@ ' + parseFloat(pk.quota).toFixed(2) + '</span></div>'
+        + '</div>';
+    }).join('');
+    html += '<div class="g-result-card">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">'
+      + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.3rem;letter-spacing:2px;">&#128279; Combinata</div>'
+      + '<span style="font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:4px;background:' + riskBg(c.rischio) + ';color:' + riskColor(c.rischio) + ';">' + c.rischio + '</span>'
+      + '</div>'
+      + pHtml
+      + '<div style="font-size:0.82rem;color:var(--muted);margin:10px 0;">' + c.motivazione + '</div>'
+      + '<div class="g-budget-row">'
+      + '<div class="g-budget-item"><div class="g-budget-val">&#8364;' + parseFloat(c.importo_consigliato).toFixed(2) + '</div><div class="g-budget-lbl">Da puntare</div></div>'
+      + '<div class="g-budget-item"><div class="g-budget-val">' + parseFloat(c.quota_totale).toFixed(2) + '</div><div class="g-budget-lbl">Quota totale</div></div>'
+      + '<div class="g-budget-item"><div class="g-budget-val" style="color:var(--gold);">&#8364;' + parseFloat(c.vincita_potenziale).toFixed(2) + '</div><div class="g-budget-lbl">Vincita netta</div></div>'
+      + '</div>'
+      + '<div style="margin-top:12px;font-size:0.73rem;color:var(--muted);background:rgba(255,215,0,0.05);border-radius:6px;padding:8px 10px;">&#9888;&#65039; ' + c.avvertenza + '</div>'
+      + '</div>';
+  }
+
+  html += '<div class="g-result-card">'
+    + '<div style="font-size:0.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">&#128203; Tutti i pick analizzati (' + picks.length + ')</div>'
+    + picks.map(function(pk){
+        return '<div class="g-pick-row" style="margin-bottom:8px;">'
+          + '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">'
+          + '<div><div class="g-pick-sport">' + pk.sport + ' &bull; ' + pk.competizione + '</div>'
+          + '<div class="g-pick-match">' + pk.team1 + ' vs ' + pk.team2 + '</div>'
+          + '<div class="g-pick-bet">' + pk.pronostico + '</div></div>'
+          + '<div style="text-align:right;flex-shrink:0;">'
+          + '<div style="font-family:\'DM Mono\',monospace;font-size:0.9rem;font-weight:600;">' + (pk.quota_reale||pk.quota_stimata) + '</div>'
+          + '<div style="font-size:0.7rem;color:var(--muted);">Conf. ' + (pk.confidenza_aggiornata||pk.confidenza) + '%</div>'
+          + '<div style="font-size:0.68rem;font-weight:600;color:' + riskColor(pk.rischio_aggiornato||pk.rischio) + ';">' + (pk.rischio_aggiornato||pk.rischio) + '</div>'
+          + '</div></div>'
+          + '<div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">' + (pk.note||pk.motivo||'') + '</div>'
+          + '</div>';
+      }).join('')
+    + '</div>';
+
+  res.innerHTML = html;
+  res.style.display = 'block';
+  res.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// === END GIOCATA ===
 
 // --- UTILS -------------------------------------------------------------------
 function wait(ms) { return new Promise(r=>setTimeout(r,ms)); }
