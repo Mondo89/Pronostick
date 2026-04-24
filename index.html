@@ -103,13 +103,13 @@ textarea{resize:vertical;min-height:80px;}
 .upload-info{flex:1;}
 .upload-title{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:6px;}
 .upload-formats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;}
-.fmt-badge{background:rgba(77,166,255,0.12);border:1px solid rgba(77,166,255,0.3);color:var(--accent3);font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;padding:2px 8px;border-radius:4px;}
+.fmt-badge{background:rgba(77,166,255,0.12);border:1px solid rgba(77,166,255,0.3);color:var(--accent3);font-family:monospace;font-size:0.7rem;font-weight:500;padding:2px 8px;border-radius:4px;}
 .upload-desc{font-size:0.75rem;color:var(--muted);line-height:1.5;}
 .upload-cta{background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:10px 18px;font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:1.5px;cursor:pointer;flex-shrink:0;transition:all 0.2s;white-space:nowrap;}
 .upload-cta:hover{filter:brightness(1.1);}
 .file-chips{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
 .chip{display:flex;align-items:center;justify-content:space-between;background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.22);border-radius:6px;padding:9px 14px;}
-.chip-name{display:flex;align-items:center;gap:8px;color:var(--accent);font-family:'DM Mono',monospace;font-size:0.78rem;}
+.chip-name{display:flex;align-items:center;gap:8px;color:var(--accent);font-family:monospace;font-size:0.78rem;}
 .chip-size{color:var(--muted);font-size:0.7rem;}
 .chip-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 2px;line-height:1;transition:color 0.15s;}
 .chip-del:hover{color:var(--danger);}
@@ -128,9 +128,9 @@ textarea{resize:vertical;min-height:80px;}
 .loading-state.visible{display:block;}
 .spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.loading-text{color:var(--muted);font-size:0.9rem;font-family:'DM Mono',monospace;}
+.loading-text{color:var(--muted);font-size:0.9rem;font-family:monospace;}
 .loading-steps{margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.loading-step{font-size:0.8rem;color:var(--muted);font-family:'DM Mono',monospace;opacity:0;transition:opacity 0.5s;}
+.loading-step{font-size:0.8rem;color:var(--muted);font-family:monospace;opacity:0;transition:opacity 0.5s;}
 .loading-step.show{opacity:1;color:var(--accent);}
 
 /* ERROR */
@@ -154,7 +154,7 @@ textarea{resize:vertical;min-height:80px;}
 .odds-label{font-size:0.7rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
 .odds-value{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text);line-height:1;margin-bottom:4px;}
 .odds-cell.recommended .odds-value{color:var(--accent);}
-.odds-prob{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);}
+.odds-prob{font-family:monospace;font-size:0.75rem;color:var(--muted);}
 .bet-suggestion{background:linear-gradient(135deg,rgba(0,229,160,0.08),rgba(77,166,255,0.05));border:1px solid rgba(0,229,160,0.3);border-radius:10px;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
 .bet-main{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:1px;color:var(--accent);}
 .bet-desc{font-size:0.82rem;color:var(--muted);margin-top:3px;}
@@ -214,7 +214,7 @@ textarea{resize:vertical;min-height:80px;}
 .hcard-top{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;cursor:pointer;}
 .hcard-left{flex:1;}
 .hcard-match{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:1px;margin-bottom:2px;}
-.hcard-meta{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;display:flex;gap:10px;flex-wrap:wrap;}
+.hcard-meta{font-size:0.75rem;color:var(--muted);font-family:monospace;display:flex;gap:10px;flex-wrap:wrap;}
 .hcard-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 
 /* Status badge */
@@ -225,7 +225,7 @@ textarea{resize:vertical;min-height:80px;}
 .status-pareggio{background:rgba(255,215,0,0.1);color:var(--gold);border:1px solid rgba(255,215,0,0.2);}
 
 .pronostico-tag{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent);letter-spacing:1px;}
-.confidence-mini{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);}
+.confidence-mini{font-family:monospace;font-size:0.75rem;color:var(--muted);}
 
 /* Card actions */
 .hcard.combinata-selected { outline: 2px solid var(--accent3); outline-offset: 2px; cursor: pointer; }
@@ -266,9 +266,9 @@ textarea{resize:vertical;min-height:80px;}
 .full-detail-banner { position:relative; overflow:hidden; background:var(--surface2); border-radius:10px; padding:20px; margin-bottom:14px; }
 .full-detail-banner::before { content:''; position:absolute; top:0;left:0;right:0;height:3px; background:linear-gradient(90deg,var(--accent),var(--accent3)); }
 .full-detail-match { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:2px; margin-bottom:4px; display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
-.full-detail-meta { font-size:0.75rem; color:var(--muted); font-family:'DM Mono',monospace; }
+.full-detail-meta { font-size:0.75rem; color:var(--muted); font-family:monospace; }
 .fd-conf-row { display:flex; align-items:center; justify-content:space-between; margin-top:12px; flex-wrap:wrap; gap:8px; }
-.fd-conf-pill { background:rgba(0,229,160,0.1); border:1px solid var(--accent); border-radius:20px; padding:6px 14px; font-size:0.75rem; color:var(--accent); font-family:'DM Mono',monospace; font-weight:600; }
+.fd-conf-pill { background:rgba(0,229,160,0.1); border:1px solid var(--accent); border-radius:20px; padding:6px 14px; font-size:0.75rem; color:var(--accent); font-family:monospace; font-weight:600; }
 .fd-quota { text-align:right; }
 .fd-quota-num { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--text); line-height:1; }
 .fd-quota-label { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
@@ -731,7 +731,7 @@ textarea{resize:vertical;min-height:80px;}
 .calc-input {
   width:90px; background:var(--surface2); border:1px solid var(--border);
   color:var(--text); padding:9px 12px; border-radius:8px;
-  font-family:'DM Mono',monospace; font-size:0.9rem; outline:none;
+  font-family:monospace; font-size:0.9rem; outline:none;
   transition:border-color 0.2s;
 }
 .calc-input:focus { border-color:var(--gold); }
@@ -753,7 +753,7 @@ textarea{resize:vertical;min-height:80px;}
 .kpi-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; }
 .kpi-label { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; }
 .kpi-val { font-family:'Bebas Neue',sans-serif; font-size:2rem; line-height:1; margin-bottom:4px; }
-.kpi-sub { font-size:0.72rem; color:var(--muted); font-family:'DM Mono',monospace; }
+.kpi-sub { font-size:0.72rem; color:var(--muted); font-family:monospace; }
 
 .stats-row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
 .stats-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px; }
@@ -764,7 +764,7 @@ textarea{resize:vertical;min-height:80px;}
 .roi-chart-wrap { position:relative; width:100%; height:120px; }
 .roi-chart-wrap svg { width:100%; height:100%; }
 .roi-footer { display:flex; justify-content:space-between; margin-top:8px; flex-wrap:wrap; gap:8px; }
-.roi-stat { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; }
+.roi-stat { font-size:0.78rem; color:var(--muted); font-family:monospace; }
 .roi-stat strong { color:var(--text); }
 
 /* Sport bars */
@@ -772,8 +772,8 @@ textarea{resize:vertical;min-height:80px;}
 .sport-name { font-size:0.8rem; color:var(--text); width:60px; flex-shrink:0; }
 .sport-bar-wrap { flex:1; background:var(--border); border-radius:4px; height:6px; overflow:hidden; }
 .sport-bar { height:100%; border-radius:4px; background:var(--accent); transition:width 0.6s ease; }
-.sport-pct { font-size:0.75rem; color:var(--muted); width:36px; text-align:right; font-family:'DM Mono',monospace; }
-.sport-count { font-size:0.72rem; color:var(--muted); width:20px; font-family:'DM Mono',monospace; }
+.sport-pct { font-size:0.75rem; color:var(--muted); width:36px; text-align:right; font-family:monospace; }
+.sport-count { font-size:0.72rem; color:var(--muted); width:20px; font-family:monospace; }
 
 /* Bias alerts */
 .bias-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
@@ -994,8 +994,17 @@ body { padding-bottom: 70px; } /* space for tab bar */
 .g-pick-bet{font-size:0.82rem;color:var(--accent);}
 .g-budget-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;background:rgba(0,229,160,0.05);border:1px solid rgba(0,229,160,0.15);border-radius:10px;padding:14px;}
 .g-budget-item{text-align:center;}
-.g-budget-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:600;color:var(--accent);}
+.g-budget-val{font-family:monospace;font-size:1.1rem;font-weight:600;color:var(--accent);}
 .g-budget-lbl{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+/* ===== STORICO COMPATTO ===== */
+.hcard { border-radius:10px; overflow:hidden; border:1px solid var(--border); background:var(--surface); margin-bottom:4px; transition:border-color 0.2s; }
+.hcard:hover { border-color:rgba(0,229,160,0.25); }
+.hcard.vinto  { border-left:3px solid var(--accent); }
+.hcard.perso  { border-left:3px solid var(--danger); }
+.hcard.pareggio { border-left:3px solid var(--gold); }
+.hcard-compact { transition:background 0.15s; }
+.hcard-compact:hover { background:rgba(255,255,255,0.02); }
 </style>
 </head>
 <body>
@@ -1025,7 +1034,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
       <button onclick="switchTab('menu')" id="dnav-menu" class="dnav-btn">⚙️ Menu</button>
     </nav>
     <!-- Header status -->
-    <div id="headerStatus" style="font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--muted);flex-shrink:0;"></div>
+    <div id="headerStatus" style="font-size:0.72rem;font-family:monospace;color:var(--muted);flex-shrink:0;"></div>
   </div>
 </div>
 
@@ -1107,7 +1116,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
         <span style="font-size:0.68rem;color:var(--accent);">(opzionale — migliora il Value Bet)</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <span id="quoteSummaryTag" style="font-size:0.68rem;font-family:'DM Mono',monospace;color:var(--muted);display:none;"></span>
+        <span id="quoteSummaryTag" style="font-size:0.68rem;font-family:monospace;color:var(--muted);display:none;"></span>
         <span id="quoteToggleArrow" style="color:var(--muted);font-size:0.8rem;">▶</span>
       </div>
     </button>
@@ -1158,7 +1167,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
   <div class="mercati-section">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <span class="file-section-label" style="margin-bottom:0;">📊 Mercati da analizzare</span>
-      <span id="mercatiSportTag" style="font-size:0.68rem;color:var(--accent);font-family:'DM Mono',monospace;letter-spacing:1px;">AUTO • CALCIO</span>
+      <span id="mercatiSportTag" style="font-size:0.68rem;color:var(--accent);font-family:monospace;letter-spacing:1px;">AUTO • CALCIO</span>
     </div>
     <div class="mercati-grid" id="mercatiGrid">
       <!-- Populated dynamically by updateMercatiForSport() -->
@@ -1245,7 +1254,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
         <div style="font-size:0.8rem;color:var(--muted);">Seleziona 2-4 pronostici dalla lista cliccando sulla card, poi premi Analizza.</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <span id="combinataCount" style="font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--accent3);">0 selezionati</span>
+        <span id="combinataCount" style="font-family:monospace;font-size:0.82rem;color:var(--accent3);">0 selezionati</span>
         <button onclick="analizzaCombinata()" id="btnAnalizzaCombinata" disabled style="background:var(--accent3);color:var(--bg);border:none;border-radius:8px;padding:9px 18px;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:1.5px;cursor:pointer;opacity:0.5;">⚡ ANALIZZA</button>
         <button onclick="toggleCombinataMode()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:0.8rem;cursor:pointer;">Annulla</button>
       </div>
@@ -1301,7 +1310,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
       <div id="sportBars"></div>
       <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
         <div class="kpi-label">Confidenza media AI vs reale</div>
-        <div id="confCompare" style="font-size:0.9rem;margin-top:4px;font-family:'DM Mono',monospace;"></div>
+        <div id="confCompare" style="font-size:0.9rem;margin-top:4px;font-family:monospace;"></div>
       </div>
     </div>
   </div>
@@ -1571,12 +1580,12 @@ body { padding-bottom: 70px; } /* space for tab bar */
   <div class="settings-card" id="apikeyCard" style="margin-bottom:10px;">
     <div style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px;color:var(--text);margin-bottom:12px;">🔑 API Key Anthropic</div>
     <div class="apikey-row">
-      <input type="password" class="apikey-input" id="apikeyInput" placeholder="sk-ant-api03-..." autocomplete="new-password" onkeydown="if(event.key==='Enter') saveApiKey()"/>
+      <input type="password" class="apikey-input" id="apikeyInput" placeholder="sk-ant-api03-..." autocomplete="new-password" onkeydown="if(event.key===\'Enter\') saveApiKey()"/>
       <button class="apikey-btn" onclick="saveApiKey()">SALVA</button>
     </div>
     <div class="apikey-status missing" id="apikeyStatus" style="margin-top:8px;">⚠️ API key non configurata</div>
     <button id="testApiKeyBtn" onclick="testApiKey()" style="margin-top:10px;width:100%;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:0.83rem;cursor:pointer;transition:all 0.2s;display:none;">🧪 Testa chiave</button>
-    <div id="testApiKeyStatus" style="display:none;margin-top:8px;font-size:0.8rem;font-family:'DM Mono',monospace;padding:8px 12px;border-radius:6px;"></div>
+    <div id="testApiKeyStatus" style="display:none;margin-top:8px;font-size:0.8rem;font-family:monospace;padding:8px 12px;border-radius:6px;"></div>
     <a class="apikey-link" href="https://console.anthropic.com/keys" target="_blank" style="margin-top:6px;display:inline-block;">→ Ottieni la tua API key</a>
   </div>
 
@@ -1752,7 +1761,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="color:var(--muted);">€</span>
         <input type="number" id="giocataBudget" min="5" max="10000" value="50" step="5"
-          style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:1rem;font-weight:600;outline:none;"
+          style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:monospace;font-size:1rem;font-weight:600;outline:none;"
           oninput="updateGiocataCost()"/>
       </div>
     </div>
@@ -1784,6 +1793,14 @@ body { padding-bottom: 70px; } /* space for tab bar */
       <div class="g-sport-chip" data-sport="Hockey su ghiaccio (NHL)" onclick="toggleGiocataSport(this)">🏒 Hockey</div>
       <div class="g-sport-chip" data-sport="Ciclismo (Tour, Giro, Vuelta, classiche)" onclick="toggleGiocataSport(this)">🚴 Ciclismo</div>
     </div>
+    <!-- Custom sport input -->
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <input type="text" id="giocataCustomSport" placeholder="Aggiungi sport... es. Darts, Snooker, Baseball"
+        style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;"
+        onkeydown="if(event.key===\'Enter\'){addGiocataCustomSport();event.preventDefault();}"/>
+      <button onclick="addGiocataCustomSport()" title="Aggiungi sport"
+        style="background:var(--accent);color:var(--bg);border:none;border-radius:8px;width:38px;height:38px;font-size:1.3rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;">+</button>
+    </div>
   </div>
   <!-- Hidden checkboxes for backward compat with JS -->
   <input type="checkbox" id="tipoSingola" checked style="display:none"/>
@@ -1791,7 +1808,7 @@ body { padding-bottom: 70px; } /* space for tab bar */
   <div style="background:rgba(0,229,160,0.05);border:1px solid rgba(0,229,160,0.15);border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
     <div>
       <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Costo API stimato</div>
-      <div id="giocataCostLabel" style="font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--accent);">~$0.30</div>
+      <div id="giocataCostLabel" style="font-family:monospace;font-size:0.9rem;color:var(--accent);">~$0.30</div>
     </div>
     <button id="btnGiocata" onclick="avviaGiocataConsigliata()"
       style="background:var(--accent);color:var(--bg);border:none;border-radius:10px;padding:13px 28px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;cursor:pointer;">
@@ -2490,6 +2507,8 @@ updateApiKeyUI();
 updateCostPanel();
 updateMercatiForSport(selectedSport);
 renderQuoteTable(selectedSport);
+// Init giocata after DOM is ready
+setTimeout(initGiocataSports, 50);
 
 const zone = document.getElementById('uploadZone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
@@ -3594,144 +3613,305 @@ function renderHistory() {
   document.getElementById('fcount-attesa').textContent = counts.attesa;
   document.getElementById('fcount-vinto').textContent = counts.vinto;
   document.getElementById('fcount-perso').textContent = counts.perso;
+
   const filtered = history.filter(function(e) {
     if (activeFilter === 'vinto') return e.status === 'vinto';
     if (activeFilter === 'perso') return e.status === 'perso';
     return e.status === 'attesa' || e.status === 'pareggio';
   });
+
   if (!filtered.length) {
     const emptyMsg = { attesa: '⏳ Nessun pronostico in attesa.', vinto: '🏆 Nessun pronostico vinto ancora.', perso: '📭 Nessun pronostico perso registrato.' }[activeFilter];
     listEl.innerHTML = '<div class="storico-empty">' + emptyMsg + '</div>';
     return;
   }
 
-  listEl.innerHTML = filtered.map(e => {
-    const statusLabel = {attesa:'⏳ In Attesa',vinto:'✅ Vinto',perso:'❌ Perso',pareggio:'➖ Pareggio'}[e.status]||'⏳ In Attesa';
-    const statusClass = 'status-'+e.status;
-    const liveBadge = e.dati_live ? '🌐' : '📚';
-    const savedDate = new Date(e.savedAt).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
-    const savedTime = new Date(e.savedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-
-    // Verifica già eseguita — mostra sempre il pannello
-    let verificaHtml = '';
-    if (e.verifica) {
-      const v = e.verifica;
-      const headerClass = v.accuratezza==='ESATTO'?'corretto':v.accuratezza==='SBAGLIATO'?'sbagliato':'parziale';
-      const esitoColor = v.esito_scommessa==='VINTO'?'var(--accent)':v.esito_scommessa==='PERSO'?'var(--danger)':'var(--gold)';
-      const esitoIcon = v.esito_scommessa==='VINTO'?'✅':v.esito_scommessa==='PERSO'?'❌':'➖';
-      verificaHtml = '<div class="verifica-panel visible" id="verifica_' + e.id + '">'
-        + '<div class="verifica-header ' + headerClass + '">'
-        + '<span class="verifica-esito" style="color:' + esitoColor + '">' + esitoIcon + ' ' + v.esito_scommessa + ' — ' + v.accuratezza + '</span>'
-        + '<span class="verifica-score">Risultato reale: <strong>' + v.punteggio_reale + '</strong></span>'
-        + '</div><div class="verifica-body"><div class="verifica-row">'
-        + '<div class="verifica-item"><div class="verifica-key">Pronostico dato</div><div class="verifica-val">' + e.pronostico + '</div></div>'
-        + '<div class="verifica-item"><div class="verifica-key">Esito reale</div><div class="verifica-val">' + v.vincitore_reale + '</div></div>'
-        + '<div class="verifica-item"><div class="verifica-key">✅ Cosa ha indovinato</div><div class="verifica-val ok">' + v.cosa_ha_indovinato + '</div></div>'
-        + '<div class="verifica-item"><div class="verifica-key">❌ Cosa ha sbagliato</div><div class="verifica-val ko">' + v.cosa_ha_sbagliato + '</div></div>'
-        + '</div><div class="verifica-key" style="margin-bottom:8px">🧠 Nota di Apprendimento</div>'
-        + '<div class="verifica-note">' + v.nota_apprendimento + '</div>'
-        + '</div></div>';
+  // Group by week/month
+  const groups = {};
+  const groupOrder = [];
+  filtered.forEach(function(e) {
+    const d = new Date(e.savedAt);
+    const now = new Date();
+    const diffDays = Math.floor((now - d) / 86400000);
+    let groupKey, groupLabel;
+    if (diffDays < 7) {
+      groupKey = 'week_current';
+      groupLabel = '📅 Questa settimana';
+    } else if (diffDays < 14) {
+      groupKey = 'week_last';
+      groupLabel = '📅 Settimana scorsa';
     } else {
-      verificaHtml = '<div class="verifica-panel" id="verifica_' + e.id + '"></div>';
+      // Group by month
+      groupKey = 'month_' + d.getFullYear() + '_' + d.getMonth();
+      groupLabel = '📅 ' + d.toLocaleDateString('it-IT', {month:'long', year:'numeric'});
     }
+    if (!groups[groupKey]) { groups[groupKey] = { label: groupLabel, entries: [] }; groupOrder.push(groupKey); }
+    groups[groupKey].entries.push(e);
+  });
 
-    // Latest ricalcolo diff
-    let diffHtml = '';
-    if (e.ricalcoli && e.ricalcoli.length) {
-      const latest = e.ricalcoli[0];
-      const ricalcoloDate = new Date(latest.timestamp).toLocaleDateString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-      const pronosticoChanged = latest.pronostico_new !== e.pronostico;
-      const confidenzaChanged = latest.confidenza_new !== e.confidenza;
-      const rischioChanged = latest.rischio_new !== e.rischio;
-      const prob1Changed = latest.prob1_new !== e.prob1;
-      const prob2Changed = latest.prob2_new !== e.prob2;
-      const anyChanged = pronosticoChanged || confidenzaChanged || rischioChanged || prob1Changed || prob2Changed;
+  let html = '';
+  groupOrder.forEach(function(gk) {
+    const g = groups[gk];
+    const gWon  = g.entries.filter(function(e){return e.status==='vinto';}).length;
+    const gLost = g.entries.filter(function(e){return e.status==='perso';}).length;
+    const gWait = g.entries.filter(function(e){return e.status==='attesa'||e.status==='pareggio';}).length;
+    html += '<div style="margin-bottom:6px;margin-top:18px;display:flex;align-items:center;gap:10px;">'
+      + '<span style="font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);">' + g.label + '</span>'
+      + '<span style="font-size:0.65rem;color:var(--muted);">(' + g.entries.length + ' pronostici'
+      + (gWon  ? ' · ' + gWon + ' vinti' : '')
+      + (gLost ? ' · ' + gLost + ' persi' : '')
+      + (gWait ? ' · ⏳ ' + gWait : '')
+      + ')</span>'
+      + '<div style="flex:1;height:1px;background:var(--border);"></div>'
+      + '</div>';
+    g.entries.forEach(function(e) { html += renderCompactCard(e); });
+  });
 
-      const cgNew = latest.come_giocarla_new;
-      const cgSection = cgNew
-        ? '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">'
-          + '<div class="diff-col-label" style="margin-bottom:8px">🎰 Come Giocarla Aggiornata</div>'
-          + [cgNew.passo1,cgNew.passo2,cgNew.passo3,cgNew.passo4].filter(Boolean).map(function(s,i){
-              return '<div style="display:flex;gap:10px;margin-bottom:6px;align-items:flex-start">'
-                + '<span style="background:var(--accent3);color:var(--bg);width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:2px">' + (i+1) + '</span>'
-                + '<span style="font-size:0.8rem;color:#c5cad8;line-height:1.5">' + s + '</span>'
-                + '</div>';
-            }).join('')
-          + (cgNew.quota_da_cercare ? '<div style="margin-top:8px;font-size:0.8rem;color:var(--accent)">🎯 Quota: ' + cgNew.quota_da_cercare + '</div>' : '')
-          + (cgNew.importo_consigliato ? '<div style="font-size:0.8rem;color:var(--muted)">💰 ' + cgNew.importo_consigliato + '</div>' : '')
-          + '</div>'
-        : '';
+  listEl.innerHTML = html;
+}
 
-      diffHtml = '<div class="diff-panel" id="diff_' + e.id + '">'
-        + '<div class="diff-title">🔄 Ricalcolo — ' + ricalcoloDate + ' ' + (anyChanged ? '<span style="color:var(--accent2);margin-left:8px">⚠️ Modifiche rilevate</span>' : '<span style="color:var(--accent);margin-left:8px">✅ Sostanzialmente confermato</span>') + '</div>'
-        + '<div class="diff-grid"><div>'
-        + '<div class="diff-col-label">📌 Originale</div>'
-        + '<div class="diff-item"><div class="diff-key">Pronostico</div><div class="diff-val">' + e.pronostico + '</div></div>'
-        + '<div class="diff-item"><div class="diff-key">Confidenza</div><div class="diff-val">' + e.confidenza + '%</div></div>'
-        + '<div class="diff-item"><div class="diff-key">Rischio</div><div class="diff-val">' + e.rischio + '</div></div>'
-        + '<div class="diff-item"><div class="diff-key">1 / X / 2</div><div class="diff-val">' + e.prob1 + '% / ' + e.probx + '% / ' + e.prob2 + '%</div></div>'
-        + '</div><div>'
-        + '<div class="diff-col-label">🔄 Ricalcolato</div>'
-        + '<div class="diff-item"><div class="diff-key">Pronostico</div><div class="diff-val ' + (pronosticoChanged?'changed':'same') + '">' + latest.pronostico_new + '</div></div>'
-        + '<div class="diff-item"><div class="diff-key">Confidenza</div><div class="diff-val ' + (confidenzaChanged?'changed':'same') + '">' + latest.confidenza_new + '%</div></div>'
-        + '<div class="diff-item"><div class="diff-key">Rischio</div><div class="diff-val ' + (rischioChanged?'changed':'same') + '">' + latest.rischio_new + '</div></div>'
-        + '<div class="diff-item"><div class="diff-key">1 / X / 2</div><div class="diff-val ' + ((prob1Changed||prob2Changed)?'changed':'same') + '">' + (latest.prob1_new||'?') + '% / ' + (latest.probx_new||'?') + '% / ' + (latest.prob2_new||'?') + '%</div></div>'
-        + '</div></div>'
-        + (latest.analisi_forma_new ? '<div class="diff-summary"><strong style="color:var(--text)">📈 Forma aggiornata:</strong><br>' + latest.analisi_forma_new + '</div>' : '')
-        + (latest.fattori_new ? '<div class="diff-summary" style="margin-top:8px"><strong style="color:var(--text)">🔑 Fattori chiave aggiornati:</strong><br>' + latest.fattori_new + '</div>' : '')
-        + cgSection
-        + '</div>';
-    }
+function renderCompactCard(e) {
+  var statusIcon = {attesa:'⏳',vinto:'✅',perso:'❌',pareggio:'➖'}[e.status] || '⏳';
+  var statusClass = 'status-' + e.status;
+  var liveBadge = e.dati_live ? '🌐' : '📚';
+  var matchDate = e.matchDate || '';
+  var sport = e.sport || '';
+  var confidenza = e.confidenza ? e.confidenza + '%' : '';
+  var rischioColor = e.rischio === 'BASSO' ? 'var(--accent)' : e.rischio === 'MEDIO' ? 'var(--gold)' : 'var(--danger)';
 
-    return '<div class="hcard ' + e.status + (combinataMode ? ' combinata-mode' : '') + (combinataSelected.indexOf(e.id) >= 0 ? ' combinata-selected' : '') + '" id="hcard_' + e.id + '">'
-      + '<div class="hcard-top" onclick="handleCardClick(\'' + e.id + '\')">'
-      + '<div class="hcard-left">'
-      + '<div class="hcard-match">' + e.team1 + ' vs ' + e.team2 + '</div>'
-      + '<div class="hcard-meta">'
-      + '<span>' + e.sport + '</span>'
-      + (e.competition ? '<span>' + e.competition + '</span>' : '')
-      + '<span>📅 ' + e.matchDate + '</span>'
-      + '<span>💾 ' + savedDate + ' ' + savedTime + '</span>'
-      + '<span>' + liveBadge + '</span>'
-      + '</div></div>'
-      + '<div class="hcard-right">'
-      + '<span class="pronostico-tag">' + e.pronostico + '</span>'
-      + '<span class="confidence-mini">' + e.confidenza + '%</span>'
-      + '<button class="status-badge ' + statusClass + '" data-id="' + e.id + '" onclick="event.stopPropagation();openStatusPicker(this.dataset.id,this)">' + statusLabel + '</button>'
-      + '</div></div>'
-      + buildFullDetailHTML(e)
-      + verificaHtml
-      + diffHtml
-      + '<div class="hcard-actions">'
-      + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:8px;width:100%;">'
-      + '<span style="font-size:0.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);width:100%;margin-bottom:2px;">📝 Dati Giocata</span>'
-      + '<div style="display:flex;align-items:center;gap:4px;">'
-      + '<label style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">💰€</label>'
-      + '<input type="number" min="0" step="0.01" value="' + (e.importo_giocato||'') + '" placeholder="Importo" data-id="' + e.id + '" data-field="importo_giocato" onchange="salvaGiocata(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}" autocomplete="off" style="width:65px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-family:\'DM Mono\',monospace;font-size:0.82rem;outline:none;" title="Importo giocato"/>'
+  // Build verificaSummary
+  var verificaSummary = '';
+  if (e.verifica) {
+    var vc = e.verifica.esito_scommessa === 'VINTO' ? 'var(--accent)' : e.verifica.esito_scommessa === 'PERSO' ? 'var(--danger)' : 'var(--gold)';
+    verificaSummary = '<span style="font-size:0.7rem;color:' + vc + ';margin-left:6px;">' + (e.verifica.punteggio_reale || '') + '</span>';
+  }
+
+  // Create outer card div using DOM
+  var card = document.createElement('div');
+  card.className = 'hcard ' + e.status + (combinataMode ? ' combinata-mode' : '') + (combinataSelected.indexOf(e.id) >= 0 ? ' combinata-selected' : '');
+  card.id = 'hcard_' + e.id;
+  card.style.marginBottom = '4px';
+
+  // --- COMPACT ROW ---
+  var compactRow = document.createElement('div');
+  compactRow.className = 'hcard-compact';
+  compactRow.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;';
+  compactRow.onclick = function() { toggleCardExpand(e.id); };
+
+  var iconSpan = document.createElement('span');
+  iconSpan.style.cssText = 'font-size:1rem;flex-shrink:0;';
+  iconSpan.textContent = statusIcon;
+
+  var infoDiv = document.createElement('div');
+  infoDiv.style.cssText = 'flex:1;min-width:0;';
+  infoDiv.innerHTML = '<div style="font-size:0.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
+    + escapeHtml(e.team1) + ' vs ' + escapeHtml(e.team2) + verificaSummary + '</div>'
+    + '<div style="font-size:0.68rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;">'
+    + '<span>' + escapeHtml(sport) + '</span>'
+    + (matchDate ? '<span>📅 ' + escapeHtml(matchDate) + '</span>' : '')
+    + (e.rischio ? '<span style="color:' + rischioColor + ';">' + escapeHtml(e.rischio) + '</span>' : '')
+    + '<span>' + liveBadge + '</span>'
+    + '</div>';
+
+  var rightDiv = document.createElement('div');
+  rightDiv.style.cssText = 'display:flex;align-items:center;gap:8px;flex-shrink:0;';
+
+  var pronosticoSpan = document.createElement('span');
+  pronosticoSpan.style.cssText = 'font-family:monospace;font-size:0.75rem;color:var(--accent);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+  pronosticoSpan.textContent = e.pronostico || '';
+
+  var confSpan = document.createElement('span');
+  confSpan.style.cssText = 'font-size:0.7rem;color:var(--muted);';
+  confSpan.textContent = confidenza;
+
+  var statusBtn = document.createElement('button');
+  statusBtn.className = 'status-badge ' + statusClass;
+  statusBtn.dataset.id = e.id;
+  statusBtn.style.cssText = 'font-size:0.65rem;padding:3px 8px;';
+  statusBtn.textContent = statusIcon;
+  statusBtn.onclick = function(ev) { ev.stopPropagation(); openStatusPicker(e.id, statusBtn); };
+
+  var arrowSpan = document.createElement('span');
+  arrowSpan.id = 'arrow_' + e.id;
+  arrowSpan.style.cssText = 'color:var(--muted);font-size:0.75rem;';
+  arrowSpan.textContent = '▶';
+
+  rightDiv.appendChild(pronosticoSpan);
+  rightDiv.appendChild(confSpan);
+  rightDiv.appendChild(statusBtn);
+  rightDiv.appendChild(arrowSpan);
+
+  compactRow.appendChild(iconSpan);
+  compactRow.appendChild(infoDiv);
+  compactRow.appendChild(rightDiv);
+  card.appendChild(compactRow);
+
+  // --- EXPANDED CONTENT ---
+  var expandDiv = document.createElement('div');
+  expandDiv.id = 'expand_' + e.id;
+  expandDiv.style.display = 'none';
+
+  // Full detail
+  var detailWrap = document.createElement('div');
+  detailWrap.style.cssText = 'padding:0 14px 4px;border-top:1px solid var(--border);';
+  detailWrap.innerHTML = buildFullDetailHTML(e);
+  expandDiv.appendChild(detailWrap);
+
+  // Verifica panel
+  var verificaDiv = document.createElement('div');
+  verificaDiv.id = 'verifica_' + e.id;
+  verificaDiv.className = 'verifica-panel' + (e.verifica ? ' visible' : '');
+  if (e.verifica) {
+    var v = e.verifica;
+    var headerClass = v.accuratezza === 'ESATTO' ? 'corretto' : v.accuratezza === 'SBAGLIATO' ? 'sbagliato' : 'parziale';
+    var esitoColor = v.esito_scommessa === 'VINTO' ? 'var(--accent)' : v.esito_scommessa === 'PERSO' ? 'var(--danger)' : 'var(--gold)';
+    var esitoIcon = v.esito_scommessa === 'VINTO' ? '✅' : v.esito_scommessa === 'PERSO' ? '❌' : '➖';
+    verificaDiv.innerHTML = '<div class="verifica-header ' + headerClass + '">'
+      + '<span class="verifica-esito" style="color:' + esitoColor + '">' + esitoIcon + ' ' + escapeHtml(v.esito_scommessa) + ' — ' + escapeHtml(v.accuratezza) + '</span>'
+      + '<span class="verifica-score">Risultato: <strong>' + escapeHtml(v.punteggio_reale || '') + '</strong></span>'
+      + '</div><div class="verifica-body"><div class="verifica-row">'
+      + '<div class="verifica-item"><div class="verifica-key">Pronostico</div><div class="verifica-val">' + escapeHtml(e.pronostico || '') + '</div></div>'
+      + '<div class="verifica-item"><div class="verifica-key">Esito reale</div><div class="verifica-val">' + escapeHtml(v.vincitore_reale || '') + '</div></div>'
+      + '<div class="verifica-item"><div class="verifica-key">✅ Indovinato</div><div class="verifica-val ok">' + escapeHtml(v.cosa_ha_indovinato || '') + '</div></div>'
+      + '<div class="verifica-item"><div class="verifica-key">❌ Sbagliato</div><div class="verifica-val ko">' + escapeHtml(v.cosa_ha_sbagliato || '') + '</div></div>'
+      + '</div><div class="verifica-key" style="margin-bottom:8px">🧠 Nota di Apprendimento</div>'
+      + '<div class="verifica-note">' + escapeHtml(v.nota_apprendimento || '') + '</div>'
+      + '</div>';
+  }
+  expandDiv.appendChild(verificaDiv);
+
+  // Diff panel
+  if (e.ricalcoli && e.ricalcoli.length) {
+    var latest = e.ricalcoli[0];
+    var ricalcoloDate = new Date(latest.timestamp).toLocaleDateString('it-IT', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    var pronosticoChanged = latest.pronostico_new !== e.pronostico;
+    var confidenzaChanged = latest.confidenza_new !== e.confidenza;
+    var rischioChanged    = latest.rischio_new    !== e.rischio;
+    var anyChanged = pronosticoChanged || confidenzaChanged || rischioChanged;
+    var diffDiv = document.createElement('div');
+    diffDiv.id = 'diff_' + e.id;
+    diffDiv.className = 'diff-panel';
+    diffDiv.innerHTML = '<div class="diff-title">🔄 Ricalcolo — ' + ricalcoloDate + ' '
+      + (anyChanged ? '<span style="color:var(--accent2);margin-left:8px">⚠️ Modifiche rilevate</span>' : '<span style="color:var(--accent);margin-left:8px">✅ Confermato</span>')
       + '</div>'
-      + '<div style="display:flex;align-items:center;gap:4px;">'
-      + '<label style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">📊 Quota</label>'
-      + '<input type="number" min="1" step="0.01" value="' + (e.quota_reale||'') + '" placeholder="es. 1.85" data-id="' + e.id + '" data-field="quota_reale" onchange="salvaGiocata(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}" autocomplete="off" style="width:72px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-family:\'DM Mono\',monospace;font-size:0.82rem;outline:none;" title="Quota reale bookmaker"/>'
-      + '</div>'
-      + '<div style="display:flex;align-items:center;gap:4px;">'
-      + '<label style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">🏦</label>'
-      + '<input type="text" value="' + (e.bookmaker||'') + '" placeholder="Bookmaker" data-id="' + e.id + '" data-field="bookmaker" onchange="salvaGiocata(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}" autocomplete="off" style="width:88px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-family:\'DM Sans\',sans-serif;font-size:0.78rem;outline:none;" title="Bookmaker usato"/>'
-      + '</div>'
-      + (e.importo_giocato && e.quota_reale ? '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;color:var(--accent);letter-spacing:1px;" title="Vincita potenziale">→ €' + (parseFloat(e.importo_giocato) * parseFloat(e.quota_reale)).toFixed(2) + '</div>' : '')
-      + '</div>'
-      + '<button class="btn-verifica" id="verificaBtn_' + e.id + '" data-id="' + e.id + '" onclick="verificaRisultato(this.dataset.id)">' + (e.verifica ? '🔍 RIVERIFICA' : '🔍 VERIFICA RISULTATO') + '</button>'
-      + '<button class="btn-ricalcolo" id="ricalcBtn_' + e.id + '" data-id="' + e.id + '" onclick="ricalcola(this.dataset.id)">🔄 RICALCOLA</button>'
-      + '<button class="btn-delete" data-id="' + e.id + '" onclick="deleteEntry(this.dataset.id)">🗑 Elimina</button>'
+      + '<div class="diff-grid"><div>'
+      + '<div class="diff-col-label">📌 Originale</div>'
+      + '<div class="diff-item"><div class="diff-key">Pronostico</div><div class="diff-val">' + escapeHtml(e.pronostico || '') + '</div></div>'
+      + '<div class="diff-item"><div class="diff-key">Confidenza</div><div class="diff-val">' + (e.confidenza || '') + '%</div></div>'
+      + '<div class="diff-item"><div class="diff-key">Rischio</div><div class="diff-val">' + escapeHtml(e.rischio || '') + '</div></div>'
+      + '</div><div>'
+      + '<div class="diff-col-label">🔄 Ricalcolato</div>'
+      + '<div class="diff-item"><div class="diff-key">Pronostico</div><div class="diff-val ' + (pronosticoChanged?'changed':'same') + '">' + escapeHtml(latest.pronostico_new || '') + '</div></div>'
+      + '<div class="diff-item"><div class="diff-key">Confidenza</div><div class="diff-val ' + (confidenzaChanged?'changed':'same') + '">' + (latest.confidenza_new || '') + '%</div></div>'
+      + '<div class="diff-item"><div class="diff-key">Rischio</div><div class="diff-val ' + (rischioChanged?'changed':'same') + '">' + escapeHtml(latest.rischio_new || '') + '</div></div>'
       + '</div></div>';
-  }).join('');
+    expandDiv.appendChild(diffDiv);
+  }
+
+  // Actions
+  var actionsDiv = document.createElement('div');
+  actionsDiv.className = 'hcard-actions';
+
+  // Dati giocata
+  var datiRow = document.createElement('div');
+  datiRow.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:8px;width:100%;';
+  datiRow.innerHTML = '<span style="font-size:0.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);width:100%;margin-bottom:2px;">📝 Dati Giocata</span>';
+
+  function makeInput(type, value, placeholder, field, width, extraStyle) {
+    var inp = document.createElement('input');
+    inp.type = type;
+    inp.value = value || '';
+    inp.placeholder = placeholder;
+    inp.dataset.id = e.id;
+    inp.dataset.field = field;
+    inp.autocomplete = 'off';
+    inp.style.cssText = 'width:' + width + ';background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-size:0.82rem;outline:none;' + (extraStyle||'');
+    inp.onchange = function() { salvaGiocata(inp); };
+    inp.onkeydown = function(ev) { if (ev.key === 'Enter') { ev.preventDefault(); inp.blur(); } };
+    return inp;
+  }
+
+  var labelImporto = document.createElement('label');
+  labelImporto.style.cssText = 'font-size:0.72rem;color:var(--muted);white-space:nowrap;';
+  labelImporto.textContent = '💰€';
+  datiRow.appendChild(labelImporto);
+  datiRow.appendChild(makeInput('number', e.importo_giocato, 'Importo', 'importo_giocato', '65px', 'font-family:monospace;'));
+
+  var labelQuota = document.createElement('label');
+  labelQuota.style.cssText = 'font-size:0.72rem;color:var(--muted);white-space:nowrap;';
+  labelQuota.textContent = '📊';
+  datiRow.appendChild(labelQuota);
+  datiRow.appendChild(makeInput('number', e.quota_reale, 'Quota', 'quota_reale', '60px', 'font-family:monospace;'));
+
+  var labelBk = document.createElement('label');
+  labelBk.style.cssText = 'font-size:0.72rem;color:var(--muted);white-space:nowrap;';
+  labelBk.textContent = '🏦';
+  datiRow.appendChild(labelBk);
+  datiRow.appendChild(makeInput('text', e.bookmaker, 'Bookmaker', 'bookmaker', '90px', ''));
+
+  if (e.importo_giocato && e.quota_reale) {
+    var potSpan = document.createElement('div');
+    potSpan.style.cssText = 'font-size:0.72rem;color:var(--gold);padding:4px 8px;background:rgba(255,215,0,0.08);border-radius:5px;';
+    potSpan.textContent = '💰 €' + (parseFloat(e.importo_giocato) * parseFloat(e.quota_reale)).toFixed(2);
+    datiRow.appendChild(potSpan);
+  }
+  actionsDiv.appendChild(datiRow);
+
+  // Action buttons
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;';
+
+  var btnVerifica = document.createElement('button');
+  btnVerifica.className = 'btn-verifica';
+  btnVerifica.id = 'verificaBtn_' + e.id;
+  btnVerifica.dataset.id = e.id;
+  btnVerifica.textContent = e.verifica ? '🔍 RIVERIFICA' : '🔍 VERIFICA RISULTATO';
+  btnVerifica.onclick = function() { verificaRisultato(e.id); };
+  btnRow.appendChild(btnVerifica);
+
+  var btnRicalcola = document.createElement('button');
+  btnRicalcola.className = 'btn-verifica';
+  btnRicalcola.style.cssText = 'background:rgba(99,179,237,0.08);border-color:rgba(99,179,237,0.3);color:#63b3ed;';
+  btnRicalcola.textContent = '🔄 RICALCOLA';
+  btnRicalcola.onclick = function() { ricalcolaPronostico(e.id); };
+  btnRow.appendChild(btnRicalcola);
+
+  var btnElimina = document.createElement('button');
+  btnElimina.style.cssText = 'margin-left:auto;background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.25);color:var(--danger);border-radius:6px;padding:6px 10px;font-size:0.75rem;cursor:pointer;';
+  btnElimina.textContent = '🗑';
+  btnElimina.onclick = function() { eliminaPronostico(e.id); };
+  btnRow.appendChild(btnElimina);
+
+  actionsDiv.appendChild(btnRow);
+  expandDiv.appendChild(actionsDiv);
+  card.appendChild(expandDiv);
+
+  return card.outerHTML;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+
+function toggleCardExpand(id) {
+  if (combinataMode) { toggleCombinataCard(id); return; }
+  var expand = document.getElementById('expand_' + id);
+  var arrow  = document.getElementById('arrow_'  + id);
+  if (!expand) return;
+  var isOpen = expand.style.display !== 'none';
+  // Close all others
+  document.querySelectorAll('[id^="expand_"]').forEach(function(el) { el.style.display = 'none'; });
+  document.querySelectorAll('[id^="arrow_"]').forEach(function(el) { el.textContent = '▶'; el.style.transform = ''; });
+  if (!isOpen) {
+    expand.style.display = 'block';
+    if (arrow) { arrow.textContent = '▼'; }
+  }
 }
 
 function handleCardClick(id) {
-  if (combinataMode) {
-    toggleCombinataCard(id);
-  } else {
-    toggleDetail(id);
-  }
+  toggleCardExpand(id);
 }
 
 function toggleDetail(id) {
@@ -4066,7 +4246,17 @@ async function verificaRisultato(id) {
 
 
 // === GIOCATA CONSIGLIATA ===
-var giocataSelectedSports = ['Calcio Serie A e Champions League','Basket NBA e Eurolega e LBA','Tennis ATP e WTA'];
+var giocataSelectedSports = [];
+
+function initGiocataSports() {
+  // Populate array from chips that are marked selected in HTML
+  giocataSelectedSports = [];
+  document.querySelectorAll('#giocataSportChips .g-sport-chip.selected').forEach(function(chip) {
+    var sport = chip.dataset.sport;
+    if (sport && giocataSelectedSports.indexOf(sport) < 0) giocataSelectedSports.push(sport);
+  });
+  updateGiocataCost();
+}
 
 function toggleGiocataSport(chip) {
   var sport = chip.dataset.sport;
@@ -4081,12 +4271,35 @@ function toggleGiocataSport(chip) {
 
 function updateGiocataCost() {
   var n = giocataSelectedSports.length;
-  var base = 0.20 + (n * 0.03);
-  var singola = document.getElementById('tipoSingola') && document.getElementById('tipoSingola').checked;
-  var combo = document.getElementById('tipoCombo') && document.getElementById('tipoCombo').checked;
-  if (singola && combo) base += 0.05;
   var lbl = document.getElementById('giocataCostLabel');
-  if (lbl) lbl.textContent = '~$' + base.toFixed(2);
+  if (!lbl) return;
+  if (n === 0) { lbl.textContent = '— seleziona almeno uno sport'; lbl.style.color = 'var(--danger)'; return; }
+  var base = 0.18 + (n * 0.025);
+  lbl.textContent = '~$' + base.toFixed(2);
+  lbl.style.color = 'var(--accent)';
+}
+
+function addGiocataCustomSport() {
+  var input = document.getElementById('giocataCustomSport');
+  var val = input.value.trim();
+  if (!val) return;
+  // Check if already exists
+  if (giocataSelectedSports.indexOf(val) >= 0) {
+    showToast('Sport già presente', 'error'); return;
+  }
+  // Create chip
+  var chip = document.createElement('div');
+  chip.className = 'g-sport-chip selected';
+  chip.dataset.sport = val;
+  chip.textContent = '✏️ ' + val;
+  chip.onclick = function() { toggleGiocataSport(chip); };
+  // Add remove × on long press or double click
+  chip.title = 'Clicca per deselezionare';
+  document.getElementById('giocataSportChips').appendChild(chip);
+  giocataSelectedSports.push(val);
+  input.value = '';
+  updateGiocataCost();
+  showToast('✅ Sport aggiunto: ' + val, 'success');
 }
 
 function setGStep(n, state) {
