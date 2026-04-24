@@ -4354,14 +4354,16 @@ async function callProxy(messages, useWebSearch, maxTokens) {
   return d;
 }
 
+function sleep(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
+
 async function runWithWebSearch(prompt, maxIter) {
   var msgs = [{ role:'user', content: prompt }];
   var finalText = '';
   var iter = 0;
-  maxIter = maxIter || 5;
+  maxIter = maxIter || 3;
   while (iter < maxIter) {
     iter++;
-    var d = await callProxy(msgs, true, 3000);
+    var d = await callProxy(msgs, true, 1200);
     var ac = d.content || [];
     msgs.push({ role:'assistant', content: ac });
     var texts = ac.filter(function(b){ return b.type==='text'; }).map(function(b){ return b.text; }).join('');
@@ -4403,10 +4405,8 @@ async function avviaGiocataConsigliata() {
     // FASE 1 — trova partite
     setGStep(1,'active');
     var sportsStr = giocataSelectedSports.join(', ');
-    var p1 = 'Oggi e' + ' ' + oggi + ' (' + dataISO + '). Trova TUTTE le partite in programma per "' + periodo + '" in questi sport: ' + sportsStr + '. '
-      + 'Per ogni partita: sport, team1, team2, data YYYY-MM-DD, ora HH:MM, competizione. '
-      + 'Rispondi SOLO con JSON: {"partite":[{"sport":"","team1":"","team2":"","data":"","ora":"","competizione":""}]}';
-    var raw1 = await runWithWebSearch(p1, 6);
+    var p1 = 'Data: ' + dataISO + '. Partite in programma "' + periodo + '", sport: ' + sportsStr + '. JSON: {"partite":[{"sport":"","team1":"","team2":"","data":"","ora":"","competizione":""}]}';
+    var raw1 = await runWithWebSearch(p1, 3);
     var partite = parseJSON(raw1).partite || [];
     if (!partite.length) throw new Error('Nessuna partita trovata. Prova un periodo diverso.');
     setGStep(1,'done');
@@ -4414,11 +4414,9 @@ async function avviaGiocataConsigliata() {
     // FASE 2 — screening rapido (no web)
     setGStep(2,'active');
     var lista = partite.map(function(p,i){ return (i+1)+'. '+p.sport+' | '+p.team1+' vs '+p.team2+' | '+p.data+' '+p.ora+' | '+p.competizione; }).join('\n');
-    var p2 = 'Sei un analista scommesse. Valuta queste ' + partite.length + ' partite con le tue conoscenze:\n' + lista
-      + '\n\nPer ognuna: confidenza 0-100, rischio BASSO/MEDIO/ALTO, pronostico consigliato, quota_stimata, motivo breve.'
-      + '\nIncludi SOLO partite con confidenza >= 65 e rischio BASSO o MEDIO. Max 8 risultati, ordinati per confidenza.'
-      + '\nRispondi SOLO con JSON: {"picks":[{"indice":1,"sport":"","team1":"","team2":"","competizione":"","data":"","pronostico":"","quota_stimata":1.5,"confidenza":70,"rischio":"BASSO","motivo":""}]}';
-    var d2 = await callProxy([{role:'user',content:p2}], false, 2000);
+    var p2 = 'Analista scommesse. Valuta queste partite:\n' + lista
+      + '\nSeleziona max 5 con confidenza>=65 e rischio BASSO/MEDIO. JSON: {"picks":[{"indice":1,"sport":"","team1":"","team2":"","competizione":"","data":"","pronostico":"","quota_stimata":1.5,"confidenza":70,"rischio":"BASSO","motivo":""}]}';
+    var d2 = await callProxy([{role:'user',content:p2}], false, 1000);
     var raw2 = d2.content.map(function(b){ return b.text||''; }).join('');
     var picks = parseJSON(raw2).picks || [];
     if (!picks.length) throw new Error('Nessun pick di qualita trovato. Riprova con sport o periodo diversi.');
@@ -4426,16 +4424,15 @@ async function avviaGiocataConsigliata() {
 
     // FASE 3 — analisi approfondita top 3
     setGStep(3,'active');
-    var top3 = picks.slice(0,3);
+    var top3 = picks.slice(0,2); // limit to 2 deep analyses to avoid rate limit
     var confermati = [];
     for (var j=0; j<top3.length; j++) {
       var pk = top3[j];
-      var p3 = 'Oggi e' + ' ' + oggi + '. Analisi rapida: ' + pk.sport + ' - ' + pk.team1 + ' vs ' + pk.team2
-        + ' (' + pk.competizione + ', ' + pk.data + '). Pronostico: ' + pk.pronostico + ' @ ' + pk.quota_stimata
-        + '. Cerca forma recente, infortuni, quote reali bookmaker.'
-        + ' Rispondi SOLO con JSON: {"confermato":true,"confidenza_aggiornata":75,"rischio_aggiornato":"BASSO","quota_reale":"1.70","note":"breve nota","vale_la_pena":true}';
+      var p3 = 'Analisi ' + pk.team1 + ' vs ' + pk.team2 + ' ' + pk.data + '. Pronostico: ' + pk.pronostico
+        + '. JSON: {"confermato":true,"confidenza_aggiornata":75,"rischio_aggiornato":"BASSO","quota_reale":"1.70","note":"nota","vale_la_pena":true}';
       var raw3 = '';
-      try { raw3 = await runWithWebSearch(p3, 4); } catch(e) { raw3 = ''; }
+      if (j > 0) { await sleep(3000); } // rate limit pause between calls
+      try { raw3 = await runWithWebSearch(p3, 2); } catch(e) { raw3 = ''; }
       var det = {};
       try { det = parseJSON(raw3); } catch(e) { det = {confermato:true,vale_la_pena:true,quota_reale:String(pk.quota_stimata),note:pk.motivo}; }
       if (det.confermato && det.vale_la_pena) {
@@ -4463,7 +4460,7 @@ async function avviaGiocataConsigliata() {
       + '"combinata":null,'
       + '"consiglio_generale":"spiega in 1-2 frasi la strategia scelta e perche\u0027"}';
     var singola = true; var combo = true;
-    var d4 = await callProxy([{role:'user',content:p4}], false, 1500);
+    var d4 = await callProxy([{role:'user',content:p4}], false, 900);
     var raw4 = d4.content.map(function(b){ return b.text||''; }).join('');
     var sched = parseJSON(raw4);
     setGStep(4,'done');
@@ -4473,9 +4470,15 @@ async function avviaGiocataConsigliata() {
 
   } catch(err) {
     progress.style.display = 'none';
-    if (!handleApiError(err, errDiv)) {
+    var msg = err.message || '';
+    var isRate = msg.toLowerCase().includes('rate') || msg.toLowerCase().includes('limit') || msg.includes('50,000');
+    if (isRate) {
       errDiv.style.display = 'block';
-      errDiv.textContent = 'Errore: ' + err.message;
+      errDiv.innerHTML = '⏳ <strong>Limite di velocità raggiunto</strong> — stai facendo troppe richieste in poco tempo.<br><br>'
+        + 'Aspetta 1-2 minuti e riprova. Se il problema persiste, passa al modello <strong>claude-sonnet</strong> nel Menu ⚙️ (ha limiti più alti).';
+    } else if (!handleApiError(err, errDiv)) {
+      errDiv.style.display = 'block';
+      errDiv.textContent = 'Errore: ' + msg;
     }
   }
   btn.disabled = false; btn.textContent = '🎯 TROVA GIOCATA';
