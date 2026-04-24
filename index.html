@@ -3626,51 +3626,77 @@ function renderHistory() {
     return;
   }
 
-  // Group by week/month
+  // Helper: get ISO week number and week date range
+  function getISOWeek(d) {
+    var date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+    var yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    return { week: Math.ceil((((date - yearStart) / 86400000) + 1) / 7), year: date.getUTCFullYear() };
+  }
+  function getWeekRange(weekNum, year) {
+    // Jan 4 is always in week 1
+    var jan4 = new Date(Date.UTC(year, 0, 4));
+    var dayOfWeek = (jan4.getUTCDay() || 7);
+    var week1Mon = new Date(jan4);
+    week1Mon.setUTCDate(jan4.getUTCDate() - dayOfWeek + 1);
+    var mon = new Date(week1Mon);
+    mon.setUTCDate(week1Mon.getUTCDate() + (weekNum - 1) * 7);
+    var sun = new Date(mon);
+    sun.setUTCDate(mon.getUTCDate() + 6);
+    var fmt = function(dt) { return dt.toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'UTC'}); };
+    return fmt(mon) + ' / ' + fmt(sun);
+  }
+
+  // Group by ISO week
   const groups = {};
   const groupOrder = [];
   filtered.forEach(function(e) {
     const d = new Date(e.savedAt);
-    const now = new Date();
-    const diffDays = Math.floor((now - d) / 86400000);
-    let groupKey, groupLabel;
-    if (diffDays < 7) {
-      groupKey = 'week_current';
-      groupLabel = '📅 Questa settimana';
-    } else if (diffDays < 14) {
-      groupKey = 'week_last';
-      groupLabel = '📅 Settimana scorsa';
-    } else {
-      // Group by month
-      groupKey = 'month_' + d.getFullYear() + '_' + d.getMonth();
-      groupLabel = '📅 ' + d.toLocaleDateString('it-IT', {month:'long', year:'numeric'});
+    const isoW = getISOWeek(d);
+    const groupKey = 'week_' + isoW.year + '_' + isoW.week;
+    if (!groups[groupKey]) {
+      var range = getWeekRange(isoW.week, isoW.year);
+      groups[groupKey] = {
+        label: 'Settimana ' + isoW.week + ' ' + isoW.year + ' &nbsp;·&nbsp; ' + range,
+        sortKey: isoW.year * 100 + isoW.week,
+        entries: []
+      };
+      groupOrder.push(groupKey);
     }
-    if (!groups[groupKey]) { groups[groupKey] = { label: groupLabel, entries: [] }; groupOrder.push(groupKey); }
     groups[groupKey].entries.push(e);
   });
+  // Sort groups newest first
+  groupOrder.sort(function(a,b){ return groups[b].sortKey - groups[a].sortKey; });
 
-  let html = '';
+  // Build DOM directly to preserve event listeners
+  listEl.innerHTML = '';
   groupOrder.forEach(function(gk) {
     const g = groups[gk];
     const gWon  = g.entries.filter(function(e){return e.status==='vinto';}).length;
     const gLost = g.entries.filter(function(e){return e.status==='perso';}).length;
     const gWait = g.entries.filter(function(e){return e.status==='attesa'||e.status==='pareggio';}).length;
-    html += '<div style="margin-bottom:6px;margin-top:18px;display:flex;align-items:center;gap:10px;">'
-      + '<span style="font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);">' + g.label + '</span>'
-      + '<span style="font-size:0.65rem;color:var(--muted);">(' + g.entries.length + ' pronostici'
+
+    // Group header
+    var header = document.createElement('div');
+    header.style.cssText = 'margin-bottom:6px;margin-top:18px;display:flex;align-items:center;gap:10px;';
+    var stats = g.entries.length + ' pronostici'
       + (gWon  ? ' · ' + gWon + ' vinti' : '')
       + (gLost ? ' · ' + gLost + ' persi' : '')
-      + (gWait ? ' · ⏳ ' + gWait : '')
-      + ')</span>'
-      + '<div style="flex:1;height:1px;background:var(--border);"></div>'
-      + '</div>';
-    g.entries.forEach(function(e) { html += renderCompactCard(e); });
-  });
+      + (gWait ? ' · ⏳ ' + gWait : '');
+    header.innerHTML = '<span style="font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);">' + g.label + '</span>'
+      + '<span style="font-size:0.65rem;color:var(--muted);">(' + stats + ')</span>'
+      + '<div style="flex:1;height:1px;background:var(--border);"></div>';
+    listEl.appendChild(header);
 
-  listEl.innerHTML = html;
+    // Cards
+    g.entries.forEach(function(e) {
+      var cardEl = buildCompactCardDOM(e);
+      listEl.appendChild(cardEl);
+    });
+  });
 }
 
-function renderCompactCard(e) {
+function buildCompactCardDOM(e) {
   var statusIcon = {attesa:'⏳',vinto:'✅',perso:'❌',pareggio:'➖'}[e.status] || '⏳';
   var statusClass = 'status-' + e.status;
   var liveBadge = e.dati_live ? '🌐' : '📚';
@@ -3886,7 +3912,7 @@ function renderCompactCard(e) {
   expandDiv.appendChild(actionsDiv);
   card.appendChild(expandDiv);
 
-  return card.outerHTML;
+  return card;
 }
 
 function escapeHtml(str) {
