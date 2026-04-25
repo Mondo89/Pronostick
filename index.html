@@ -1895,6 +1895,7 @@ if (fbConfigured) {
     if (user) {
       // Load history from Firebase on login
       await syncFromFirebase();
+      await syncCalendarioFromFirebase();
     }
   });
 }
@@ -1924,6 +1925,40 @@ window.saveToFirebase = async function(history) {
     });
   } catch(e) { console.error('Firebase save error:', e); }
 };
+
+window.saveCalendarioToFirebase = async function(partite) {
+  if (!currentUser || !db) return;
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid, 'data', 'calendario'), {
+      entries: partite,
+      updatedAt: new Date().toISOString()
+    });
+  } catch(e) { console.error('Firebase calendario save error:', e); }
+};
+
+async function syncCalendarioFromFirebase() {
+  if (!currentUser || !db) return;
+  try {
+    const snap = await getDoc(doc(db, 'users', currentUser.uid, 'data', 'calendario'));
+    if (snap.exists()) {
+      const data = snap.data();
+      const remote = data.entries || [];
+      if (remote.length === 0) return;
+      const local = loadCalendario();
+      const localMap = {};
+      local.forEach(function(p) { localMap[p.id] = p; });
+      let added = 0;
+      remote.forEach(function(p) {
+        if (!localMap[p.id]) { local.push(p); added++; }
+      });
+      if (added > 0) {
+        saveCalendario(local);
+        renderCalendario();
+        showToast('☁️ Calendario: ' + added + ' partite sincronizzate', 'success');
+      }
+    }
+  } catch(e) { console.error('Firebase calendario sync error:', e); }
+}
 
 async function syncFromFirebase() {
   if (!currentUser || !db) return;
@@ -3030,6 +3065,7 @@ function loadCalendario() {
 }
 function saveCalendario(data) {
   localStorage.setItem(CAL_KEY, JSON.stringify(data));
+  if (window.saveCalendarioToFirebase) window.saveCalendarioToFirebase(data);
 }
 function clearCalendario() {
   if (!confirm('Svuotare tutto il calendario salvato?')) return;
@@ -4423,10 +4459,8 @@ async function avviaGiocataConsigliata() {
   var resDiv = document.getElementById('giocataResult');
   var budget = parseFloat(document.getElementById('giocataBudget').value) || 50;
   var periodo = document.getElementById('giocataPeriodo').value;
-  var singola = document.getElementById('tipoSingola').checked;
-  var combo = document.getElementById('tipoCombo').checked;
-  var oggi = new Date().toLocaleDateString('it-IT');
   var dataISO = new Date().toISOString().split('T')[0];
+  var sportsStr = giocataSelectedSports.join(', ');
 
   btn.disabled = true; btn.textContent = '⏳ Analisi...';
   progress.style.display = 'block';
@@ -4435,81 +4469,59 @@ async function avviaGiocataConsigliata() {
   for (var i=1;i<=4;i++) { var s=document.getElementById('gstep'+i); if(s){s.classList.remove('active','done');} }
 
   try {
-    // FASE 1 — trova partite
+    // CHIAMATA 1 — cerca partite + valuta tutto in una sola web search
     setGStep(1,'active');
-    var sportsStr = giocataSelectedSports.join(', ');
-    var p1 = 'Data: ' + dataISO + '. Partite in programma "' + periodo + '", sport: ' + sportsStr + '. JSON: {"partite":[{"sport":"","team1":"","team2":"","data":"","ora":"","competizione":""}]}';
-    var raw1 = await runWithWebSearch(p1, 2);
-    var partite = parseJSON(raw1).partite || [];
-    if (!partite.length) throw new Error('Nessuna partita trovata. Prova un periodo diverso.');
-    setGStep(1,'done');
-    await sleep(2000); // brief pause after web search
-
-    // FASE 2 — screening rapido (no web)
     setGStep(2,'active');
-    var lista = partite.map(function(p,i){ return (i+1)+'. '+p.sport+' | '+p.team1+' vs '+p.team2+' | '+p.data+' '+p.ora+' | '+p.competizione; }).join('\n');
-    var p2 = 'Analista scommesse. Valuta queste partite:\n' + lista
-      + '\nSeleziona max 5 con confidenza>=65 e rischio BASSO/MEDIO. JSON: {"picks":[{"indice":1,"sport":"","team1":"","team2":"","competizione":"","data":"","pronostico":"","quota_stimata":1.5,"confidenza":70,"rischio":"BASSO","motivo":""}]}';
-    var d2 = await callProxy([{role:'user',content:p2}], false, 1500);
-    var raw2 = d2.content.map(function(b){ return b.text||''; }).join('');
-    var picks = parseJSON(raw2).picks || [];
-    if (!picks.length) throw new Error('Nessun pick di qualita trovato. Riprova con sport o periodo diversi.');
-    setGStep(2,'done');
-
-    // FASE 3 — analisi approfondita top 3
     setGStep(3,'active');
-    var top3 = picks.slice(0,2); // limit to 2 deep analyses to avoid rate limit
-    var confermati = [];
-    for (var j=0; j<top3.length; j++) {
-      var pk = top3[j];
-      var p3 = 'Analisi ' + pk.team1 + ' vs ' + pk.team2 + ' ' + pk.data + '. Pronostico: ' + pk.pronostico
-        + '. JSON: {"confermato":true,"confidenza_aggiornata":75,"rischio_aggiornato":"BASSO","quota_reale":"1.70","note":"nota","vale_la_pena":true}';
-      var raw3 = '';
-      if (j > 0) { await sleep(5000); } // rate limit pause between calls
-      try { raw3 = await runWithWebSearch(p3, 2); } catch(e2) { raw3 = ''; }
-      var det = {};
-      try { det = parseJSON(raw3); } catch(e) { det = {confermato:true,vale_la_pena:true,quota_reale:String(pk.quota_stimata),note:pk.motivo}; }
-      if (det.confermato && det.vale_la_pena) {
-        confermati.push(Object.assign({}, pk, det));
-      }
-    }
-    if (!confermati.length) confermati = top3.map(function(pk){ return Object.assign({},pk,{quota_reale:String(pk.quota_stimata),note:pk.motivo}); });
-    setGStep(3,'done');
 
-    // FASE 4 — schedina ottimale
+    var p1 = 'Data odierna: ' + dataISO + '. Periodo: ' + periodo + '. Sport: ' + sportsStr + '.'
+      + ' COMPITO: 1) Trova partite/eventi cercando sul web.'
+      + ' 2) Seleziona i 3 migliori pick con confidenza >= 65 e rischio BASSO o MEDIO.'
+      + ' 3) Cerca quota reale approssimativa per ogni pick.'
+      + ' Rispondi SOLO con JSON: {"picks":['
+      + '{"sport":"","team1":"","team2":"","competizione":"","data":"YYYY-MM-DD","pronostico":"","quota_reale":"1.75","confidenza":72,"rischio":"BASSO","motivo":""}'
+      + ']}';
+
+    var raw1 = await runWithWebSearch(p1, 3);
+    var picks = parseJSON(raw1).picks || [];
+    if (!picks.length) throw new Error('Nessun pick trovato per il periodo selezionato. Prova altri sport o un periodo diverso.');
+    setGStep(1,'done'); setGStep(2,'done'); setGStep(3,'done');
+
+    await sleep(3000);
+
+    // CHIAMATA 2 — costruisci schedina ottimale (no web search)
     setGStep(4,'active');
-    var picksStr = JSON.stringify(confermati.map(function(pk){
-      return {sport:pk.sport,team1:pk.team1,team2:pk.team2,competizione:pk.competizione,data:pk.data,pronostico:pk.pronostico,quota:pk.quota_reale||pk.quota_stimata,confidenza:pk.confidenza_aggiornata||pk.confidenza,rischio:pk.rischio_aggiornato||pk.rischio,note:pk.note||pk.motivo};
+    var picksStr = JSON.stringify(picks.map(function(pk){
+      return {sport:pk.sport,team1:pk.team1,team2:pk.team2,competizione:pk.competizione,
+              data:pk.data,pronostico:pk.pronostico,quota:pk.quota_reale,
+              confidenza:pk.confidenza,rischio:pk.rischio,motivo:pk.motivo};
     }));
-    var p4 = 'Sei un money manager sportivo esperto. Budget disponibile: EUR ' + budget + '.'
-      + ' OBIETTIVO: vincere SPESSO e in SICUREZZA. Preferisci quote basse e certezze alle grandi vincite rischiose.'
-      + '\nPick verificati disponibili: ' + picksStr
-      + '\n\nDECIDI TU il tipo di giocata migliore in base ai pick disponibili:'
-      + '\n- Se c\u0027e\u0027 almeno 1 pick con confidenza >= 75 e rischio BASSO: proponi una SINGOLA sicura'
-      + '\n- Se ci sono 2-3 pick compatibili con rischio BASSO/MEDIO: proponi anche una COMBINATA'
-      + '\n- Se i pick sono di qualita\u0027 media: proponi solo la singola migliore'
-      + '\n- Distribuisci il budget in modo conservativo (singola: 5-8%, combinata: 3-5%)'
-      + '\nRispondi SOLO con JSON: {'
-      + '"singola":{"pick_indice":0,"partita":"team1 vs team2","pronostico":"","quota":1.0,"importo_consigliato":10.0,"vincita_potenziale":0.0,"rischio":"BASSO","motivazione":"","avvertenza":""},'
-      + '"combinata":null,'
-      + '"consiglio_generale":"spiega in 1-2 frasi la strategia scelta e perche\u0027"}';
-    var singola = true; var combo = true;
-    var d4 = await callProxy([{role:'user',content:p4}], false, 1200);
-    var raw4 = d4.content.map(function(b){ return b.text||''; }).join('');
-    var sched = parseJSON(raw4);
+    var p2 = 'Money manager sportivo. Budget EUR ' + budget + '. Obiettivo: vincere spesso in sicurezza.'
+      + ' Pick: ' + picksStr
+      + '. Se confidenza>=75 e rischio BASSO: singola. Se 2+ pick compatibili: aggiungi combinata. Budget singola 5-8%, combinata 3-5%.'
+      + ' JSON: {"singola":{"pick_indice":0,"partita":"","pronostico":"","quota":1.0,"importo_consigliato":5.0,"vincita_potenziale":0.0,"rischio":"BASSO","motivazione":"","avvertenza":""},"combinata":null,"consiglio_generale":""}';
+
+    var d2 = await callProxy([{role:'user',content:p2}], false, 1200);
+    var raw2 = d2.content.map(function(b){ return b.text||''; }).join('');
+    var sched = parseJSON(raw2);
     setGStep(4,'done');
 
     progress.style.display = 'none';
-    renderGiocataResult(sched, confermati, singola, combo);
+    renderGiocataResult(sched, picks, true, true);
 
   } catch(err) {
     progress.style.display = 'none';
     var msg = err.message || '';
     var isRate = msg.toLowerCase().includes('rate') || msg.toLowerCase().includes('limit') || msg.includes('50,000');
+    var isTimeout = msg.toLowerCase().includes('timeout') || msg.toLowerCase().includes('<html');
     if (isRate) {
       errDiv.style.display = 'block';
-      errDiv.innerHTML = '⏳ <strong>Limite di velocità raggiunto</strong> — stai facendo troppe richieste in poco tempo.<br><br>'
-        + 'Aspetta 1-2 minuti e riprova. Se il problema persiste, passa al modello <strong>claude-sonnet</strong> nel Menu ⚙️ (ha limiti più alti).';
+      errDiv.innerHTML = '⏳ <strong>Limite velocità raggiunto</strong> — aspetta 1-2 minuti e riprova.<br>'
+        + 'Suggerimento: seleziona meno sport o usa Sonnet nel Menu ⚙️.';
+    } else if (isTimeout) {
+      errDiv.style.display = 'block';
+      errDiv.innerHTML = '⏱ <strong>Timeout server</strong> — richiesta troppo lenta per il proxy Netlify.<br>'
+        + 'Prova con meno sport o il periodo "Solo oggi".';
     } else if (!handleApiError(err, errDiv)) {
       errDiv.style.display = 'block';
       errDiv.textContent = 'Errore: ' + msg;
@@ -4517,6 +4529,7 @@ async function avviaGiocataConsigliata() {
   }
   btn.disabled = false; btn.textContent = '🎯 TROVA GIOCATA';
 }
+
 
 function renderGiocataResult(sched, picks, singola, combo) {
   var res = document.getElementById('giocataResult');
