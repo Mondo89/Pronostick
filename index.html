@@ -898,6 +898,49 @@ textarea{resize:vertical;min-height:80px;}
 .toggle input:checked + .toggle-slider::before { transform: translateX(24px); background: var(--accent); }
 .toggle-status { font-size: 0.68rem; font-family: 'DM Mono', monospace; font-weight: 600; }
 
+/* ===== CERCA QUOTE TOGGLE ===== */
+.cerca-quote-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0;
+}
+.cerca-quote-label { font-size: 0.62rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); text-align: center; }
+.cerca-quote-status { font-size: 0.68rem; font-family: 'DM Mono', monospace; font-weight: 600; }
+/* Dropdown bookmaker per Cerca Quote */
+.cerca-quote-dropdown {
+  margin-top: 10px; padding: 14px 16px;
+  background: rgba(77,166,255,0.05);
+  border: 1px solid rgba(77,166,255,0.2);
+  border-radius: 10px; display: none; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.cerca-quote-dropdown.open { display: flex; }
+.cerca-quote-dropdown select {
+  flex: 1; min-width: 160px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); padding: 9px 12px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none;
+}
+.cerca-quote-dropdown select:focus { border-color: var(--accent3); }
+.cerca-quote-custom-row { display: flex; gap: 8px; align-items: center; flex: 1; min-width: 160px; }
+.cerca-quote-custom-input {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); padding: 9px 12px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none;
+  display: none;
+}
+.cerca-quote-custom-input.show { display: block; }
+.cerca-quote-custom-input:focus { border-color: var(--accent3); }
+.cerca-quote-add-btn {
+  background: rgba(77,166,255,0.12); border: 1px solid rgba(77,166,255,0.3);
+  color: var(--accent3); padding: 8px 12px; border-radius: 8px;
+  font-size: 0.88rem; cursor: pointer; font-weight: 600; flex-shrink: 0;
+  transition: all 0.2s;
+}
+.cerca-quote-add-btn:hover { background: rgba(77,166,255,0.2); }
+.cerca-quote-note {
+  font-size: 0.7rem; color: var(--muted); width: 100%;
+}
+/* Cost item per Cerca Quote */
+#costCercaWrap { transition: opacity 0.2s; }
+
 /* ===== DESKTOP NAV ===== */
 .dnav-btn {
   background: transparent; border: none; color: var(--muted);
@@ -1167,7 +1210,10 @@ body { padding-bottom: 70px; } /* space for tab bar */
   <div class="mercati-section">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <span class="file-section-label" style="margin-bottom:0;">📊 Mercati da analizzare</span>
-      <span id="mercatiSportTag" style="font-size:0.68rem;color:var(--accent);font-family:monospace;letter-spacing:1px;">AUTO • CALCIO</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button type="button" onclick="selectAllMercati()" style="font-size:0.65rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent3);background:rgba(77,166,255,0.08);border:1px solid rgba(77,166,255,0.2);border-radius:5px;padding:3px 8px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(77,166,255,0.18)'" onmouseout="this.style.background='rgba(77,166,255,0.08)'">⬛ TUTTI</button>
+        <span id="mercatiSportTag" style="font-size:0.68rem;color:var(--accent);font-family:monospace;letter-spacing:1px;">AUTO • CALCIO</span>
+      </div>
     </div>
     <div class="mercati-grid" id="mercatiGrid">
       <!-- Populated dynamically by updateMercatiForSport() -->
@@ -1179,26 +1225,65 @@ body { padding-bottom: 70px; } /* space for tab bar */
     </div>
   </div>
 
-  <!-- COST PANEL + WEB SEARCH TOGGLE -->
+  <!-- COST PANEL + TOGGLES -->
   <div class="cost-panel">
     <div class="cost-left">
       <div class="cost-title">💰 Costo stimato pronostico</div>
       <div class="cost-breakdown">
         <span class="cost-item">🧠 Token AI: <strong id="costToken">~$0.04</strong></span>
         <span class="cost-item" id="costWebWrap">🌐 Web search: <strong id="costWeb">~$0.10</strong></span>
+        <span class="cost-item" id="costCercaWrap" style="opacity:0.35;">📋 Cerca quote: <strong id="costCerca">$0.00</strong></span>
         <span class="cost-total" id="costTotal">≈ $0.14</span>
       </div>
       <a class="cost-billing-link" href="https://console.anthropic.com/settings/billing" target="_blank">
         💳 Controlla credito residuo →
       </a>
     </div>
-    <div class="toggle-wrap">
-      <span class="toggle-label">Web<br>Search</span>
-      <label class="toggle">
-        <input type="checkbox" id="webSearchToggle" checked onchange="updateCostPanel()"/>
-        <span class="toggle-slider"></span>
-      </label>
-      <span class="toggle-status" id="toggleStatus" style="color:var(--accent)">ON</span>
+    <div style="display:flex;align-items:center;gap:18px;flex-shrink:0;">
+      <!-- Toggle Web Search -->
+      <div class="toggle-wrap">
+        <span class="toggle-label">Web<br>Search</span>
+        <label class="toggle">
+          <input type="checkbox" id="webSearchToggle" checked onchange="updateCostPanel()"/>
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-status" id="toggleStatus" style="color:var(--accent)">ON</span>
+      </div>
+      <!-- Toggle Cerca Quote -->
+      <div class="cerca-quote-wrap">
+        <span class="cerca-quote-label">Cerca<br>Quote</span>
+        <label class="toggle">
+          <input type="checkbox" id="cercaQuoteToggle" onchange="toggleCercaQuote()"/>
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="cerca-quote-status" id="cercaQuoteStatus" style="color:var(--muted)">OFF</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dropdown bookmaker Cerca Quote (appare sotto il cost panel quando attivo) -->
+  <div class="cerca-quote-dropdown" id="cercaQuoteDropdown">
+    <select id="cercaQuoteBkSelect" onchange="onCercaQuoteBkChange(this)">
+      <option value="">— Seleziona bookmaker —</option>
+      <option value="Snai">Snai</option>
+      <option value="Sisal">Sisal</option>
+      <option value="Lottomatica">Lottomatica</option>
+      <option value="Goldbet">Goldbet</option>
+      <option value="Eurobet">Eurobet</option>
+      <option value="Bet365">Bet365</option>
+      <option value="Unibet">Unibet</option>
+      <option value="Betfair">Betfair</option>
+      <option value="William Hill">William Hill</option>
+      <option value="Bwin">Bwin</option>
+      <option value="888sport">888sport</option>
+      <option value="Betway">Betway</option>
+      <option value="altro">➕ Altro (scrivi)</option>
+    </select>
+    <div class="cerca-quote-custom-row">
+      <input type="text" id="cercaQuoteCustom" class="cerca-quote-custom-input" placeholder="Nome bookmaker personalizzato..." autocomplete="off"/>
+    </div>
+    <div class="cerca-quote-note">
+      💡 L'AI cercherà le quote reali su questo bookmaker e compilerà automaticamente la tabella. Costo aggiuntivo: ~$0.08
     </div>
   </div>
 
@@ -2048,16 +2133,55 @@ function isWebSearchEnabled() {
   return toggle ? toggle.checked : true;
 }
 
+function isCercaQuoteEnabled() {
+  const toggle = document.getElementById('cercaQuoteToggle');
+  return toggle ? toggle.checked : false;
+}
+
+function toggleCercaQuote() {
+  const on = isCercaQuoteEnabled();
+  const dropdown = document.getElementById('cercaQuoteDropdown');
+  const status = document.getElementById('cercaQuoteStatus');
+  if (dropdown) { if (on) dropdown.classList.add('open'); else dropdown.classList.remove('open'); }
+  if (status) { status.textContent = on ? 'ON' : 'OFF'; status.style.color = on ? 'var(--accent3)' : 'var(--muted)'; }
+  updateCostPanel();
+}
+
+function onCercaQuoteBkChange(sel) {
+  const custom = document.getElementById('cercaQuoteCustom');
+  if (custom) {
+    if (sel.value === 'altro') custom.classList.add('show');
+    else { custom.classList.remove('show'); custom.value = ''; }
+  }
+}
+
+function getCercaQuoteBookmaker() {
+  const sel = document.getElementById('cercaQuoteBkSelect');
+  if (!sel || !sel.value) return '';
+  if (sel.value === 'altro') {
+    const custom = document.getElementById('cercaQuoteCustom');
+    return (custom && custom.value.trim()) ? custom.value.trim() : '';
+  }
+  return sel.value;
+}
+
 function updateCostPanel() {
   const webOn = isWebSearchEnabled();
+  const cercaOn = isCercaQuoteEnabled();
   const tokenCost = 0.04;
   const webCost = 0.10;
-  const total = webOn ? tokenCost + webCost : tokenCost;
+  const cercaCost = 0.08;
+  let total = tokenCost;
+  if (webOn) total += webCost;
+  if (cercaOn) total += cercaCost;
 
   document.getElementById('costToken').textContent = '~$' + tokenCost.toFixed(2);
   const webWrap = document.getElementById('costWebWrap');
   if (webWrap) webWrap.style.opacity = webOn ? '1' : '0.35';
   document.getElementById('costWeb').textContent = webOn ? '~$' + webCost.toFixed(2) : '$0.00';
+  const cercaWrap = document.getElementById('costCercaWrap');
+  if (cercaWrap) cercaWrap.style.opacity = cercaOn ? '1' : '0.35';
+  document.getElementById('costCerca').textContent = cercaOn ? '~$' + cercaCost.toFixed(2) : '$0.00';
   document.getElementById('costTotal').textContent = '≈ $' + total.toFixed(2);
   const status = document.getElementById('toggleStatus');
   if (status) {
@@ -2225,6 +2349,64 @@ function updateOuVisibility() {
   if (ouSelect && getSportConfig(selectedSport).ou) {
     ouSelect.style.display = ouChip ? 'flex' : 'none';
   }
+}
+
+function selectAllMercati() {
+  document.querySelectorAll('.mercato-chip').forEach(function(chip) {
+    chip.classList.add('selected');
+    const cb = chip.querySelector('input[type=checkbox]');
+    if (cb) cb.checked = true;
+    const check = chip.querySelector('.mercato-check');
+    if (check) check.textContent = '\u2713';
+  });
+  updateOuVisibility();
+}
+
+async function fetchQuoteBookmaker(team1, team2, competition, sport, bookmaker) {
+  const prompt = 'Sei un esperto di scommesse sportive. Cerca le quote AGGIORNATE del bookmaker "' + bookmaker + '" per la partita: ' + team1 + ' vs ' + team2
+    + (competition ? ' (' + competition + ')' : '') + ' - Sport: ' + sport + '.'
+    + ' Oggi è ' + new Date().toLocaleDateString('it-IT') + '.'
+    + ' Cerca le quote reali attuali su questo bookmaker per i principali mercati (1X2, Over/Under, GG/NG, Handicap, ecc.).'
+    + ' Se non trovi la partita specifica o le quote non sono disponibili, rispondi con trovato: false.'
+    + ' Rispondi SOLO con JSON valido, nessun testo prima o dopo, nel formato:'
+    + ' { "trovato": true o false, "bookmaker": "nome", "quote": { "1": "numero o null", "X": "numero o null", "2": "numero o null",'
+    + ' "over": "es. Over 2.5: 1.85 o null", "under": "es. Under 2.5: 2.00 o null",'
+    + ' "gg": "numero o null", "ng": "numero o null",'
+    + ' "1x": "numero o null", "x2": "numero o null",'
+    + ' "handicap": "descrizione o null",'
+    + ' "altri": "altri mercati trovati come stringa o null" } }';
+  const rawText = await runWithWebSearch(prompt, 3);
+  return parseJSON(rawText);
+}
+
+function fillQuoteTableFromFetch(data, bookmaker) {
+  if (!data || !data.quote) return;
+  const q = data.quote;
+  const sportFields = getQuoteFields(selectedSport);
+  // Mappa i dati ricevuti ai field ID
+  const map = {
+    q_1: q['1'], q_x: q['X'], q_2: q['2'],
+    q_over: q['over'], q_under: q['under'],
+    q_gg: q['gg'], q_ng: q['ng'],
+    q_1x: q['1x'], q_x2: q['x2'],
+    q_hc: q['handicap'],
+    q_win: q['1'], q_pod: q['altri'], q_h2h: null, q_pole: null,
+    q_met: q['altri'], q_dist: q['altri'],
+    q_1q: q['altri'], q_1set: q['altri']
+  };
+  sportFields.forEach(function(f) {
+    var el = document.getElementById(f.id);
+    if (el && map[f.id] && map[f.id] !== 'null' && map[f.id] !== null) {
+      el.value = map[f.id];
+    }
+  });
+  // Compila bookmaker name
+  var bkNameEl = document.getElementById('quoteBookmakerName');
+  if (bkNameEl) bkNameEl.value = bookmaker;
+  buildQuoteString();
+  // Apri il pannello quote se non già aperto
+  var panel = document.getElementById('quotePanel');
+  if (panel && panel.style.display === 'none') toggleQuotePanel();
 }
 
 function getSelectedMercati() {
@@ -2686,17 +2868,48 @@ async function analyzeMatch() {
   const competition = document.getElementById('competition').value.trim();
   const matchDate = document.getElementById('matchDate').value;
   const context = document.getElementById('context').value.trim();
-  const quoteBookmaker = document.getElementById('quoteBookmaker').value.trim();
   if (!team1||!team2) { showError('⚠️ Inserisci entrambi i nomi.'); return; }
   if (!getApiKey()) { showError('⚠️ Inserisci la tua API key in cima alla pagina prima di analizzare.'); return; }
 
-  hideError(); hideResult();
-  showLoading(true,'Analisi in corso...');
+  // --- FASE 0: Cerca Quote Bookmaker (se attivo) ---
+  if (isCercaQuoteEnabled()) {
+    const bk = getCercaQuoteBookmaker();
+    if (!bk) {
+      showError('⚠️ Cerca Quote è attivo: seleziona un bookmaker dal menu a tendina.');
+      return;
+    }
+    hideError(); hideResult();
+    showLoading(true, 'Ricerca quote su ' + bk + '...');
+    document.getElementById('step1').textContent = '📋 Cerca quote su ' + bk + '...';
+    document.getElementById('step1').classList.add('show');
+    document.getElementById('analyzeBtn').disabled = true;
+    try {
+      const qData = await fetchQuoteBookmaker(team1, team2, competition, selectedSport, bk);
+      if (!qData || qData.trovato === false) {
+        showLoading(false);
+        document.getElementById('analyzeBtn').disabled = false;
+        showError('⚠️ Non ho trovato quote per questa partita su ' + bk + '. Puoi inserirle manualmente nella sezione "Quote Bookmaker" e riprovare, oppure disattiva "Cerca Quote" per procedere senza.');
+        return;
+      }
+      fillQuoteTableFromFetch(qData, bk);
+      showToast('✅ Quote trovate su ' + bk + ' e inserite automaticamente!', 'success');
+    } catch(err) {
+      showLoading(false);
+      document.getElementById('analyzeBtn').disabled = false;
+      showError('❌ Errore nella ricerca quote: ' + err.message + '. Puoi inserire le quote manualmente o disattivare "Cerca Quote".');
+      return;
+    }
+  } else {
+    hideError(); hideResult();
+    showLoading(true,'Analisi in corso...');
+    document.getElementById('analyzeBtn').disabled = true;
+  }
+
+  const quoteBookmaker = document.getElementById('quoteBookmaker').value.trim();
+
   document.getElementById('step1').textContent = isWebSearchEnabled()
     ? '🌐 Ricerca dati in tempo reale...'
     : '📚 Analisi con dati storici...';
-  document.getElementById('analyzeBtn').disabled = true;
-
   document.getElementById('step1').classList.add('show');
   const webData = isWebSearchEnabled()
     ? await fetchWebData(team1,team2,competition,selectedSport,matchDate)
